@@ -2,8 +2,43 @@
  * Created by Steve on 9/1/2017.
  */
 import React, {Component} from 'react';
+import Foundation from 'react-foundation';
 
 
+/**
+ *
+ * @param props
+ * @return {XML}
+ * @constructor
+ */
+export function DataModule(props){
+    const title = this.props.title;
+    const note = this.props.note;
+    const warning = this.props.warning;
+    return (
+        <div className="module-container">
+            <DataModuleHeader title={title} note={note} warning={warning}/>
+            {props.children}
+        </div>
+    );
+}
+
+function DataModuleHeader(props) {
+    const title = this.props.title;
+    const note = this.props.note;
+    const warning = this.props.warning;
+    return (
+        <div className="module-header">
+            <h3 className="dd-header">{title}</h3>
+            {note && <p className="dd-note">{note}</p>}
+            {warning && <p className="dd-warning">{warning}</p>}
+        </div>
+    );
+}
+
+/*****************************************
+ * Key Value Pairs
+ *****************************************/
 export class KeyValuePairList extends Component {
     /**
      * Renders a list of key-value pairs.  Primarily used for listing several related singular data points.
@@ -41,6 +76,9 @@ function KeyValueValue(props) {
     return <dd className="kv-val">{props.val}</dd>
 }
 
+/*****************************************
+ * Table
+ *****************************************/
 
 export class Table extends Component {
     /**
@@ -64,7 +102,7 @@ export class Table extends Component {
     }
 }
 
-function TableHeaderRow(props){
+function TableHeaderRow(props) {
     const headers = Object.keys(props.rows);
     return (
         <tr>
