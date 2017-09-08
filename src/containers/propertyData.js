@@ -1,9 +1,9 @@
 /**
  * Created by sds25 on 9/6/17.
  */
-import react, {Component} from 'react'
+import React, {Component} from 'react'
 
-import DEFAULT_PARCEL_ID from '../utils/settings'
+import {DEFAULT_PARCEL_ID} from '../utils/settings.js'
 
 
 export class PropertyDataContainer extends Component {
@@ -18,10 +18,24 @@ export class PropertyDataContainer extends Component {
 
     render() {
         // Here is where we'll load all of the available DataModules
+        return (
+            <div>
+                <PropertyHeader address={this.props.address}/>
+                {this.props.children}
+            </div>
+        );
     }
 }
 
-function PropertyDataSection(props) {
+function PropertyHeader(props) {
+    return (
+        <div className="pdata-header">
+            <h1>{props.address}</h1>
+        </div>
+    );
+}
+
+export function PropertyDataSection(props) {
     return (
         <div className="pdata-section">
             {props.children}
