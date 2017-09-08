@@ -157,4 +157,12 @@ export class WPRDCPropertyAPI extends DataSource {
                 });
         });
     }
+
+    get(format, parcelId, options){
+        if (format === 'keyValue') {
+            if (typeof(options.fieldMapping) === 'undefined')
+                throw new Error('Must provide "fieldMapping for KeyValue requests.')
+            return this.getKeyValueData(parcelId, options.fieldMapping())
+        }
+    }
 }

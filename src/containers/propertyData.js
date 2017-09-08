@@ -4,7 +4,7 @@
 import React, {Component} from 'react'
 
 import {DEFAULT_PARCEL_ID} from '../utils/settings.js'
-
+import {DataModule, KeyValuePairList, Table} from '../components/dataDisplays'
 
 export class PropertyDataContainer extends Component {
     constructor(props) {
@@ -40,5 +40,16 @@ export function PropertyDataSection(props) {
         <div className="pdata-section">
             {props.children}
         </div>
+    );
+}
+
+
+export function BasicInfoModule(props){
+    let data= props.api.
+
+    return (
+        <DataModule title="">
+            <KeyValuePairList data={props.data}/>
+        </DataModule>
     );
 }

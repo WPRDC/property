@@ -8,16 +8,38 @@ import React, {Component} from 'react';
  * @param props
  * @returns {XML}
  */
-export function DataModule(props) {
-    const title = props.title;
-    const note = props.note;
-    const warning = props.warning;
-    return (
-        <div className="module-container">
-            <DataModuleHeader title={title} note={note} warning={warning}/>
-            {props.children}
-        </div>
-    );
+export class DataModule extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {data: {}}
+    }
+
+    componentDidMount(){
+        this.props.api.get(this.props.format, this.props.parcelId, this.props.fieldMapping)
+    }
+
+    render() {
+        const title = this.props.title;
+        const note = this.props.note;
+        const warning = this.props.warning;
+        const format = this.props.format;
+
+        let dataDisplay = null;
+        if (format === 'keyValue') {
+            dataDisplay = <KeyValuePairList data={this.state.data}/>
+        } else if (format === 'table') {
+            dataDisplay = <Table data={this.state.data}/>
+        } else {
+            dataDisplay = <p className="error-note">Incorrect Data Display ({format})</p>
+        }
+
+        return (
+            <div className="module-container">
+                <DataModuleHeader title={title} note={note} warning={warning}/>
+                {dataDisplay}
+            </div>
+        );
+    }
 }
 
 function DataModuleHeader(props) {
@@ -48,7 +70,7 @@ export function KeyValuePairList(props) {
     );
 }
 
- function KeyValuePair(props) {
+function KeyValuePair(props) {
     return <li className="kv-pair">
         <dl><KeyValueKey field={props.field}/><KeyValueValue val={props.val}/></dl>
     </li>
