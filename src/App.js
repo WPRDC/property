@@ -3,11 +3,10 @@ import logo from './logo.svg';
 import './App.css';
 
 import {WPRDCPropertyAPI} from './api/propertyApi'
-import {DataModule, KeyValuePairList, Table} from './components/dataDisplays.js'
-import {PropertyDataContainer, PropertyDataSection} from "./containers/propertyData";
+import {PropertyDataContainer} from "./containers/propertyData";
 
 
-const api = new WPRDCPropertyAPI()
+const api = new WPRDCPropertyAPI('http://tools.wprdc.org/property-api/v1/parcels/');
 
 
 class App extends Component {
@@ -18,16 +17,7 @@ class App extends Component {
                     <img src={logo} className="App-logo" alt="logo"/>
                     <h2>Welcome to React</h2>
                 </div>
-                <PropertyDataContainer address="226 Shady Ave">
-
-                    <PropertyDataSection>
-                        <DataModule title="" note="This is a place for things and stuff">
-                            <KeyValuePairList/>
-                        </DataModule>
-                    </PropertyDataSection>
-
-
-
+                <PropertyDataContainer api={api} parcelId="0028B00154000000">
                 </PropertyDataContainer>
 
             </div>

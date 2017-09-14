@@ -1,55 +1,323 @@
 /**
  * Created by sds25 on 9/6/17.
  */
-import React, {Component} from 'react'
+import React, {Component} from "react";
+import {KeyValueModule, TableModule} from "../components/dataDisplays";
 
-import {DEFAULT_PARCEL_ID} from '../utils/settings.js'
-import {DataModule, KeyValuePairList, Table} from '../components/dataDisplays'
 
+//<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
+// Primary Container for Displaying Parcel Information
+//<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
 export class PropertyDataContainer extends Component {
     constructor(props) {
         super(props);
-        this.state = {parcel: DEFAULT_PARCEL_ID}
-    }
+        this.state = {
+            parcelId: '',
+            address: null,
+            isLoaded: false,
+            data: null
+        };
 
-    componentDidMount() {
-
+        this.updateParcel = this.updateParcel.bind(this);
     }
 
     render() {
-        // Here is where we'll load all of the available DataModules
-        return (
-            <div>
-                <PropertyHeader address={this.props.address}/>
-                {this.props.children}
-            </div>
-        );
+        if (this.state.isLoaded) {
+            return (
+                <div>
+                    <ParcelIdSearch handleParcelIdChange={this.updateParcel}/>
+                    <PropertyHeader address={this.state.address} parcelId={this.state.parcelId}/>
+
+                    <PropertyDataSection name="home">
+                        <ParcelChars data={this.state.data}/>
+                        <DwellingChars data={this.state.data}/>
+                    </PropertyDataSection>
+
+                    <PropertyDataSection name="assessment" title="Assessment">
+                        <AssessmentTable data={this.state.data}/>
+                        <PropertyTaxReductions data={this.state.data}/>
+                    </PropertyDataSection>
+
+                    <PropertyDataSection name="sales" title="Sales">
+                        <SalesTable data={this.state.data}/>
+                    </PropertyDataSection>
+
+                    <PropertyDataSection name="liens" title="Tax Liens">
+                        <TaxLiens data={this.state.data}/>
+                    </PropertyDataSection>
+                </div>
+            );
+        }
+        else {
+            return null;
+        }
     }
+
+    componentDidMount() {
+        this.updateParcel(this.props.parcelId)
+    }
+
+
+    updateParcel(parcelId) {
+        this.props.api.collectData(parcelId)
+            .then((newData) => {
+                    this.setState(
+                        {
+                            isLoaded: true,
+                            parcelId: this.props.api.parcelId(),
+                            data: newData,
+                            address: this.props.api.address()
+                        }
+                    );
+                    this.render();
+                }
+                , (err) => {
+                    console.log(err);
+                }
+            )
+    }
+
 }
 
-function PropertyHeader(props) {
-    return (
-        <div className="pdata-header">
-            <h1>{props.address}</h1>
-        </div>
-    );
-}
 
+//<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
+// Extra Modules
+//<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
 export function PropertyDataSection(props) {
     return (
-        <div className="pdata-section">
+        <div className="pdata-section" id={"pdata-section-" + props.name}>
+            {props.title && <h2>{props.title}</h2>}
             {props.children}
         </div>
     );
 }
 
-
-export function BasicInfoModule(props){
-    let data= props.api.
-
+function PropertyHeader(props) {
+    let addr = props.address;
     return (
-        <DataModule title="">
-            <KeyValuePairList data={props.data}/>
-        </DataModule>
+        <div className="pdata-header">
+            <h1><span>{addr.number} {addr.street}</span><br/><span>{addr.city} {addr.state} {addr.zip}</span></h1>
+            <p className="parcelId">{props.parcelId}</p>
+        </div>
     );
+}
+
+
+//<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
+// Individual Modules
+//<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
+// These are named modules to plugin into the property data container.
+// Defining them here makes organizing the views a lot easier.
+
+function ParcelChars(props) {
+    return (
+        <KeyValueModule title="Property Characteristics"
+                        sourceData={props.data}
+                        fields={[
+                            {resource: 'assessments', id: 'CLASSDESC', title: 'Use Class'},
+                            {resource: 'assessments', id: 'OWNERDESC', title: 'Owner Type'},
+                            {resource: 'assessments', id: 'USEDESC', title: 'Land Use'},
+                            {
+                                resource: 'assessments', id: 'LOTAREA', title: 'Lot Size', formatter: (input) => {
+                                return [`${input} ft`, <sup key="1">2</sup>]
+                            }
+                            }
+                        ]}
+        />
+    );
+}
+
+function DwellingChars(props) {
+    return (
+        <KeyValueModule title="Dwelling  Characteristics"
+                        sourceData={props.data}
+                        missingDataMsg="Dwelling characteristics are only available for residential parcels."
+                        fields={[
+                            {resource: 'assessments', id: 'STYLEDESC', title: 'Style'},
+                            {resource: 'assessments', id: 'STORIES', title: 'Stories'},
+                            {resource: 'assessments', id: 'YEARBLT', title: 'Year Built'},
+                            {resource: 'assessments', id: 'EXTFINISH_DESC', title: 'Exterior Finish'},
+                            {resource: 'assessments', id: 'HEATINGCOOLINGDESC', title: 'Heating/Cooling'},
+                            {resource: 'assessments', id: 'ROOFDESC', title: 'Roof'},
+                            {resource: 'assessments', id: 'BASEMENTDESC', title: 'Basement'},
+                            {resource: 'assessments', id: 'GRADE', title: 'Grade'},
+                            {resource: 'assessments', id: 'CONDITIONDESC', title: 'Condition'},
+                            {
+                                resource: 'assessments',
+                                id: 'CDUDESC',
+                                title: 'CDU',
+                                note: 'Condition/Desirability/Utility'
+                            },
+                        ]}
+        />
+    );
+}
+
+function AssessmentTable(props) {
+    return (
+        <TableModule title="Assessment Values"
+                     sourceData={props.data}
+                     tableInfo={
+                         {
+                             showHeading: true,
+                             showLabel: true,
+                             heading: ['__label__', 'County', 'Local', 'Fair Market'],
+                             rows: [
+                                 {
+                                     '__label__': 'Building',
+                                     'County': {resource: 'assessments', id: 'COUNTYBUILDING', formatter: monify},
+                                     'Local': {resource: 'assessments', id: 'LOCALBUILDING', formatter: monify},
+                                     'Fair Market': {
+                                         resource: 'assessments',
+                                         id: 'FAIRMARKETBUILDING',
+                                         formatter: monify
+                                     }
+                                 }, {
+                                     '__label__': 'Land',
+                                     'County': {resource: 'assessments', id: 'COUNTYLAND', formatter: monify},
+                                     'Local': {resource: 'assessments', id: 'LOCALLAND', formatter: monify},
+                                     'Fair Market': {resource: 'assessments', id: 'FAIRMARKETLAND', formatter: monify}
+                                 }, {
+                                     '__label__': 'Total',
+                                     'County': {resource: 'assessments', id: 'COUNTYTOTAL', formatter: monify},
+                                     'Local': {resource: 'assessments', id: 'LOCALTOTAL', formatter: monify},
+                                     'Fair Market': {resource: 'assessments', id: 'FAIRMARKETTOTAL', formatter: monify}
+                                 },
+                             ]
+                         }
+                     }
+
+        />
+    );
+}
+
+function PropertyTaxReductions(props) {
+    return (
+        <KeyValueModule title="Tax Reductions"
+                        sourceData={props.data}
+                        fields={
+                            [
+                                {
+                                    title: 'Homestead',
+                                    id: 'HOMESTEADFLAG',
+                                    resource: 'assessments',
+                                    formatter: (data) => {
+                                        return data ? "YES" : "NO"
+                                    }
+                                },
+                                {
+                                    title: 'Farmstead',
+                                    id: 'FARMSTEADFLAG',
+                                    resource: 'assessments',
+                                    formatter: (data) => {
+                                        return data ? "YES" : "NO"
+                                    }
+                                },
+                                {
+                                    title: 'Clean & Green',
+                                    id: 'CLEANGREEN',
+                                    resource: 'assessments',
+                                    formatter: (data) => {
+                                        return data ? "YES" : "NO"
+                                    }
+                                },
+                                {
+                                    title: 'Abatement',
+                                    id: 'ABATEMENTFLAG',
+                                    resource: 'assessments',
+                                    formatter: (data) => {
+                                        return data ? "YES" : "NO"
+                                    }
+                                },
+                            ]
+                        }
+                        allowNulls={true}
+
+        />
+    );
+}
+
+function SalesTable(props) {
+    return (
+        <TableModule title="Assessment Values"
+                     sourceData={props.data}
+                     tableInfo={
+                         {
+                             showHeading: true,
+                             showLabel: false,
+                             heading: ['Sale Date', 'Price'],
+                             rows: [
+                                 {
+                                     'Sale Date': {resource: 'assessments', id: 'PREVSALEDATE2'},
+                                     'Price': {resource: 'assessments', id: 'PREVSALEPRICE2', formatter: monify},
+                                 }, {
+                                     'Sale Date': {resource: 'assessments', id: 'PREVSALEDATE'},
+                                     'Price': {resource: 'assessments', id: 'PREVSALEPRICE', formatter: monify},
+                                 }, {
+                                     'Sale Date': {resource: 'assessments', id: 'SALEDATE'},
+                                     'Price': {resource: 'assessments', id: 'SALEPRICE', formatter: monify},
+                                 },
+                             ]
+                         }
+                     }
+
+        />
+    );
+}
+
+
+function TaxLiens(props) {
+    return (
+        <KeyValueModule sourceData={props.data}
+                        warning="The information provided here is merely an estimate. Please refer to Allegheny County's Department of Court Records for official tax lien information."
+                        fields={[
+                            {title: 'Number of Liens', id: 'number', resource: 'tax_liens'},
+                            {title: 'Total Amount', id: 'total_amount', resource: 'tax_liens', formatter: monify}
+                        ]}
+                        missingDataMsg="No tax liens were found for this property."
+        />
+    );
+}
+
+function monify(number) {
+    if (number !== 0 && (!number || isNaN(number)))
+        return '';
+    return '$' + number.toFixed(2);
+}
+
+
+class ParcelIdSearch extends Component {
+    constructor(props) {
+        super(props);
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+
+        this.state = {
+            parcelId: ''
+        }
+
+
+    }
+
+    handleChange(event){
+        this.setState({parcelId: event.target.value});
+    }
+
+    handleSubmit(e) {
+        this.props.handleParcelIdChange(this.state.parcelId);
+        this.setState({parcelId: ''});
+        e.preventDefault();
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <label>
+                    <input name='parcelId' type="text" value={this.state.parcelId} onChange={this.handleChange} placeholder="PARCEL ID"/>
+                    <input type="submit" value="Search"/>
+                </label>
+            </form>
+        );
+    }
 }

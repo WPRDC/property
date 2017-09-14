@@ -7,20 +7,16 @@
  *
  */
 
-import getJSON from '../utils/apiUtils'
+const FRESHNESS = 60/*min*/ * 60/*sec*/ * 1000/*ms*/;  // 1 hour
+/*
+
+ Process
+ 1.  Get's all necessary date for parcel. And stores in object. (collect_data)
+ 2.  `get` functions check to make sure parcel ID is correct and then grab data from collected data.
 
 
-const FRESHNESS = 60 * 60 * 1000;   // 1 Hour
 
-
-function isFresh(time, delta) {
-    if (typeof(delta) === 'undefine')
-        delta = FRESHNESS;
-
-    let now = new Date();
-
-    return (now - time) > delta;
-}
+ */
 
 
 class DataSource {
@@ -49,33 +45,17 @@ export class WPRDCPropertyAPI extends DataSource {
     constructor(url) {
         super();
         this.url = url;                 // url of api including endpoint
-        this.cache = {};                // cache of response data. useful until filters are added to property api
+        this.cache = {};                // cache of response data.
         this.cachedParcelId = '';       // PIN of parcel with data in `cache`
+        this.cachedAddress = null;
         this.cacheTime = new Date(0);   //
     }
 
-    /**
-     * Extracts requested key-value data from API call and gives pretty Title if provided in `fieldMapping`
-     *
-     * @param {Object} sourceData - data from which subset is pulled
-     * @param {Object} fieldMapping - fields (resource, id [, title) which constitute the subset
-     * @return {{}} subset of data
-     * @private
-     */
-    _getDataSubset(sourceData, fieldMapping) {
-        let subData = {};
-        for (let i in fieldMapping) {
-            let field = fieldMapping[i];
-            if (typeof(field.title) === 'undefined')
-                field.title = field.id;
-            subData[field.title] = sourceData['results'][0]['data'][field.resource][0][field.id]
-        }
-        return subData;
-    }
 
     /**
      * Checks local cache to see if data should be pulled
      *
+     * @param {string} parcelId - identifying string for parcel
      * @param {number} freshness - max age (in ms) of data before being refreshed
      * @return {boolean} validity of cache
      * @private
@@ -95,11 +75,32 @@ export class WPRDCPropertyAPI extends DataSource {
      * @private
      */
     _updateCache(data) {
-        console.log(data);
-        this.cache = data;
+        this.cache = data['results'][0]['data'];
         this.cachedParcelId = data['results'][0]['parcel_id'];
+        this.cachedAddress = WPRDCPropertyAPI._makeAddress(data['results'][0]['data']);
         this.cacheTime = new Date();
         return true
+    }
+
+
+    static _makeAddress(data) {
+        return(
+            {
+                "number": data['assessments'][0]['PROPERTYHOUSENUM'],
+                "street": data['assessments'][0]['PROPERTYADDRESS'],
+                "city":data['assessments'][0]['PROPERTYCITY'],
+                "state": data['assessments'][0]['PROPERTYSTATE'],
+                "zip": data['assessments'][0]['PROPERTYZIP'],
+            }
+        )
+    }
+
+    parcelId() {
+        return this.cachedParcelId;
+    }
+
+    address(){
+        return this.cachedAddress;
     }
 
     /**
@@ -109,7 +110,7 @@ export class WPRDCPropertyAPI extends DataSource {
      * @returns (Promise) Promise object that resolves to an Object of parcel data
      * @private
      */
-    _collectData(parcelId) {
+    collectData(parcelId) {
         return new Promise((resolve, reject) => {
             // Check cache first
             if (this._checkCache(parcelId)) {
@@ -117,7 +118,6 @@ export class WPRDCPropertyAPI extends DataSource {
             }
             // Request fresh data from API
             else {
-                console.log(this.url);
                 fetch(this.url + parcelId).then((response) => {
                     if (response.ok) {
                         // cache response before resolving
@@ -141,24 +141,25 @@ export class WPRDCPropertyAPI extends DataSource {
     /**
      * Returns key value pair data for parcel identified by `parcelId` and matching fields from `fieldMapping`.
      *
-     * @param {string} parcelId - parcel identifier (e.g. PIN)
      * @param {Array.<Object>} fieldMapping - array of objects representing field mappings {resource: '',
      * @returns {Promise} Promise object that resolves to Object of requested data in form of {title: data}
      */
-    getKeyValueData(parcelId, fieldMapping) {
-        console.log(fieldMapping);
-
-        return new Promise((resolve, reject) => {
-            this._collectData(parcelId)
-                .then((data) => {
-                    resolve(this._getDataSubset(data, fieldMapping));
-                }, (error) => {
-                    reject(error);
-                });
-        });
+    getKeyValueData(fieldMapping) {
+        let subData = {};
+        for (let i in fieldMapping) {
+            let field = fieldMapping[i];
+            if (typeof(field.title) === 'undefined')
+                field.title = field.id;
+            subData[field.title] = this.cache[field.resource][0][field.id]
+        }
+        return subData;
     }
 
-    get(format, parcelId, options){
+    getTableData(tableMapping) {
+        return null
+    }
+
+    get(format, parcelId, options) {
         if (format === 'keyValue') {
             if (typeof(options.fieldMapping) === 'undefined')
                 throw new Error('Must provide "fieldMapping for KeyValue requests.')
