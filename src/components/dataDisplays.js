@@ -2,6 +2,7 @@
  * Created by Steve on 9/1/2017.
  */
 import React from 'react';
+import {themeColors} from "../utils/settings"
 
 
 export function KeyValueModule(props) {
@@ -19,6 +20,38 @@ export function TableModule(props) {
     );
 }
 
+export function ImageModule(props){
+    const style = {
+        width: '100%',
+        display: 'block'
+    }
+    return (
+      <Module noPadding={true}>
+          <img style={style}src={props.imgSrc}/>
+      </Module>
+    );
+}
+
+function Module(props){
+    const style = {
+        border: '1px solid gray',
+        margin: '.4rem',
+        padding: '.5rem',
+        borderRadius: '2px',
+        boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+        background: 'white'
+    };
+    if(props.noPadding){
+        style.padding = '0';
+    }
+
+    return(
+      <div style={style}>
+          {props.children}
+      </div>
+    );
+
+}
 
 /**
  *
@@ -32,11 +65,6 @@ export function DataModule(props) {
     const format = props.format;
     let dataDisplay = null;
 
-    const style = {
-        border: '1px solid black',
-        margin: '.4rem',
-        padding: '.5rem'
-    }
 
 
     /* Key-Value Display */
@@ -63,10 +91,10 @@ export function DataModule(props) {
     }
 
     return (
-        <div style={style} className="module-container">
+        <Module className="dataModule">
             <DataModuleHeader title={title} note={note} warning={warning}/>
             {dataDisplay}
-        </div>
+        </Module>
     );
 }
 
@@ -74,7 +102,7 @@ export function DataModule(props) {
 function DataModuleHeader(props) {
     const hStyle = {
         margin: 0
-    }
+    };
 
     return (
         <div className="module-header">
@@ -92,7 +120,7 @@ export function KeyValuePairList(props) {
     const data = props.data;
     const style = {
         listStyle: 'none',
-        marginLeft: '0',
+        margin: '.5rem 0 0 0',
         paddingLeft: '0'
     };
 

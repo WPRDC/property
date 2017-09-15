@@ -2,7 +2,11 @@
  * Created by sds25 on 9/6/17.
  */
 import React, {Component} from "react";
-import {KeyValueModule, TableModule} from "../components/dataDisplays";
+import {KeyValueModule, TableModule, ImageModule} from "../components/dataDisplays";
+
+// Colors taken from logo
+
+import {themeColors} from "../utils/settings"
 
 
 //<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
@@ -25,8 +29,13 @@ export class PropertyDataContainer extends Component {
         let style = {
             padding: '.25rem',
             float: 'right',
-            width: '33%',
-            border: '2px solid black'
+            width: '30%',
+            backgroundColor: themeColors.white,
+            overflowY: 'scroll',
+            height: 'auto',
+            display: 'flex',
+            flexDirection: 'column',
+            margin: 0,
         };
 
         if (this.state.isLoaded) {
@@ -34,8 +43,9 @@ export class PropertyDataContainer extends Component {
                 <div style={style}>
                     <ParcelIdSearch handleParcelIdChange={this.updateParcel}/>
                     <PropertyHeader address={this.state.address} parcelId={this.state.parcelId}/>
-
+                    {/*TODO: contain all this stuff in another div that has overflow scroll*/}
                     <PropertyDataSection name="home">
+                        <PropertyImageContainer address={this.state.address}/>
                         <ParcelChars data={this.state.data}/>
                         <DwellingChars data={this.state.data}/>
                     </PropertyDataSection>
@@ -56,7 +66,12 @@ export class PropertyDataContainer extends Component {
             );
         }
         else {
-            return null;
+            return (
+                <div style={style}>
+                    <div className="loader"/>
+                </div>
+            );
+
         }
     }
 
@@ -91,19 +106,34 @@ export class PropertyDataContainer extends Component {
 // Extra Modules
 //<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
 export function PropertyDataSection(props) {
+    const style = {};
     return (
-        <div className="pdata-section" id={"pdata-section-" + props.name}>
+        <div style={style} className="pdata-section" id={"pdata-section-" + props.name}>
             {props.title && <h2>{props.title}</h2>}
             {props.children}
         </div>
     );
 }
 
+
 function PropertyHeader(props) {
     let addr = props.address;
+    let style = {
+        address: {
+            fontFamily: "'Comfortaa', cursive",
+            fontWeight: 200,
+            marginBottom: '.25rem'
+        },
+        secondAddrLine: {
+            fontSize: '60%'
+        },
+        parcelId: {}
+    };
     return (
         <div className="pdata-header">
-            <h1><span>{addr.number} {addr.street}</span><br/><span>{addr.city} {addr.state} {addr.zip}</span></h1>
+            <h1 style={style.address}>
+                <span>{addr.number} {addr.street}</span><span
+                style={style.secondAddrLine}> {addr.city} {addr.state} {addr.zip}</span></h1>
             <p className="parcelId">{props.parcelId}</p>
         </div>
     );
@@ -331,4 +361,48 @@ class ParcelIdSearch extends Component {
             </form>
         );
     }
+}
+
+class PropertyImageContainer extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            picIsLoaded: true,
+            streetViewImg: null
+        }
+    }
+
+    render() {
+        // TODO: clean this up, it's a mess!
+        const streetViewUrl = "https://maps.googleapis.com/maps/api/streetview";
+        let address = this.props.address;
+        const params = {
+            key: "AIzaSyCcLG-dRLxiRB22U9cSv1jaP6XxoOn5aSY",
+            location: `${address.number} ${address.street} ${address.city} ${address.state} ${address.zip}`,
+            size: "561x200"
+        };
+        let paramList = [];
+        for (let p in params) {
+            if (params.hasOwnProperty(p)) {
+                paramList.push(encodeURIComponent(p) + '=' + encodeURIComponent(params[p]))
+            }
+        }
+        let paramStr = paramList.join('&');
+
+        console.log(paramStr);
+
+        let img = null;
+        if (this.state.picIsLoaded) {
+            img = streetViewUrl + '?' +  paramStr;
+        } else {
+            img = require('../img/svloading.png')
+        }
+
+
+        return (
+            <ImageModule imgSrc={img}/>
+        );
+    }
+
+
 }
