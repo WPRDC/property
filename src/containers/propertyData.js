@@ -22,9 +22,16 @@ export class PropertyDataContainer extends Component {
     }
 
     render() {
+        let style = {
+            padding: '.25rem',
+            float: 'right',
+            width: '33%',
+            border: '2px solid black'
+        };
+
         if (this.state.isLoaded) {
             return (
-                <div>
+                <div style={style}>
                     <ParcelIdSearch handleParcelIdChange={this.updateParcel}/>
                     <PropertyHeader address={this.state.address} parcelId={this.state.parcelId}/>
 
@@ -119,8 +126,11 @@ function ParcelChars(props) {
                             {resource: 'assessments', id: 'USEDESC', title: 'Land Use'},
                             {
                                 resource: 'assessments', id: 'LOTAREA', title: 'Lot Size', formatter: (input) => {
-                                return [`${input} ft`, <sup key="1">2</sup>]
+                                return [`${input} ft`,
+                                    <sup style={{verticalAlign: 'baseline', position: 'relative', bottom: '1ex'}}
+                                         key="1">2</sup>]
                             }
+
                             }
                         ]}
         />
@@ -300,7 +310,7 @@ class ParcelIdSearch extends Component {
 
     }
 
-    handleChange(event){
+    handleChange(event) {
         this.setState({parcelId: event.target.value});
     }
 
@@ -314,7 +324,8 @@ class ParcelIdSearch extends Component {
         return (
             <form onSubmit={this.handleSubmit}>
                 <label>
-                    <input name='parcelId' type="text" value={this.state.parcelId} onChange={this.handleChange} placeholder="PARCEL ID"/>
+                    <input name='parcelId' type="text" value={this.state.parcelId} onChange={this.handleChange}
+                           placeholder="PARCEL ID"/>
                     <input type="submit" value="Search"/>
                 </label>
             </form>

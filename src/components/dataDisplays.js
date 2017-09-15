@@ -1,7 +1,7 @@
 /**
  * Created by Steve on 9/1/2017.
  */
-import React, {Component} from 'react';
+import React from 'react';
 
 
 export function KeyValueModule(props) {
@@ -32,6 +32,12 @@ export function DataModule(props) {
     const format = props.format;
     let dataDisplay = null;
 
+    const style = {
+        border: '1px solid black',
+        margin: '.4rem',
+        padding: '.5rem'
+    }
+
 
     /* Key-Value Display */
     /* ----------------- */
@@ -57,7 +63,7 @@ export function DataModule(props) {
     }
 
     return (
-        <div className="module-container">
+        <div style={style} className="module-container">
             <DataModuleHeader title={title} note={note} warning={warning}/>
             {dataDisplay}
         </div>
@@ -66,14 +72,15 @@ export function DataModule(props) {
 
 
 function DataModuleHeader(props) {
-    const title = props.title;
-    const note = props.note;
-    const warning = props.warning;
+    const hStyle = {
+        margin: 0
+    }
+
     return (
         <div className="module-header">
-            <h3 className="dd-header">{title}</h3>
-            {note && <p className="dd-note">{note}</p>}
-            {warning && <p className="dd-warning">{warning}</p>}
+            <h3 style={hStyle} className="dd-header">{props.title}</h3>
+            {props.note && <p className="dd-note">{props.note}</p>}
+            {props.warning && <p className="dd-warning">{props.warning}</p>}
         </div>
     );
 }
@@ -83,9 +90,14 @@ function DataModuleHeader(props) {
  *****************************************/
 export function KeyValuePairList(props) {
     const data = props.data;
+    const style = {
+        listStyle: 'none',
+        marginLeft: '0',
+        paddingLeft: '0'
+    };
 
     return (
-        <ul className="kv-list">
+        <ul className="kv-list" style={style}>
             {Object.keys(data).map((key) =>
                 <KeyValuePair key={key.toString()} field={key} val={data[key]}/>
             )}
@@ -94,17 +106,41 @@ export function KeyValuePairList(props) {
 }
 
 function KeyValuePair(props) {
-    return <li className="kv-pair">
-        <dl><KeyValueKey field={props.field}/><KeyValueValue key={props.field} val={props.val}/></dl>
+    const listStyle={
+        paddingBottom: '0.3rem'
+    };
+    const afterStyle = {
+        display: 'table',
+        clear: 'both',
+    };
+    return <li style={listStyle} className="kv-pair">
+        <dl style={{margin: '0'}} ><KeyValueKey field={props.field}/><KeyValueValue key={props.field} val={props.val}/></dl>
+        <div style={afterStyle}> </div>
     </li>
 }
 
 function KeyValueKey(props) {
-    return <dt className="kv-key">{props.field}</dt>
+    const style = {
+        float: 'left',
+        textAlign: 'right',
+        verticalAlign: 'baseline',
+        width: '20%',
+        clear: 'left',
+        fontWeight: 'bold'
+    };
+    return <dt style={style} className="kv-key">{props.field}</dt>
 }
 
 function KeyValueValue(props) {
-    return <dd className="kv-val">{props.val}</dd>
+    const style = {
+        float: 'left',
+        verticalAlign: 'baseline',
+        width: '70%',
+        marginLeft: '1rem',
+        fontStyle: 'italic'
+    };
+
+    return <dd style={style} className="kv-val">{props.val}</dd>
 }
 
 /*****************************************
@@ -209,7 +245,7 @@ function extractKeyValueSubset(data, fieldMapping) {
                 title = field.title;
             else
                 title = field.id;
-            if(data[field.resource].length && data[field.resource][0].hasOwnProperty(field.id))
+            if (data[field.resource].length && data[field.resource][0].hasOwnProperty(field.id))
                 value = data[field.resource][0][field.id]
         }
 
