@@ -20,35 +20,35 @@ export function TableModule(props) {
     );
 }
 
-export function ImageModule(props){
+export function ImageModule(props) {
     const style = {
         width: '100%',
         display: 'block'
     }
     return (
-      <Module noPadding={true}>
-          <img style={style}src={props.imgSrc}/>
-      </Module>
+        <Module noPadding={true}>
+            <img style={style} src={props.imgSrc}/>
+        </Module>
     );
 }
 
-function Module(props){
+function Module(props) {
     const style = {
         border: '1px solid gray',
         margin: '.4rem',
         padding: '.5rem',
         borderRadius: '2px',
-        boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+        boxShadow: '0 3px 6px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
         background: 'white'
     };
-    if(props.noPadding){
+    if (props.noPadding) {
         style.padding = '0';
     }
 
-    return(
-      <div style={style}>
-          {props.children}
-      </div>
+    return (
+        <div style={style}>
+            {props.children}
+        </div>
     );
 
 }
@@ -64,7 +64,6 @@ export function DataModule(props) {
     const warning = props.warning;
     const format = props.format;
     let dataDisplay = null;
-
 
 
     /* Key-Value Display */
@@ -101,12 +100,13 @@ export function DataModule(props) {
 
 function DataModuleHeader(props) {
     const hStyle = {
-        margin: 0
+        margin: 0,
+        textTransform: 'uppercase'
     };
 
     return (
         <div className="module-header">
-            <h3 style={hStyle} className="dd-header">{props.title}</h3>
+            <Header level={3} className="dd-header">{props.title}</Header>
             {props.note && <p className="dd-note">{props.note}</p>}
             {props.warning && <p className="dd-warning">{props.warning}</p>}
         </div>
@@ -121,7 +121,7 @@ export function KeyValuePairList(props) {
     const style = {
         listStyle: 'none',
         margin: '.5rem 0 0 0',
-        paddingLeft: '0'
+        padding: '0'
     };
 
     return (
@@ -134,38 +134,31 @@ export function KeyValuePairList(props) {
 }
 
 function KeyValuePair(props) {
-    const listStyle={
-        paddingBottom: '0.3rem'
+    const listStyle = {
+        padding: '16px 0'
     };
-    const afterStyle = {
-        display: 'table',
-        clear: 'both',
-    };
+
     return <li style={listStyle} className="kv-pair">
-        <dl style={{margin: '0'}} ><KeyValueKey field={props.field}/><KeyValueValue key={props.field} val={props.val}/></dl>
-        <div style={afterStyle}> </div>
+        <dl style={{margin: '0'}}><KeyValueKey field={props.field}/><KeyValueValue key={props.field} val={props.val}/>
+        </dl>
     </li>
 }
 
 function KeyValueKey(props) {
     const style = {
-        float: 'left',
-        textAlign: 'right',
-        verticalAlign: 'baseline',
-        width: '20%',
+        paddingLeft: '16px',
+        fontSize: '13px',
         clear: 'left',
-        fontWeight: 'bold'
     };
     return <dt style={style} className="kv-key">{props.field}</dt>
 }
 
 function KeyValueValue(props) {
     const style = {
-        float: 'left',
-        verticalAlign: 'baseline',
-        width: '70%',
-        marginLeft: '1rem',
-        fontStyle: 'italic'
+        paddingLeft: '16px',
+        marginLeft: '0',
+        fontSize: '13px',
+        color: 'dimgray'
     };
 
     return <dd style={style} className="kv-val">{props.val}</dd>
@@ -322,6 +315,27 @@ function extractTable(data, tableProps) {
     }
 
     return table;
+}
+
+//<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
+// Typography Containers
+// <+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
+
+export function Header(props) {
+    let HeaderTag = 'h1';
+    if ([2, 3, 4, 5, 6].includes(props.level)) {
+        HeaderTag = `h${props.level}`
+    }
+    const defaultStyle = {
+        fontFamily: "'Roboto', sans-serif",
+        fontWeight: 500,
+        fontSize: '20px',
+        marginTop: 0
+    };
+
+    return (
+        <HeaderTag style={{...defaultStyle, ...props.style}}>{props.children}</HeaderTag>
+    );
 }
 
 

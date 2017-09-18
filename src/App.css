@@ -28,13 +28,10 @@
 .mapContainer{
   flex-grow: 1;
 }
-#propertyData{
-  border: 2px solid purple;
-  float: right;
-  width: 50vw;
-}
+
 p, li, a {
   font-family: 'Roboto', sans-serif;
+  font-size: 14px;
 }
 
 h1, h2, h3, h4, h5, h6 {

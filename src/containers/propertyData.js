@@ -2,11 +2,14 @@
  * Created by sds25 on 9/6/17.
  */
 import React, {Component} from "react";
-import {KeyValueModule, TableModule, ImageModule} from "../components/dataDisplays";
+import {KeyValueModule, TableModule, Header} from "../components/dataDisplays";
 
-// Colors taken from logo
+import AppBar from 'material-ui/AppBar'
 
-import {themeColors} from "../utils/settings"
+// Colors taken from logoma
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
+import {themeColors} from "../utils/settings";
 
 
 //<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
@@ -27,11 +30,11 @@ export class PropertyDataContainer extends Component {
 
     render() {
         let style = {
-            padding: '.25rem',
             float: 'right',
-            width: '30%',
-            backgroundColor: themeColors.white,
+            width: '480px',
+            backgroundColor: '#F5F5F5',
             overflowY: 'scroll',
+            overflowX: 'hidden',
             height: 'auto',
             display: 'flex',
             flexDirection: 'column',
@@ -41,11 +44,12 @@ export class PropertyDataContainer extends Component {
         if (this.state.isLoaded) {
             return (
                 <div style={style}>
-                    <ParcelIdSearch handleParcelIdChange={this.updateParcel}/>
+                    {/* <ParcelIdSearch handleParcelIdChange={this.updateParcel}/>*/}
+
                     <PropertyHeader address={this.state.address} parcelId={this.state.parcelId}/>
+
                     {/*TODO: contain all this stuff in another div that has overflow scroll*/}
                     <PropertyDataSection name="home">
-                        <PropertyImageContainer address={this.state.address}/>
                         <ParcelChars data={this.state.data}/>
                         <DwellingChars data={this.state.data}/>
                     </PropertyDataSection>
@@ -106,10 +110,17 @@ export class PropertyDataContainer extends Component {
 // Extra Modules
 //<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
 export function PropertyDataSection(props) {
-    const style = {};
+    const style = {
+        h2: {
+            color: 'gray',
+            fontSize: '12pt',
+            textTransform: 'uppercase',
+            marginLeft: '1rem'
+        }
+    };
     return (
         <div style={style} className="pdata-section" id={"pdata-section-" + props.name}>
-            {props.title && <h2>{props.title}</h2>}
+            {props.title && <h2 style={style.h2}>{props.title}</h2>}
             {props.children}
         </div>
     );
@@ -117,24 +128,21 @@ export function PropertyDataSection(props) {
 
 
 function PropertyHeader(props) {
-    let addr = props.address;
-    let style = {
-        address: {
-            fontFamily: "'Comfortaa', cursive",
-            fontWeight: 200,
-            marginBottom: '.25rem'
-        },
-        secondAddrLine: {
-            fontSize: '60%'
-        },
-        parcelId: {}
-    };
+    let img = <PropertyImageContainer address={props.address}/>;
     return (
-        <div className="pdata-header">
-            <h1 style={style.address}>
-                <span>{addr.number} {addr.street}</span><span
-                style={style.secondAddrLine}> {addr.city} {addr.state} {addr.zip}</span></h1>
-            <p className="parcelId">{props.parcelId}</p>
+        <ImageToolbar img={img} header={'This is stuff'}>
+        </ImageToolbar>
+    );
+}
+
+function ImageToolbar(props) {
+    return (
+        <div>
+            <AppBar/>
+            {/*{props.img}*/}
+            {/*<div style={{backgroundColor: '#9e9e9e', height: '110px'}}>*/}
+                {/*<Header>{props.header}</Header>*/}
+            {/*</div>*/}
         </div>
     );
 }
@@ -368,7 +376,7 @@ class PropertyImageContainer extends Component {
         super(props);
         this.state = {
             picIsLoaded: true,
-            streetViewImg: null
+            streetViewImg: null,
         }
     }
 
@@ -379,7 +387,7 @@ class PropertyImageContainer extends Component {
         const params = {
             key: "AIzaSyCcLG-dRLxiRB22U9cSv1jaP6XxoOn5aSY",
             location: `${address.number} ${address.street} ${address.city} ${address.state} ${address.zip}`,
-            size: "561x200"
+            size: "480x270"
         };
         let paramList = [];
         for (let p in params) {
@@ -389,18 +397,21 @@ class PropertyImageContainer extends Component {
         }
         let paramStr = paramList.join('&');
 
-        console.log(paramStr);
-
         let img = null;
         if (this.state.picIsLoaded) {
-            img = streetViewUrl + '?' +  paramStr;
+            img = streetViewUrl + '?' + paramStr;
         } else {
             img = require('../img/svloading.png')
         }
 
+        const defaultStyle = {
+            maxWidth: '100%',
+            display: 'block'
+        }
+
 
         return (
-            <ImageModule imgSrc={img}/>
+            <img style={{...defaultStyle, ...this.props.style}} src={img}/>
         );
     }
 
