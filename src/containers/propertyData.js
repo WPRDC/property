@@ -3,14 +3,23 @@
  */
 import React, {Component} from "react";
 import {KeyValueModule, TableModule, Header} from "../components/dataDisplays";
-
-import AppBar from 'material-ui/AppBar'
-
-// Colors taken from logoma
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import {themeColors} from "../utils/settings";
 
+import {blue500}from 'material-ui/styles/colors'
+
+import AppBar from 'material-ui/AppBar'
+import Card from 'material-ui/Card'
+import Subheader from 'material-ui/Subheader';
+
+
+
+import FloatingActionButton from 'material-ui/FloatingActionButton'
+import MyLocation from 'material-ui/svg-icons/maps/my-location'
+
+
+console.log(blue500)
 
 //<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
 // Primary Container for Displaying Parcel Information
@@ -32,13 +41,10 @@ export class PropertyDataContainer extends Component {
         let style = {
             float: 'right',
             width: '480px',
-            backgroundColor: '#F5F5F5',
             overflowY: 'scroll',
             overflowX: 'hidden',
-            height: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
             margin: 0,
+            boxShadow: '-10px 0px 10px 1px black'
         };
 
         if (this.state.isLoaded) {
@@ -111,16 +117,13 @@ export class PropertyDataContainer extends Component {
 //<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
 export function PropertyDataSection(props) {
     const style = {
-        h2: {
-            color: 'gray',
-            fontSize: '12pt',
-            textTransform: 'uppercase',
-            marginLeft: '1rem'
-        }
+        base: {
+            padding: '8px 8px'
+        },
     };
     return (
-        <div style={style} className="pdata-section" id={"pdata-section-" + props.name}>
-            {props.title && <h2 style={style.h2}>{props.title}</h2>}
+        <div style={style.base} className="pdata-section" id={"pdata-section-" + props.name}>
+            {props.title && <Subheader>{props.title}</Subheader>}
             {props.children}
         </div>
     );
@@ -129,20 +132,43 @@ export function PropertyDataSection(props) {
 
 function PropertyHeader(props) {
     let img = <PropertyImageContainer address={props.address}/>;
-    return (
-        <ImageToolbar img={img} header={'This is stuff'}>
-        </ImageToolbar>
-    );
-}
+    let address = props.address;
+    let addrLine = `${address.number} ${address.street.toLowerCase()} ${address.city.toLowerCase()} ${address.state} ${address.zip}`;
 
-function ImageToolbar(props) {
+    const style = {
+        base: {
+            color: 'white',
+            backgroundColor: blue500,
+            position: 'relative',
+            padding: '16px 24px 20px 24px'
+        },
+        addr: {
+            margin: '0',
+            fontSize: '18px',
+            textTransform: 'capitalize'
+        },
+        parcelId:{
+            margin: '0',
+            paddingTop: '6px',
+            fontsize: '13px'
+        },
+        button:{
+            position: 'absolute',
+            top: '-28',
+            right: '16px',
+        }
+    };
+
     return (
         <div>
-            <AppBar/>
-            {/*{props.img}*/}
-            {/*<div style={{backgroundColor: '#9e9e9e', height: '110px'}}>*/}
-                {/*<Header>{props.header}</Header>*/}
-            {/*</div>*/}
+            {img}
+            <div style={style.base}>
+                <FloatingActionButton iconStyle={{fill: blue500}} backgroundColor={'white'} style={style.button}>
+                    <MyLocation color={blue500} />
+                </FloatingActionButton>
+                <h1 style={style.addr}>{addrLine}</h1>
+                <p style={style.parcelId}>{props.parcelId}</p>
+            </div>
         </div>
     );
 }
@@ -317,7 +343,7 @@ function SalesTable(props) {
 function TaxLiens(props) {
     return (
         <KeyValueModule sourceData={props.data}
-                        warning="The information provided here is merely an estimate. Please refer to Allegheny County's Department of Court Records for official tax lien information."
+                        note="The information provided here is merely an estimate. Please refer to Allegheny County's Department of Court Records for official tax lien information."
                         fields={[
                             {title: 'Number of Liens', id: 'number', resource: 'tax_liens'},
                             {title: 'Total Amount', id: 'total_amount', resource: 'tax_liens', formatter: monify}
@@ -387,7 +413,7 @@ class PropertyImageContainer extends Component {
         const params = {
             key: "AIzaSyCcLG-dRLxiRB22U9cSv1jaP6XxoOn5aSY",
             location: `${address.number} ${address.street} ${address.city} ${address.state} ${address.zip}`,
-            size: "480x270"
+            size: "480x200"
         };
         let paramList = [];
         for (let p in params) {

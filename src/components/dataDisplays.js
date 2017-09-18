@@ -4,6 +4,7 @@
 import React from 'react';
 import {themeColors} from "../utils/settings"
 
+import {Card, CardHeader, CardTitle, CardText} from 'material-ui/Card'
 
 export function KeyValueModule(props) {
     return (
@@ -20,39 +21,6 @@ export function TableModule(props) {
     );
 }
 
-export function ImageModule(props) {
-    const style = {
-        width: '100%',
-        display: 'block'
-    }
-    return (
-        <Module noPadding={true}>
-            <img style={style} src={props.imgSrc}/>
-        </Module>
-    );
-}
-
-function Module(props) {
-    const style = {
-        border: '1px solid gray',
-        margin: '.4rem',
-        padding: '.5rem',
-        borderRadius: '2px',
-        boxShadow: '0 3px 6px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-        background: 'white'
-    };
-    if (props.noPadding) {
-        style.padding = '0';
-    }
-
-    return (
-        <div style={style}>
-            {props.children}
-        </div>
-    );
-
-}
-
 /**
  *
  * @param props
@@ -60,8 +28,7 @@ function Module(props) {
  */
 export function DataModule(props) {
     const title = props.title;
-    const note = props.note;
-    const warning = props.warning;
+    let note = props.note;
     const format = props.format;
     let dataDisplay = null;
 
@@ -72,7 +39,7 @@ export function DataModule(props) {
         if (props.allowNulls || hasValues(props.data))
             dataDisplay = <KeyValuePairList data={props.data}/>;
         else
-            dataDisplay = <MissingDataMessage msg={props.missingDataMsg}/>;
+            note = props.missingDataMsg;
     }
 
     /* Table Display */
@@ -90,26 +57,10 @@ export function DataModule(props) {
     }
 
     return (
-        <Module className="dataModule">
-            <DataModuleHeader title={title} note={note} warning={warning}/>
+        <Card className="dataModule">
+            <CardHeader title={title} subtitle={note} />
             {dataDisplay}
-        </Module>
-    );
-}
-
-
-function DataModuleHeader(props) {
-    const hStyle = {
-        margin: 0,
-        textTransform: 'uppercase'
-    };
-
-    return (
-        <div className="module-header">
-            <Header level={3} className="dd-header">{props.title}</Header>
-            {props.note && <p className="dd-note">{props.note}</p>}
-            {props.warning && <p className="dd-warning">{props.warning}</p>}
-        </div>
+        </Card>
     );
 }
 

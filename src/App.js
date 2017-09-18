@@ -7,35 +7,38 @@ import {PropertyDataContainer} from "./containers/propertyData";
 import {MapContainer} from "./containers/map";
 
 import {themeColors} from "./utils/settings"
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const api = new WPRDCPropertyAPI('http://tools.wprdc.org/property-api/v1/parcels/');
+
 
 class App extends Component {
     render() {
         return (
-            <div className="App flex-container">
-                <MainHeader className="flex-item"/>
+            <MuiThemeProvider>
+                <div className="App flex-container">
+                    <MainHeader className="flex-item"/>
 
-                <MainContent className="flex-item">
-                    <MapContainer className="map" id="map"/>
-                    <PropertyDataContainer api={api} parcelId="0028B00154000000"> </PropertyDataContainer>
-                </MainContent>
+                    <MainContent className="flex-item">
+                        <MapContainer className="map" id="map"/>
+                        <PropertyDataContainer api={api} parcelId="0028B00154000000"> </PropertyDataContainer>
+                    </MainContent>
 
-                <MainFooter className="flex-item">
-                    <p>This is a footer.</p>
-                </MainFooter>
-
-            </div>
-
+                    <MainFooter className="flex-item">
+                        <p>This is a footer.</p>
+                    </MainFooter>
+                </div>
+            </MuiThemeProvider>
         );
     }
 }
 
 
 class MainContent extends Component {
-    constructor(props){
+    constructor(props) {
         super(props)
     }
+
     render() {
         return (
             <div className={this.props.className}>
@@ -46,11 +49,12 @@ class MainContent extends Component {
 }
 
 class MainHeader extends Component {
-    constructor(props){
+    constructor(props) {
         super(props)
     }
+
     render() {
-        const style={
+        const style = {
             padding: '20px',
             backgroundColor: themeColors.black,
             color: themeColors.white,
@@ -58,18 +62,19 @@ class MainHeader extends Component {
 
         return (
             <div style={style} className={this.props.className}>
-            <h1>Property Dashboard</h1>
+                <h1>Property Dashboard</h1>
             </div>
         )
     }
 }
 
 class MainFooter extends Component {
-    constructor(props){
+    constructor(props) {
         super(props)
     }
-    render(){
-        const style={
+
+    render() {
+        const style = {
             borderTop: "3px solid black",
             background: themeColors.black,
             color: "white",
