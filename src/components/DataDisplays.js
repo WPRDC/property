@@ -2,9 +2,18 @@
  * Created by Steve on 9/1/2017.
  */
 import React from 'react';
-import {themeColors} from "../utils/settings"
 
-import {Card, CardHeader, CardTitle, CardText} from 'material-ui/Card'
+import Typography from 'material-ui/Typography';
+
+import Paper from 'material-ui/Paper';
+
+import DataTable from './DataTable'
+import KeyValuePairList from './KeyValueList'
+
+import {exists, hasValues} from '../utils/dataUtils'
+
+
+
 
 export function KeyValueModule(props) {
     return (
@@ -39,15 +48,15 @@ export function DataModule(props) {
         if (props.allowNulls || hasValues(props.data))
             dataDisplay = <KeyValuePairList data={props.data}/>;
         else
-            note = props.missingDataMsg;
+            dataDisplay = <MissingDataNote>{props.missingDataMsg}</MissingDataNote>
     }
 
-    /* Table Display */
+    /* DataTable Display */
     /* ------------- */
     else if (format === 'table') {
-        dataDisplay = <Table data={props.data}
-                             hasHeader={props.tableInfo.showHeading}
-                             hasLabel={props.tableInfo.showLabel}/>
+        dataDisplay = <DataTable data={props.data}
+                                 hasHeader={props.tableInfo.showHeading}
+                                 hasLabel={props.tableInfo.showLabel}/>
     }
 
     /* Error Message Display */
@@ -57,120 +66,29 @@ export function DataModule(props) {
     }
 
     return (
-        <Card className="dataModule">
-            <CardHeader title={title} subtitle={note} />
-            {dataDisplay}
-        </Card>
+        <div className="dataModule">
+            <Typography  type="title">{title}</Typography>
+            <Typography  type="subheading">{note}</Typography>
+            <div>
+                {dataDisplay}
+            </div>
+        </div>
     );
 }
 
-/*****************************************
- * Key Value Pairs
- *****************************************/
-export function KeyValuePairList(props) {
-    const data = props.data;
-    const style = {
-        listStyle: 'none',
-        margin: '.5rem 0 0 0',
-        padding: '0'
-    };
 
-    return (
-        <ul className="kv-list" style={style}>
-            {Object.keys(data).map((key) =>
-                <KeyValuePair key={key.toString()} field={key} val={data[key]}/>
-            )}
-        </ul>
-    );
-}
-
-function KeyValuePair(props) {
-    const listStyle = {
-        padding: '16px 0'
-    };
-
-    return <li style={listStyle} className="kv-pair">
-        <dl style={{margin: '0'}}><KeyValueKey field={props.field}/><KeyValueValue key={props.field} val={props.val}/>
-        </dl>
-    </li>
-}
-
-function KeyValueKey(props) {
-    const style = {
-        paddingLeft: '16px',
-        fontSize: '13px',
-        clear: 'left',
-    };
-    return <dt style={style} className="kv-key">{props.field}</dt>
-}
-
-function KeyValueValue(props) {
-    const style = {
-        paddingLeft: '16px',
-        marginLeft: '0',
-        fontSize: '13px',
-        color: 'dimgray'
-    };
-
-    return <dd style={style} className="kv-val">{props.val}</dd>
-}
-
-/*****************************************
- * Table
- *****************************************/
-export function Table(props) {
-    const rows = props.data;
-    let header, dataRows;
-    if (props.hasHeader) {
-        header = rows[0];
-        dataRows = rows.slice(1);
-    } else {
-        dataRows = rows;
-    }
-
-
-    return (
-        <table>
-            {header && <thead><TableHeaderRow row={header}/></thead>}
-            <tbody>
-            {dataRows.map((row, i) => <TableRow key={i.toString()} row={row} hasLabel={props.hasLabel}/>)}
-            </tbody>
-        </table>
-    );
-
-}
-
-function TableHeaderRow(props) {
-    return (
-        <tr>
-            {props.row.map((header, i) => <th key={i}>{header}</th>)}
-        </tr>
-    );
-
-}
-
-function TableRow(props) {
-    let label, row;
-    if (props.hasLabel) {
-        label = props.row[0];
-        row = props.row.slice(1);
-    } else {
-        row = props.row;
-    }
-
-    return (
-        <tr>
-            {label && <td key="label" className="label">{label}</td>}
-            {row.map((value, i) => <td key={i.toString()}>{value}</td>)}
-        </tr>);
-}
 
 //<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
 // Misc Components
 //<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
 
-export function MissingDataMessage(props) {
-    return <p className="missing-data-msg">{props.msg}</p>
+export function MissingDataNote(props) {
+    const style = {
+        fontStyle: 'italic',
+        color: 'dimgray',
+        margin: '0',
+    };
+    return <p style={style} className="missing-data-msg">{props.children}</p>
 }
 
 
@@ -293,33 +211,3 @@ export function Header(props) {
 //<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
 // Helper Functions
 //<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
-/**
- * Check if all `things` exist
- *
- * @param {stuff} things - variable amount of arguments to test for existence
- * @return {boolean} `true` if all things exist, `false` otherwise
- */
-function exists(...things) {
-    for (let thing of things) {
-        if (typeof(thing) === 'undefined') {
-            return false;
-        }
-    }
-    return true;
-}
-
-/**
- * Checks that all properties of object have values.
- *
- * @param obj
- * @return {boolean}
- */
-function hasValues(obj) {
-    for (let k in obj) {
-        if (obj.hasOwnProperty(k)) {
-            if (obj[k] === null || typeof(obj[k]) === 'undefined')
-                return false;
-        }
-    }
-    return true;
-}

@@ -2,24 +2,23 @@
  * Created by sds25 on 9/6/17.
  */
 import React, {Component} from "react";
-import {KeyValueModule, TableModule, Header} from "../components/dataDisplays";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-
-import {themeColors} from "../utils/settings";
-
-import {blue500}from 'material-ui/styles/colors'
-
-import AppBar from 'material-ui/AppBar'
-import Card from 'material-ui/Card'
-import Subheader from 'material-ui/Subheader';
+import {KeyValueModule, TableModule} from "../components/DataDisplays";
 
 
+import Button from 'material-ui/Button';
+import Divider from 'material-ui/Divider';
 
-import FloatingActionButton from 'material-ui/FloatingActionButton'
-import MyLocation from 'material-ui/svg-icons/maps/my-location'
+import MyLocation from 'material-ui-icons/MyLocation'
+
+import {blue} from 'material-ui/colors'
+import Tooltip from 'material-ui/Tooltip';
+
+import Card, {CardHeader, CardContent} from 'material-ui/Card';
 
 
-console.log(blue500)
+import {monify} from '../utils/dataUtils'
+
+const blue500 = blue[500];
 
 //<+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+><+>
 // Primary Container for Displaying Parcel Information
@@ -57,11 +56,13 @@ export class PropertyDataContainer extends Component {
                     {/*TODO: contain all this stuff in another div that has overflow scroll*/}
                     <PropertyDataSection name="home">
                         <ParcelChars data={this.state.data}/>
+                        <br/>
                         <DwellingChars data={this.state.data}/>
                     </PropertyDataSection>
 
                     <PropertyDataSection name="assessment" title="Assessment">
                         <AssessmentTable data={this.state.data}/>
+                        <br/>
                         <PropertyTaxReductions data={this.state.data}/>
                     </PropertyDataSection>
 
@@ -118,14 +119,17 @@ export class PropertyDataContainer extends Component {
 export function PropertyDataSection(props) {
     const style = {
         base: {
+            margin: '8px',
             padding: '8px 8px'
         },
     };
     return (
-        <div style={style.base} className="pdata-section" id={"pdata-section-" + props.name}>
-            {props.title && <Subheader>{props.title}</Subheader>}
-            {props.children}
-        </div>
+        <Card style={style.base} className="pdata-section" id={"pdata-section-" + props.name}>
+            {props.title && <CardHeader title={props.title}/>}
+            <CardContent>
+                {props.children}
+            </CardContent>
+        </Card>
     );
 }
 
@@ -147,14 +151,14 @@ function PropertyHeader(props) {
             fontSize: '18px',
             textTransform: 'capitalize'
         },
-        parcelId:{
+        parcelId: {
             margin: '0',
             paddingTop: '6px',
             fontsize: '13px'
         },
-        button:{
+        button: {
             position: 'absolute',
-            top: '-28',
+            top: '-28px',
             right: '16px',
         }
     };
@@ -163,11 +167,17 @@ function PropertyHeader(props) {
         <div>
             {img}
             <div style={style.base}>
-                <FloatingActionButton iconStyle={{fill: blue500}} backgroundColor={'white'} style={style.button}>
-                    <MyLocation color={blue500} />
-                </FloatingActionButton>
+                <Button fab style={style.button}>
+                    <MyLocation color={blue500}/>
+                </Button>
                 <h1 style={style.addr}>{addrLine}</h1>
-                <p style={style.parcelId}>{props.parcelId}</p>
+
+                <div style={style.parcelId}>
+                    <Tooltip title="Parcel ID">
+                        <span style={style.parcelId}>{props.parcelId}</span>
+                    </Tooltip>
+                </div>
+
             </div>
         </div>
     );
@@ -313,7 +323,7 @@ function PropertyTaxReductions(props) {
 
 function SalesTable(props) {
     return (
-        <TableModule title="Assessment Values"
+        <TableModule title="Previous Sales"
                      sourceData={props.data}
                      tableInfo={
                          {
@@ -323,13 +333,25 @@ function SalesTable(props) {
                              rows: [
                                  {
                                      'Sale Date': {resource: 'assessments', id: 'PREVSALEDATE2'},
-                                     'Price': {resource: 'assessments', id: 'PREVSALEPRICE2', formatter: monify},
+                                     'Price': {
+                                         resource: 'assessments', id: 'PREVSALEPRICE2', formatter: (number) => {
+                                             return monify(number, 0)
+                                         }
+                                     },
                                  }, {
                                      'Sale Date': {resource: 'assessments', id: 'PREVSALEDATE'},
-                                     'Price': {resource: 'assessments', id: 'PREVSALEPRICE', formatter: monify},
+                                     'Price': {
+                                         resource: 'assessments', id: 'PREVSALEPRICE', formatter: (number) => {
+                                             return monify(number, 0)
+                                         }
+                                     },
                                  }, {
                                      'Sale Date': {resource: 'assessments', id: 'SALEDATE'},
-                                     'Price': {resource: 'assessments', id: 'SALEPRICE', formatter: monify},
+                                     'Price': {
+                                         resource: 'assessments', id: 'SALEPRICE', formatter: (number) => {
+                                             return monify(number, 0)
+                                         }
+                                     },
                                  },
                              ]
                          }
@@ -343,6 +365,7 @@ function SalesTable(props) {
 function TaxLiens(props) {
     return (
         <KeyValueModule sourceData={props.data}
+                        title="Tax Liens Summary"
                         note="The information provided here is merely an estimate. Please refer to Allegheny County's Department of Court Records for official tax lien information."
                         fields={[
                             {title: 'Number of Liens', id: 'number', resource: 'tax_liens'},
@@ -351,12 +374,6 @@ function TaxLiens(props) {
                         missingDataMsg="No tax liens were found for this property."
         />
     );
-}
-
-function monify(number) {
-    if (number !== 0 && (!number || isNaN(number)))
-        return '';
-    return '$' + number.toFixed(2);
 }
 
 
@@ -437,7 +454,7 @@ class PropertyImageContainer extends Component {
 
 
         return (
-            <img style={{...defaultStyle, ...this.props.style}} src={img}/>
+            <img alt={params.location} style={{...defaultStyle, ...this.props.style}} src={img}/>
         );
     }
 

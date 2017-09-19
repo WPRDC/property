@@ -6,7 +6,7 @@
     "cartodb": "^0.5.1",
     "foundation-sites": "^6.4.3",
     "leaflet": "^1.2.0",
-    "material-ui": "^0.19.1",
+    "material-ui": "^1.0.0-beta.11",
     "material-ui-icons": "^1.0.0-beta.10",
     "prop-types": "^15.5.10",
     "radium": "^0.19.4",

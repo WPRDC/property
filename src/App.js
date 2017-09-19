@@ -7,7 +7,6 @@ import {PropertyDataContainer} from "./containers/propertyData";
 import {MapContainer} from "./containers/map";
 
 import {themeColors} from "./utils/settings"
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 const api = new WPRDCPropertyAPI('http://tools.wprdc.org/property-api/v1/parcels/');
 
@@ -15,7 +14,6 @@ const api = new WPRDCPropertyAPI('http://tools.wprdc.org/property-api/v1/parcels
 class App extends Component {
     render() {
         return (
-            <MuiThemeProvider>
                 <div className="App flex-container">
                     <MainHeader className="flex-item"/>
 
@@ -28,7 +26,6 @@ class App extends Component {
                         <p>This is a footer.</p>
                     </MainFooter>
                 </div>
-            </MuiThemeProvider>
         );
     }
 }
