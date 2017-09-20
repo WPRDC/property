@@ -14,18 +14,18 @@ const api = new WPRDCPropertyAPI('http://tools.wprdc.org/property-api/v1/parcels
 class App extends Component {
     render() {
         return (
-                <div className="App flex-container">
-                    <MainHeader className="flex-item"/>
+            <div className="App flex-container">
+                <MainHeader className="flex-item"/>
 
-                    <MainContent className="flex-item">
-                        <MapContainer className="map" id="map"/>
-                        <PropertyDataContainer api={api} parcelId="0028B00154000000"> </PropertyDataContainer>
-                    </MainContent>
+                <MainContent className="flex-item">
+                    <MapContainer className="map" id="map"/>
+                    <PropertyDataContainer api={api} parcelId="0028B00154000000"> </PropertyDataContainer>
+                </MainContent>
 
-                    <MainFooter className="flex-item">
-                        <p>This is a footer.</p>
-                    </MainFooter>
-                </div>
+                <MainFooter className="flex-item">
+                    <p>This is a footer.</p>
+                </MainFooter>
+            </div>
         );
     }
 }
@@ -85,6 +85,7 @@ class MainFooter extends Component {
         )
     }
 }
+
 
 
 export default App;

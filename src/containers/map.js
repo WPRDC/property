@@ -3,59 +3,63 @@
  */
 
 import React, {Component} from 'react';
-import {Map, TileLayer} from 'react-leaflet';
+import {Map, TileLayer, GeoJSON} from 'react-leaflet';
 
-//import cartodb from '../vendor/cartodb'
-
-//import {LayerList, Layers} from '../map/Layers'
-
-// Carto SQL engine
-//const cartoSQL = new cartodb.SQL({user: 'wprdc'});
-
-
-// // Instantiate LayerList
-// const layers = new LayerList(map);
-//
-// // Main parcel layer for selection and so on
-// const parcelLayer = new Layer(map, "base_parcel", "Parcels", "MultiPolygon", cartoMaps.parcel.id, cartoMaps.parcel.defaultOptions);
-//
-//
-// layers.add(parcelLayer);
+import {getCartoTiles, getParcel} from './mapUtils'
 
 
 const mapDefaults = {
     position: [40.45, -79.9959],
-    zoom: 13,
+    zoom: 16,
     maxZoom: 18
-}
+};
 
 
 export class MapContainer extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
+
         this.state = {
-            baseMap:     <TileLayer
+            selectedShape: null,
+            baseMap: <TileLayer
                 url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             />
-        }
+        };
+
+        this.handleClick = this.handleClick.bind(this)
     }
 
-    componentDidMount(){
-        this.setState()
+
+    handleClick(e) {
+        let sql = `SELECT pin, the_geom, the_geom_webmercator FROM allegheny_county_parcel_boundaries WHERE ST_Contains(the_geom, ST_SetSRID(ST_Point(${e.latlng.lng}, ${e.latlng.lat}), 4326))`
+        this.setState({selectedShape: null});
+        this.setState({selectedShape: <CartoLayer sql={sql} css="#layer {line-color: #00F}"/>})
     }
 
 
     render() {
-        const style={
+        const style = {
             height: '100%'
         };
-
-
         return (
             <div className="mapContainer">
-                <Map style={style} center={mapDefaults.position} zoom={mapDefaults.zoom} maxZoom={mapDefaults.maxZoom}>
+                <Map style={style}
+                     center={mapDefaults.position}
+                     zoom={mapDefaults.zoom}
+                     maxZoom={mapDefaults.maxZoom}
+                     onClick={this.handleClick}
+                >
                     {this.state.baseMap}
+                    {this.state.selectedShape}
+                    <CartoLayer sql="SELECT * FROM allegheny_county_parcel_boundaries"
+                                css={"#allegheny_county_parcel_boundaries{" +
+                                "polygon-fill: #FFFFFF;" +
+                                "polygon-opacity: 0.2;" +
+                                "line-color: #4d4d4d;" +
+                                "line-width: 0.5;" +
+                                "line-opacity: 0;" +
+                                "[zoom >= 15] {line-opacity: .8;}}"}/>
                 </Map>
 
             </div>
@@ -63,4 +67,39 @@ export class MapContainer extends Component {
     }
 }
 
+class CartoLayer extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            sql: this.props.sql,
+            css: this.props.css,
+            tiles: ''
+        };
+        this.setTiles = this.setTiles.bind(this);
+    }
 
+    componentDidMount() {
+        this.setTiles();
+    }
+
+    setTiles() {
+        getCartoTiles(this.state.sql, this.state.css)
+            .then((tileUrl) => {
+                console.log(tileUrl);
+                this.setState({tiles: tileUrl})
+            }, (err) => {
+                console.log(err);
+            })
+    }
+
+
+    render() {
+        const tiles = this.state.tiles;
+
+        if (tiles === null)
+            return null
+
+        return <TileLayer url={tiles}/>
+
+    }
+}

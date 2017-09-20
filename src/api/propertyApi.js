@@ -84,11 +84,11 @@ export class WPRDCPropertyAPI extends DataSource {
 
 
     static _makeAddress(data) {
-        return(
+        return (
             {
                 "number": data['assessments'][0]['PROPERTYHOUSENUM'],
                 "street": data['assessments'][0]['PROPERTYADDRESS'],
-                "city":data['assessments'][0]['PROPERTYCITY'],
+                "city": data['assessments'][0]['PROPERTYCITY'],
                 "state": data['assessments'][0]['PROPERTYSTATE'],
                 "zip": data['assessments'][0]['PROPERTYZIP'],
             }
@@ -99,7 +99,7 @@ export class WPRDCPropertyAPI extends DataSource {
         return this.cachedParcelId;
     }
 
-    address(){
+    address() {
         return this.cachedAddress;
     }
 
@@ -126,7 +126,7 @@ export class WPRDCPropertyAPI extends DataSource {
                                 this._updateCache(data);
                                 resolve(this.cache);
                             }, (err) => {
-                                console.log(err)
+                                reject(err);
                             })
 
                     }
