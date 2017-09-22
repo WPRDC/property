@@ -15,8 +15,11 @@ import Tooltip from 'material-ui/Tooltip';
 
 import Card, {CardHeader, CardContent} from 'material-ui/Card';
 
+import {LinearProgress} from 'material-ui/Progress';
 
 import {monify} from '../utils/dataUtils'
+
+import {getStreetViewImage} from '../utils/apiUtils'
 
 const blue500 = blue[500];
 
@@ -43,9 +46,21 @@ export class PropertyDataContainer extends Component {
             overflowY: 'scroll',
             overflowX: 'hidden',
             margin: 0,
-            boxShadow: '-10px 0px 10px 1px black'
+            boxShadow: '-10px 0px 10px 1px black',
+            template:{
+                img: {
+                    height: '229px',
+                    width: '100%',
+                },
+                header: {
+                    height: '80px',
+                    backgroundColor: blue500
+                }
+            }
         };
 
+
+        // TODO: keep old render up until loaded
         if (this.state.isLoaded) {
             return (
                 <div style={style}>
@@ -79,7 +94,11 @@ export class PropertyDataContainer extends Component {
         else {
             return (
                 <div style={style}>
-                    <div className="loader"/>
+                    <div className="template">
+                        <div style={style.template.img}/>
+                        <LinearProgress mode="query"/>
+                        <div style={style.template.header}/>
+                    </div>
                 </div>
             );
 
@@ -87,9 +106,13 @@ export class PropertyDataContainer extends Component {
     }
 
     componentDidMount() {
-        this.updateParcel(this.props.parcelId)
+        this.updateParcel(this.props.parcelId);
     }
 
+    componentWillReceiveProps(nextProps) {
+        this.setState({isLoaded: false})
+        this.updateParcel(nextProps.parcelId);
+    }
 
     updateParcel(parcelId) {
         this.props.api.collectData(parcelId)
@@ -105,7 +128,7 @@ export class PropertyDataContainer extends Component {
                     this.render();
                 }
                 , (err) => {
-                    console.log(err);
+                    console.log("ERROR", err);
                 }
             )
     }
@@ -135,16 +158,23 @@ export function PropertyDataSection(props) {
 
 
 function PropertyHeader(props) {
-    let img = <PropertyImageContainer address={props.address}/>;
     let address = props.address;
-    let addrLine = `${address.number} ${address.street.toLowerCase()} ${address.city.toLowerCase()} ${address.state} ${address.zip}`;
+    let addrLine = '';
+    let img = null;
+    if (typeof(address) !== 'undefined') {
+        addrLine = `${address.number} ${address.street.toLowerCase()} ${address.city.toLowerCase()} ${address.state} ${address.zip}`;
+        img = <PropertyImageContainer address={addrLine}/>;
+    } else {
+        console.log('BAD address', addrLine);
+        img = <PropertyImageContainer address={addrLine}/>;
+    }
 
     const style = {
         base: {
             color: 'white',
             backgroundColor: blue500,
             position: 'relative',
-            padding: '16px 24px 20px 24px'
+            padding: '16px 24px 20px 24px',
         },
         addr: {
             margin: '0',
@@ -154,7 +184,7 @@ function PropertyHeader(props) {
         parcelId: {
             margin: '0',
             paddingTop: '6px',
-            fontsize: '13px'
+            fontsize: '13px',
         },
         button: {
             position: 'absolute',
@@ -418,45 +448,47 @@ class PropertyImageContainer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            picIsLoaded: true,
+            address: props.address,
             streetViewImg: null,
         }
+
     }
 
+    componentDidMount() {
+        this.setState({
+            streetViewImg: null,
+            address: this.props.address
+        });
+        getStreetViewImage(this.state.address)
+            .then((url) => {
+                this.setState({streetViewImg: url})
+            }, (err) => {
+                console.log('err', err);
+            })
+    }
+
+
     render() {
-        // TODO: clean this up, it's a mess!
-        const streetViewUrl = "https://maps.googleapis.com/maps/api/streetview";
-        let address = this.props.address;
-        const params = {
-            key: "AIzaSyCcLG-dRLxiRB22U9cSv1jaP6XxoOn5aSY",
-            location: `${address.number} ${address.street} ${address.city} ${address.state} ${address.zip}`,
-            size: "480x200"
-        };
-        let paramList = [];
-        for (let p in params) {
-            if (params.hasOwnProperty(p)) {
-                paramList.push(encodeURIComponent(p) + '=' + encodeURIComponent(params[p]))
-            }
-        }
-        let paramStr = paramList.join('&');
-
         let img = null;
-        if (this.state.picIsLoaded) {
-            img = streetViewUrl + '?' + paramStr;
-        } else {
-            img = require('../img/svloading.png')
-        }
-
+        let address = this.state.address;
         const defaultStyle = {
             maxWidth: '100%',
             display: 'block'
+        };
+
+        if (this.state.streetViewImg === null) {
+            return (
+                <div>
+                    <div style={{width: '100%', height: '232px'}}/>
+                    <LinearProgress mode="query"/>
+                </div>);
+        } else {
+            return (
+                <img alt={address} style={{...defaultStyle, ...this.props.style}} src={this.state.streetViewImg}/>
+            );
         }
 
 
-        return (
-            <img alt={params.location} style={{...defaultStyle, ...this.props.style}} src={img}/>
-        );
     }
-
-
 }
+

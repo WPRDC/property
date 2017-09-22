@@ -4,24 +4,41 @@
 
 const streetViewUrl = "https://maps.googleapis.com/maps/api/streetview";
 
-const params = {
+const streetViewParams = {
     key: "AIzaSyCcLG-dRLxiRB22U9cSv1jaP6XxoOn5aSY",
-    location: records['PROPERTYHOUSENUM'] + " " + records['PROPERTYADDRESS'] + records['PROPERTYCITY'] + ", " + records['PROPERTYSTATE'] + " " + records['PROPERTYZIP'],
+    location: '',
     size: "600x300"
 };
 
-let imgUrl = streetViewUrl + '?' + $.param(params);
 
-$.get(streetViewUrl + "/metadata?" + $.param(params))
-    .done(function (data) {
-        if (data.status == 'OK') {
-            $loader.hide();
-            $svImg.attr('src', imgUrl);
-        } else if (data.status == "NOT_FOUND") {
-            console.log('using lat/lng backup');
-            params.location = centroid[1] + ',' + centroid[0];
-            imgUrl = streetViewUrl + '?' + $.param(params);
-            $loader.hide();
-            $svImg.attr('src', imgUrl);
+export function paramaterize(params) {
+    let paramList = [];
+    for (let p in params) {
+        if (params.hasOwnProperty(p)) {
+            paramList.push(encodeURIComponent(p) + '=' + encodeURIComponent(params[p]))
         }
-    });
+    }
+    return paramList.join('&');
+
+}
+
+export function getStreetViewImage(address) {
+    let params = JSON.parse(JSON.stringify(streetViewParams));  // hack way to copy object
+    params['location'] = address;
+
+    window.URL = window.URL || window.webkitURL;
+
+    return new Promise((resolve, reject) => {
+        fetch(streetViewUrl + '?' + paramaterize(params))
+            .then((response) => {
+                response.blob()
+                    .then((imgBlob) => {
+                        resolve(window.URL.createObjectURL(imgBlob))
+                    }, (err) => {
+                        reject(err)
+                    })
+            }, (err) => {
+                reject(err);
+            })
+    })
+}

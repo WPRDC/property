@@ -43,8 +43,6 @@ export function getCartoTiles(sql, css) {
         dataType: 'json'
     }
 
-    console.log(options);
-
     return new Promise((resolve, reject) => {
 
         fetch(url, options).then((response) => {
@@ -53,7 +51,6 @@ export function getCartoTiles(sql, css) {
                 response.json()
                     .then((data) => {
                         let templateUrl = 'https://wprdc.carto.com/api/v1/map/' + data.layergroupid + '/{z}/{x}/{y}.png'
-                        console.log(templateUrl);
                         resolve(templateUrl);
                     }, (err) => {
                         reject(err);
@@ -61,42 +58,43 @@ export function getCartoTiles(sql, css) {
 
             }
             else {
-                console.log(response.status);
+                reject(response.status)
             }
         });
     });
 }
 
+
+/**
+ * Finds parcel at latlng.
+ * This currently uses Carto's SQL API to find what parcel contains the point that was clicked.
+ * TODO: decouple from carto, and allow different functions to be used in it's place depending developer's stack.
+ *
+ * @param {object} latlng - object containing `lat` and `lng` properties representing latitude and longitude.
+ *                          The point should use the WGS84 projection (SRID: 4326)
+ * @return {Promise} - resolves with parcel id string, rejects with error message
+ */
 export function getParcel(latlng) {
-    const url = "https://wprdc.carto.com/api/v2/sql/?";
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-
-    let params = {
-        q: `SELECT pin, the_geom FROM allegheny_county_parcel_boundaries WHERE ST_Contains(the_geom, ST_SetSRID(ST_Point(${latlng.lng}, ${latlng.lat}), 4326))`,
-        format: 'GeoJSON',
-    };
-
-    console.log(params.q);
-    let query = Object.keys(params)
-        .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
-        .join('&');
-
+    let url = 'https://wprdc.carto.com/api/v2/sql?q=';
+    let sql = `SELECT pin FROM allegheny_county_parcel_boundaries WHERE ST_Contains(the_geom, ST_SetSRID(ST_Point(${latlng.lng}, ${latlng.lat}), 4326))`;
 
     return new Promise((resolve, reject) => {
-        fetch(url + query).then((response) => {
+        fetch(url + sql).then((response) => {
             if (response.ok) {
                 response.json()
                     .then((data) => {
-                        resolve(data)
+                        // Check that a parcel was found.
+                        if (data.rows.length)
+                            resolve(data.rows[0].pin);  // pin is short for Parcel ID Number
+                        else
+                            reject("Query successful, but no parcel found.")
                     }, (err) => {
                         reject(err)
                     })
-            } else {
+            }
+            else {
                 reject(response.status)
             }
         })
     })
-
-
 }
