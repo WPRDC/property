@@ -11,11 +11,13 @@ import Button from 'material-ui/Button'
 import IconButton from 'material-ui/IconButton';
 import List, {ListItem, ListItemText} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
-import Dialog, {DialogTitle} from 'material-ui/Dialog';
+import Dialog, {DialogTitle, DialogContent} from 'material-ui/Dialog';
 import Menu, {MenuItem} from 'material-ui/Menu';
 import Input, {InputLabel} from 'material-ui/Input';
 import Select from 'material-ui/Select';
 import {FormControl, FormHelperText} from 'material-ui/Form';
+import AppBar from 'material-ui/AppBar';
+import Tabs, {Tab} from 'material-ui/Tabs';
 
 /* Icons */
 import Layers from 'material-ui-icons/Layers'
@@ -25,6 +27,9 @@ import {default as MapIcon} from 'material-ui-icons/Map'
 /* Functions */
 import {getCartoTiles, getParcel} from './mapUtils'
 import {BASEMAPS, STYLE_DATASETS} from './mapDefaults'
+import {mapDatasets} from "../containers/mapDefaults";
+
+import MapStyleMenu from "./mapStyle"
 
 /* Constants */
 const mapDefaults = {
@@ -39,6 +44,7 @@ export class MapContainer extends Component {
         super(props);
 
         this.state = {
+            styleLayer: null,
             selectedShape: null,
             baseMap: <TileLayer className="basemap"
                                 url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
@@ -46,8 +52,9 @@ export class MapContainer extends Component {
             />
         };
 
-        this.handleClick = this.handleClick.bind(this)
-        this.updateBasemap = this.updateBasemap.bind(this)
+        this.handleClick = this.handleClick.bind(this);
+        this.updateBasemap = this.updateBasemap.bind(this);
+        this.updateStyleLayer = this.updateStyleLayer.bind(this)
     }
 
     updateBasemap(i) {
@@ -73,7 +80,7 @@ export class MapContainer extends Component {
         this.setState({
             selectedShape: <CartoLayer sql={sql}
                                        css="#layer {line-color: #00F; polygon-fill: #00F; polygon-opacity: 0.4}"/>
-        })
+        });
 
         // Lift parcelId state up
         getParcel(e.latlng)
@@ -82,6 +89,15 @@ export class MapContainer extends Component {
             });
     }
 
+    /**
+     * Request new Carto tile layer styled with `css`
+     * @param {string} css - cartoCSS string used to style new layer
+     */
+    updateStyleLayer(css) {
+        console.log("W000000000000000000000000000)TTTTTTTTTT");
+        const sql = `SELECT * FROM allegheny_county_parcel_boundaries`;
+        this.setState({styleLayer: <CartoLayer sql={sql} css={css}/>});
+    }
 
     render() {
         const style = {
@@ -102,6 +118,7 @@ export class MapContainer extends Component {
                      onClick={this.handleClick}
                 >
                     {this.state.baseMap}
+                    {this.state.styleLayer}
                     {this.state.selectedShape}
                     <CartoLayer sql="SELECT * FROM allegheny_county_parcel_boundaries"
                                 css={"#allegheny_county_parcel_boundaries{" +
@@ -112,7 +129,8 @@ export class MapContainer extends Component {
                                 "[zoom >= 15] {line-opacity: .8; line-width: .5}" +
                                 "[zoom >=17] {line-opacity: .8; line-width: 1}}"}/>
                 </Map>
-                <MapControls updateBasemap={this.updateBasemap} basemaps={BASEMAPS}/>
+                <MapControls updateBasemap={this.updateBasemap} updateStyleLayer={this.updateStyleLayer}
+                             basemaps={BASEMAPS}/>
             </div>
         );
     }
@@ -145,16 +163,13 @@ class MapControls extends Component {
         return (
             <div style={style.base}>
                 <BaseMapMenu updateBasemap={this.props.updateBasemap} basemaps={this.props.basemaps}/>
-                <MapStyleMenu/>
+                <MapStyleMenu updateStyleLayer={this.props.updateStyleLayer}/>
             </div>
         );
     }
 }
 
 
-/**
- *
- */
 class BaseMapMenu extends Component {
     constructor(props) {
         super(props);
@@ -166,12 +181,16 @@ class BaseMapMenu extends Component {
         this.handleBasemapSelect = this.handleBasemapSelect.bind(this);
     }
 
-    handleOpenClick = event => {
+    handleOpenClick(event) {
         this.setState({open: true, anchorEl: event.currentTarget});
     };
 
-    handleBasemapSelect = event => {
+    handleBasemapSelect(event) {
         this.props.updateBasemap(event.target.getAttribute('value'));
+        this.setState({open: false});
+    };
+
+    handleClose = () => {
         this.setState({open: false});
     };
 
@@ -183,7 +202,7 @@ class BaseMapMenu extends Component {
                     <MapIcon/> Basemmap
                 </Button>
                 <Menu open={this.state.open}
-                      onRequestClose={this.handleBasemapSelect}
+                      onRequestClose={this.handleClose}
                       anchorEl={this.state.anchorEl}
                 >
                     {Object.keys(basemaps).map((k) => {
@@ -204,86 +223,13 @@ class BaseMapMenu extends Component {
 }
 
 
-class MapStyleMenu extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            dataset: 'sales',
-            field: 'stuff',
-            open: false
-        };
-        this.handleOpenClick = this.handleOpenClick.bind(this);
-        this.handleRequestClose = this.handleRequestClose.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-    }
-
-    handleOpenClick = event => {
-        this.setState({open: true});
-    };
-
-    handleRequestClose = () => {
-        this.setState({open: false})
-    };
-
-    handleChange = name => event => {
-        this.setState({[name]: event.target.value});
-    };
-
-    render() {
-
-        return (
-            <div>
-                <Button raised onClick={this.handleOpenClick}>
-                    <MapIcon/> Style
-                </Button>
-                <Dialog open={this.state.open}
-                        onRequestClose={this.handleRequestClose}>
-                    <DialogTitle>Add Style to the Map</DialogTitle>
-
-                    {/* Dataset Select */}
-                    <FormControl>
-                        <InputLabel htmlFor="age-native-simple">Dataset</InputLabel>
-                        <Select
-                            native
-                            value={this.state.dataset}
-                            onChange={this.handleChange('dataset')}
-                            input={<Input id="age-native-simple"/>}
-                        >
-                            {Object.keys(STYLE_DATASETS).map((dataset, i) => {
-                                return <option key={i.toString()} value={dataset}>{STYLE_DATASETS[dataset].name}</option>
-                            })}
-                        </Select>
-                    </FormControl>
-
-                    {/* Field Select */}
-                    <FormControl>
-                        <InputLabel htmlFor="age-native-simple">Field</InputLabel>
-                        <Select
-                            native
-                            value={this.state.field}
-                            onChange={this.handleChange('field')}
-                            input={<Input id="age-native-simple"/>}
-                        >
-                            {Object.keys(STYLE_DATASETS[this.state.dataset].fields).map((field, i) => {
-                                return <option key={i.toString()} value={field}>{field}</option>
-                            })}
-                        </Select>
-                    </FormControl>
-
-
-                </Dialog>
-            </div>
-        );
-    }
-}
-
-
 /*******************************************************
  * CUSTOM MAP LAYERS
  *******************************************************/
 class CartoLayer extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
             sql: this.props.sql,
             css: this.props.css,

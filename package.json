@@ -11,9 +11,9 @@
     "material-ui-icons": "^1.0.0-beta.10",
     "prop-types": "^15.5.10",
     "radium": "^0.19.4",
-    "react": "^15.6.1",
+    "react": "^16.0.0",
     "react-bootstrap": "^0.31.3",
-    "react-dom": "^15.6.1",
+    "react-dom": "^16.0.0",
     "react-foundation": "^0.9.1",
     "react-leaflet": "^1.6.6",
     "react-scripts": "1.0.12"

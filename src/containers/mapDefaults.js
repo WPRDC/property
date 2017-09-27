@@ -71,4 +71,69 @@ export const STYLE_DATASETS = {
             },
         }
     }
+};
+
+export const mapDatasets = {
+    "assessment": {
+        "title": "Assessment",
+        "cartoAccount": "wprdc-editor",
+        "cartoTable": "wprdc.alleghenycountymasterfile03012017",
+        "mapId": "4156fe54-fddc-43e6-993a-6ad37626e9e0",
+        "cartoCssId": "#alleghenycountymasterfile03012017",
+        "fields": [
+            {
+                "id": "fairmarkettotal",
+                "name": "Total Assessed Value (Fair Market)",
+                "info": "",
+                "type": "money",
+                "range": [null, null],
+                "valueFunction": "pow",
+                "base": ".0001"
+            },
+            {
+                "id": "fairmarketland",
+                "name": "Assessed Land Value (Fair Market)",
+                "info": "",
+                "type": "money",
+                "range": [null, null],
+                "valueFunction": "pow",
+                "base": "0.0001"
+            },
+            {
+                "id": "fairmarketbuilding",
+                "name": "Assessed Building Value (Fair Market)",
+                "info": "",
+                "type": "money",
+                "range": [null, null],
+                "valueFunction": "pow",
+                "base": "0.1"
+            },
+            {
+                "id": "yearblt",
+                "name": "Year Built",
+                "info": "some info and stuff2",
+                "type": "numeric",
+                "range": [1755, 2017]
+            },
+            {
+                "id": "year_sold",
+                "name": "Year of Last Sale",
+                "info": "some info and stuff2",
+                "type": "numeric",
+                "range": [1794, 2017]
+            },
+            {
+                "id": "classdesc",
+                "name": "Land Use Class",
+                "info": "some info and stuff2",
+                "type": "category"
+            },
+            {
+                "id": "usedesc",
+                "name": "Land Use Description",
+                "info": "some info and stuff2",
+                "type": "category"
+            }
+        ]
+    }
 }
