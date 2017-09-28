@@ -77,9 +77,10 @@ export const mapDatasets = {
     "assessment": {
         "title": "Assessment",
         "cartoAccount": "wprdc-editor",
-        "cartoTable": "wprdc.alleghenycountymasterfile03012017",
+        "cartoTable": "wprdc.assessments",
         "mapId": "4156fe54-fddc-43e6-993a-6ad37626e9e0",
-        "cartoCssId": "#alleghenycountymasterfile03012017",
+        "cartoCssId": "#assessments",
+        "parcelIdField": 'parid',
         "fields": [
             {
                 "id": "fairmarkettotal",

@@ -6,7 +6,6 @@ import {KeyValueModule, TableModule} from "../components/DataDisplays";
 
 
 import Button from 'material-ui/Button';
-import Divider from 'material-ui/Divider';
 
 import MyLocation from 'material-ui-icons/MyLocation'
 

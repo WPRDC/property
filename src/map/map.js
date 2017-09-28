@@ -5,31 +5,13 @@
 import React, {Component} from 'react';
 import {Map, TileLayer, GeoJSON} from 'react-leaflet';
 
-/* Material UI Components 0*/
-import Tooltip from 'material-ui/Tooltip';
-import Button from 'material-ui/Button'
-import IconButton from 'material-ui/IconButton';
-import List, {ListItem, ListItemText} from 'material-ui/List';
-import Avatar from 'material-ui/Avatar';
-import Dialog, {DialogTitle, DialogContent} from 'material-ui/Dialog';
-import Menu, {MenuItem} from 'material-ui/Menu';
-import Input, {InputLabel} from 'material-ui/Input';
-import Select from 'material-ui/Select';
-import {FormControl, FormHelperText} from 'material-ui/Form';
-import AppBar from 'material-ui/AppBar';
-import Tabs, {Tab} from 'material-ui/Tabs';
-
-/* Icons */
-import Layers from 'material-ui-icons/Layers'
-import FormatPaint from 'material-ui-icons/FormatPaint'
-import {default as MapIcon} from 'material-ui-icons/Map'
+/* Material UI Components*/
 
 /* Functions */
 import {getCartoTiles, getParcel} from './mapUtils'
-import {BASEMAPS, STYLE_DATASETS} from './mapDefaults'
-import {mapDatasets} from "../containers/mapDefaults";
+import {BASEMAPS} from './mapDefaults'
 
-import MapStyleMenu from "./mapStyle"
+import MapControls from "./MapController"
 
 /* Constants */
 const mapDefaults = {
@@ -49,16 +31,15 @@ export class MapContainer extends Component {
             baseMap: <TileLayer className="basemap"
                                 url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
                                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            />
+            />,
         };
 
         this.handleClick = this.handleClick.bind(this);
         this.updateBasemap = this.updateBasemap.bind(this);
-        this.updateStyleLayer = this.updateStyleLayer.bind(this)
+        this.updateStyleLayer = this.updateStyleLayer.bind(this);
     }
 
     updateBasemap(i) {
-        console.log(i)
         let basemap = BASEMAPS[i];
         this.setState({baseMap: null});
         this.setState({
@@ -75,7 +56,7 @@ export class MapContainer extends Component {
      */
     handleClick(e) {
         // Highlight the Parcel Polygon
-        let sql = `SELECT pin, the_geom, the_geom_webmercator FROM allegheny_county_parcel_boundaries WHERE ST_Contains(the_geom, ST_SetSRID(ST_Point(${e.latlng.lng}, ${e.latlng.lat}), 4326))`
+        let sql = `SELECT pin, the_geom, the_geom_webmercator FROM allegheny_county_parcel_boundaries WHERE ST_Contains(the_geom, ST_SetSRID(ST_Point(${e.latlng.lng}, ${e.latlng.lat}), 4326))`;
         this.setState({selectedShape: null});   // Hacky fix that tricks react into rerendering the layer.  Aparently changing the `selectedShape` isn't enough.
         this.setState({
             selectedShape: <CartoLayer sql={sql}
@@ -91,11 +72,13 @@ export class MapContainer extends Component {
 
     /**
      * Request new Carto tile layer styled with `css`
+     * @param {string} sql - SQL query used to define map for style layer
      * @param {string} css - cartoCSS string used to style new layer
      */
-    updateStyleLayer(css) {
-        console.log("W000000000000000000000000000)TTTTTTTTTT");
-        const sql = `SELECT * FROM allegheny_county_parcel_boundaries`;
+    updateStyleLayer(sql, css) {
+        console.log(sql);
+        console.log(css);
+
         this.setState({styleLayer: <CartoLayer sql={sql} css={css}/>});
     }
 
@@ -137,91 +120,6 @@ export class MapContainer extends Component {
 }
 
 
-class MapControls extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            basemapMenuOpen: false
-        };
-    }
-
-
-    render() {
-        const style = {
-            base: {
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-            },
-            button: {
-                margin: '0 4px',
-                fontWeight: '600'
-            }
-        }
-
-
-        return (
-            <div style={style.base}>
-                <BaseMapMenu updateBasemap={this.props.updateBasemap} basemaps={this.props.basemaps}/>
-                <MapStyleMenu updateStyleLayer={this.props.updateStyleLayer}/>
-            </div>
-        );
-    }
-}
-
-
-class BaseMapMenu extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            anchorEl: null,
-            open: false
-        };
-        this.handleOpenClick = this.handleOpenClick.bind(this);
-        this.handleBasemapSelect = this.handleBasemapSelect.bind(this);
-    }
-
-    handleOpenClick(event) {
-        this.setState({open: true, anchorEl: event.currentTarget});
-    };
-
-    handleBasemapSelect(event) {
-        this.props.updateBasemap(event.target.getAttribute('value'));
-        this.setState({open: false});
-    };
-
-    handleClose = () => {
-        this.setState({open: false});
-    };
-
-    render() {
-        const basemaps = this.props.basemaps;
-        return (
-            <div>
-                <Button raised onClick={this.handleOpenClick}>
-                    <MapIcon/> Basemmap
-                </Button>
-                <Menu open={this.state.open}
-                      onRequestClose={this.handleClose}
-                      anchorEl={this.state.anchorEl}
-                >
-                    {Object.keys(basemaps).map((k) => {
-                            console.log('k', k, typeof(k));
-                            return (
-                                <MenuItem value={k}
-                                          key={k}
-                                          onClick={this.handleBasemapSelect}>
-                                    {basemaps[k].name}
-                                </MenuItem>
-                            );
-                        }
-                    )}
-                </Menu>
-            </div>
-        );
-    }
-}
-
 
 /*******************************************************
  * CUSTOM MAP LAYERS
@@ -242,6 +140,9 @@ class CartoLayer extends Component {
         this.setTiles();
     }
 
+    componentWillUpdate(){
+        this.setTiles();
+    }
 
     /**
      * Collects tiles from Carto and loads them into component
@@ -253,6 +154,12 @@ class CartoLayer extends Component {
             }, (err) => {
                 console.log(err);
             })
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.sql !== this.props.sql || nextProps.css !== this.props.css) {
+            this.setState({sql: nextProps.sql, css: nextProps.css})
+        }
     }
 
 

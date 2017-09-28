@@ -4,7 +4,7 @@ import './App.css';
 
 import {WPRDCPropertyAPI} from './api/propertyApi'
 import {PropertyDataContainer} from "./containers/propertyData";
-import {MapContainer} from "./containers/map";
+import {MapContainer} from "./map/map";
 
 import {themeColors} from "./utils/settings"
 

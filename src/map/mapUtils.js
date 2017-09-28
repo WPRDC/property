@@ -98,3 +98,68 @@ export function getParcel(latlng) {
         })
     })
 }
+
+/**
+ * Collect listing of possible values for `field` in Carto `dataset`
+ *
+ * @param dataset
+ * @param field
+ * @return {Promise} - resolves list of possible values, rejects an error message
+ */
+export function getFieldValues(dataset, field) {
+    let url = `https://wprdc.carto.com/api/v2/sql/?q=SELECT DISTINCT(${field}) FROM ${dataset}`
+    return new Promise((resolve, reject) => {
+        fetch(url)
+            .then((response) => {
+                response.json()
+                    .then((data) => {
+                        if (data.hasOwnProperty('rows')) {
+                            console.log(data);
+                            resolve(data.rows.map((row) => row[field]));
+                        } else {
+                            reject('"row" not in results')
+                        }
+                    }, (err) => reject(err))
+            }, (err) => reject(err))
+    })
+};
+
+/**
+ * Generates SQL string for querying Carto for a styled.  Provides the minimum information needed to style a layer.
+ *
+ * @param tableName - id of table on Carto
+ * @param fieldName - name of field in table named `tableName`. The field which the style is used to represent.
+ * @param parcelIdField - parcel ID field on table `tableName`.  Used to join it with a parcel boundary map.
+ * @return {string}
+ */
+export function createStyleSQL(tableName, fieldName, parcelIdField){
+    let sql =
+        `SELECT ds.cartodb_id, pb.the_geom, pb.the_geom_webmercator, ds.${fieldName}, ds.${parcelIdField}
+        FROM wprdc.allegheny_county_parcel_boundaries pb JOIN ${tableName} ds ON pb.pin = ds.parid`;
+
+    return sql;
+}
+
+/**
+ * Generate cartoCSS that styles parcels if they fall into a category.
+ *
+ * @param dataset
+ * @param fieldName
+ * @param categoryColors
+ * @return {string}
+ */
+export function createCategoryCSS(dataset, fieldName, categoryColors){
+    // Base css for category styling
+    let css = `#${dataset.cartoCssId}{
+                polygon-opacity: 0.0;  
+                line-color: #000;  line-opacity: 1;
+                line-width: .5; [zoom < 15]{line-width: 0;} 
+                `;
+
+    // Add conditional css for each category-color combo entered
+    categoryColors.map((item) => {
+        css += `[ ${fieldName} = "${item.category}" ]{ polygon-opacity: 1.0; polygon-fill: ${item.color};}`;
+    });
+    css+= '}';
+    return css
+}
