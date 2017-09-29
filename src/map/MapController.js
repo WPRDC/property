@@ -1,39 +1,39 @@
 import React, {Component} from 'react';
 
-import MapStyleMenu from "./mapStyle"
+import MapStyleMenu from "./MapStyleMenu"
 import BaseMapMenu from "./BaseMapMenu"
+import Button from 'material-ui/Button'
+import {default as MapIcon} from 'material-ui-icons/Map';
 
 /* Functions */
 import {mapDatasets} from "./mapDefaults";
 
-const DEFAULT_DATASET = Object.keys(mapDatasets)[0];
-
 class MapController extends Component {
+    /**
+     * Menus for styling or changing the map
+     * @param props
+     */
     constructor(props) {
         super(props);
         this.state = {
             basemapMenuOpen: false,
-            styleMenuStates: {'category': null, 'choropleth': null, 'range': null},
-            datasetName: '',
-            fieldName: ''
+            styleMenuOpen: false,
         };
 
-        this.saveMenuState = this.saveMenuState.bind(this);
+        this.handleOpenClick = this.handleOpenClick.bind(this);
     }
 
     /**
-     * Save the state of a style menu for use when it's opened again.
      *
-     * @param {string} menu - name of menu
-     * @param menuState
-     * @param datasetName
-     * @param fieldName
+     * @param menuName
      */
-    saveMenuState(menu, menuState, datasetName, fieldName) {
-        const styleMenuStates = this.state.styleMenuStates;
-        styleMenuStates[menu] = menuState;
-        this.setState({styleMenuStates: styleMenuStates, datasetName: datasetName, fieldName: fieldName})
-    }
+    handleOpenClick = menuName => event => {
+        this.setState({[menuName]: true});
+    };
+
+    handleRequestClose = menuName => event => {
+        this.setState({[menuName]: false});
+    };
 
 
     render() {
@@ -51,16 +51,26 @@ class MapController extends Component {
 
         return (
             <div style={style.base}>
-                <BaseMapMenu updateBasemap={this.props.updateBasemap} basemaps={this.props.basemaps}/>
-                <MapStyleMenu updateStyleLayer={this.props.updateStyleLayer}
-                              savedStates={this.state.styleMenuStates}
-                              saveMenuState={this.saveMenuState}/>
+                <Button raised onClick={this.handleOpenClick('styleMenuOpen')}>
+                    <MapIcon/> Style
+                </Button>
+                <Button raised onClick={this.handleOpenClick('basemapMenuOpen')}>
+                    <MapIcon/> Basemmap
+                </Button>
+                <BaseMapMenu open={this.state.basemapMenuOpen}
+                             handleRequestClose={this.handleRequestClose('basemapMenuOpen')}
+                             updateBasemap={this.props.updateBasemap}
+                             basemaps={this.props.basemaps}
+                />
+
+                <MapStyleMenu open={this.state.styleMenuOpen}
+                              handleRequestClose={this.handleRequestClose('styleMenuOpen')}
+                              updateStyleLayer={this.props.updateStyleLayer}
+                />
             </div>
         );
     }
 }
-
-
 
 
 export default MapController

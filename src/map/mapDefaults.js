@@ -73,9 +73,12 @@ export const STYLE_DATASETS = {
     }
 };
 
-export const mapDatasets = {
-    "assessment": {
-        "title": "Assessment",
+
+
+export const MAP_DATASETS = [
+    {
+        "id": 'assessment',
+        "name": "Assessment",
         "cartoAccount": "wprdc-editor",
         "cartoTable": "wprdc.assessments",
         "mapId": "4156fe54-fddc-43e6-993a-6ad37626e9e0",
@@ -136,5 +139,55 @@ export const mapDatasets = {
                 "type": "category"
             }
         ]
+    },
+    {
+        "id": 'liens',
+        "name": "Liens",
+        "cartoAccount": "wprdc-editor",
+        "cartoTable": "allegheny_county_tax_liens",
+        "mapId": "2ac98314-c5b9-4730-ae79-71c80dbd8790",
+        "parcelID": "#allegheny_county_tax_liens",
+        "fields": [
+            {
+                "id": "total_amount",
+                "name": "Total Amount of Liens ($)",
+                "info": "some info and stuff",
+                "type": "money",
+                "range": [null, null],
+                "valueFunction": "log",
+                "base": "20"
+            },
+            {
+                "id": "number",
+                "name": "Number of Liens",
+                "info": "some info and stuff2",
+                "type": "numeric",
+                "range": [null, null]
+            }
+        ]
+    }
+];
+
+export class MapData{
+    constructor(data){
+        this.datasets = data
+    }
+
+    getDataset(datasetId){
+        return this.datasets.filter((dataset) => dataset.id === datasetId)[0]
+    }
+
+    getField(datasetId, fieldId){
+        return this.getDataset(datasetId).fields.filter((field)=> field.id === fieldId)[0]
+    }
+
+    getDatasets(){
+        return this.datasets;
+    }
+
+    getFields(datasetId){
+        return this.getDataset().fields;
     }
 }
+
+export let mapData = new  MapData(MAP_DATASETS);

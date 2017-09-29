@@ -11,8 +11,6 @@ import {default as MapIcon} from 'material-ui-icons/Map'
 
 /* Functions */
 
-
-
 class BaseMapMenu extends Component {
     constructor(props) {
         super(props);
@@ -20,32 +18,21 @@ class BaseMapMenu extends Component {
             anchorEl: null,
             open: false
         };
-        this.handleOpenClick = this.handleOpenClick.bind(this);
         this.handleBasemapSelect = this.handleBasemapSelect.bind(this);
     }
 
-    handleOpenClick(event) {
-        this.setState({open: true, anchorEl: event.currentTarget});
-    };
 
     handleBasemapSelect(event) {
         this.props.updateBasemap(event.target.getAttribute('value'));
         this.setState({open: false});
     };
 
-    handleClose = () => {
-        this.setState({open: false});
-    };
 
     render() {
         const basemaps = this.props.basemaps;
         return (
-            <div>
-                <Button raised onClick={this.handleOpenClick}>
-                    <MapIcon/> Basemmap
-                </Button>
-                <Menu open={this.state.open}
-                      onRequestClose={this.handleClose}
+                <Menu open={this.props.open}
+                      onRequestClose={this.props.handleRequestClose}
                       anchorEl={this.state.anchorEl}
                 >
                     {Object.keys(basemaps).map((k) => {
@@ -59,7 +46,6 @@ class BaseMapMenu extends Component {
                         }
                     )}
                 </Menu>
-            </div>
         );
     }
 }
