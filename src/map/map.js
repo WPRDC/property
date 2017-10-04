@@ -11,7 +11,7 @@ import {Map, TileLayer, GeoJSON} from 'react-leaflet';
 import {getCartoTiles, getParcel} from './mapUtils'
 import {BASEMAPS} from './mapDefaults'
 
-import MapControls from "./MapController"
+import MapController from "./MapController"
 
 /* Constants */
 const mapDefaults = {
@@ -112,7 +112,7 @@ export class MapContainer extends Component {
                                 "[zoom >= 15] {line-opacity: .8; line-width: .5}" +
                                 "[zoom >=17] {line-opacity: .8; line-width: 1}}"}/>
                 </Map>
-                <MapControls updateBasemap={this.updateBasemap} updateStyleLayer={this.updateStyleLayer}
+                <MapController updateBasemap={this.updateBasemap} updateStyleLayer={this.updateStyleLayer}
                              basemaps={BASEMAPS}/>
             </div>
         );

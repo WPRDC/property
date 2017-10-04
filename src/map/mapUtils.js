@@ -114,7 +114,6 @@ export function getFieldValues(dataset, field) {
                 response.json()
                     .then((data) => {
                         if (data.hasOwnProperty('rows')) {
-                            console.log(data);
                             resolve(data.rows.map((row) => row[field]));
                         } else {
                             reject('"row" not in results')
@@ -127,15 +126,12 @@ export function getFieldValues(dataset, field) {
 /**
  * Generates SQL string for querying Carto for a styled.  Provides the minimum information needed to style a layer.
  *
- * @param tableName - id of table on Carto
- * @param fieldName - name of field in table named `tableName`. The field which the style is used to represent.
- * @param parcelIdField - parcel ID field on table `tableName`.  Used to join it with a parcel boundary map.
  * @return {string}
  */
-export function createStyleSQL(tableName, fieldName, parcelIdField){
+export function createStyleSQL(dataset, field){
     let sql =
-        `SELECT ds.cartodb_id, pb.the_geom, pb.the_geom_webmercator, ds.${fieldName}, ds.${parcelIdField}
-        FROM wprdc.allegheny_county_parcel_boundaries pb JOIN ${tableName} ds ON pb.pin = ds.parid`;
+        `SELECT ds.cartodb_id, pb.the_geom, pb.the_geom_webmercator, ds.${field.id}, ds.${dataset.parcelIdField}
+        FROM wprdc.allegheny_county_parcel_boundaries pb JOIN ${dataset.cartoTable} ds ON pb.pin = ds.parid`;
 
     return sql;
 }
@@ -144,11 +140,11 @@ export function createStyleSQL(tableName, fieldName, parcelIdField){
  * Generate cartoCSS that styles parcels if they fall into a category.
  *
  * @param dataset
- * @param fieldName
+ * @param field
  * @param categoryColors
  * @return {string}
  */
-export function createCategoryCSS(dataset, fieldName, categoryColors){
+export function createCategoryCSS(dataset, field, categoryColors){
     // Base css for category styling
     let css = `#${dataset.cartoCssId}{
                 polygon-opacity: 0.0;  
@@ -158,7 +154,7 @@ export function createCategoryCSS(dataset, fieldName, categoryColors){
 
     // Add conditional css for each category-color combo entered
     categoryColors.map((item) => {
-        css += `[ ${fieldName} = "${item.category}" ]{ polygon-opacity: 1.0; polygon-fill: ${item.color};}`;
+        css += `[ ${field.id} = "${item.category}" ]{ polygon-opacity: 1.0; polygon-fill: ${item.color};}`;
     });
     css+= '}';
     return css
