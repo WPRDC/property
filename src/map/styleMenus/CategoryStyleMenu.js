@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, PureComponent} from 'react';
 
 /* Material UI Components*/
 import Button from 'material-ui/Button'
@@ -13,7 +13,6 @@ import RemoveCircleIcon from 'material-ui-icons/RemoveCircle';
 import LayersIcon from 'material-ui-icons/Layers';
 
 /* Defaults & Helper Functions */
-import {mapDatasets} from "../mapDefaults";
 import {createCategoryCSS, createStyleSQL} from '../mapUtils';
 
 const COLOR_OPTIONS = ['red', 'blue', 'green', 'yellow', 'black'];
@@ -91,8 +90,10 @@ class CategoryStyleMenu extends Component {
      * @private
      */
     _initMenuItems = (fieldValues) => {
-
-        this.state.menuItems = [{category: fieldValues[0], color: DEFAULT_COLOR}]
+        this.setState(
+            {menuItems: [{category: fieldValues[0], color: DEFAULT_COLOR}]},
+            this._handleStyleInfoChange
+        )
     };
 
     /**
@@ -123,7 +124,6 @@ class CategoryStyleMenu extends Component {
      */
     handleChangeMenuItem = (field, targetIdx) => (event) => {
         // Update the list of menu items
-        // Update the list of menu items
         const newMenuItems = this.state.menuItems.map((menuItem, currentIdx) => {
             if (targetIdx !== currentIdx) {
                 return menuItem;
@@ -148,23 +148,32 @@ class CategoryStyleMenu extends Component {
         // First check to make sure that the dataset or field has changed
         // (apparently this could run even when we don't explicitly change props)
         // https://reactjs.org/docs/react-component.html#componentwillreceiveprops
-        if (nextProps.dataset !== this.props.dataset || nextProps.field !== this.props.field) {
+        if (nextProps.dataset !== this.props.dataset ||
+            nextProps.field !== this.props.field ||
+            nextProps.fieldValues.length !== this.props.fieldValues.length ||
+            !(nextProps.fieldValues.every((fieldValue, i) => {
+                return fieldValue === this.props.fieldValues[i]
+            }))
+        ) {
             this._initMenuItems(nextProps.fieldValues)
         }
     };
 
-    /**
-     * When this component is first mounted, init the category dropdowns.
-     * // TODO: see if it's better to do this in the constructor
-     */
-    componentWillMount = () => {
-        this._initMenuItems(this.props.fieldValues)
-    }
-
     componentDidMount = () => {
-        // Generate new SQL and CSS from the current user selections and lift up to MapStyleMenu
-        this._handleStyleInfoChange();
-    }
+        this._initMenuItems(this.props.fieldValues);
+    };
+
+    componentDidUpdate = (prevProps) => {
+        if (prevProps.dataset !== this.props.dataset ||
+            prevProps.field !== this.props.field ||
+            prevProps.fieldValues.length !== this.props.fieldValues.length ||
+            !(prevProps.fieldValues.every((fieldValue, i) => {
+                return fieldValue === this.props.fieldValues[i]
+            }))
+        ) {
+            this._handleStyleInfoChange();
+        }
+    };
 
     render() {
         return (

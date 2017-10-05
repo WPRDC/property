@@ -13,14 +13,14 @@ import Tabs, {Tab} from 'material-ui/Tabs';
 /* Style Menus */
 import CategoryStyleMenu from './styleMenus/CategoryStyleMenu';
 import ChoroplethStyleMenu from './styleMenus/ChoroplethStyleMenu';
-
+import RangeStyleMenu from './styleMenus/RangeStyleMenu';
 /* Icons */
 import {default as MapIcon} from 'material-ui-icons/Map';
 
 /* Functions */
-import {mapData} from "./mapDefaults";
+import {mapDataSource} from "./mapDefaults";
 import {getFieldValues, createCategoryCSS, createStyleSQL} from './mapUtils';
-
+import {arraysAreDifferent} from "../utils/dataUtils";
 const COLORS = ['red', 'blue', 'green'];
 
 
@@ -76,6 +76,7 @@ class MapStyleMenu extends Component {
 
         this.state = {
             currentTab: 'category',
+            geometry: 'parcel_boundary',
             dataset: null,          // Carto dataset
             field: null,            // field in carto dataset
             fieldValues: null,      // possible values of field in carto dataset
@@ -97,20 +98,24 @@ class MapStyleMenu extends Component {
      */
     _getAvailableDatasets() {
         const styleType = this.state.currentTab;
-        let availableDatasets = mapData.getDatasets();
+        let availableDatasets = mapDataSource.getDatasets();
 
         // Filter out datasets that have no fields that accommodate the style type
-        if (styleType === 'category') {
-            availableDatasets = availableDatasets.filter((dataset) => mapData.accommodatesType(dataset.id, styleType));
+        switch (styleType) {
+            case 'category':
+                availableDatasets = availableDatasets.filter((dataset) => mapDataSource.accommodatesType(dataset.id, 'category'));
+                break;
+            case 'choropleth':
+            case 'range':
+                availableDatasets = availableDatasets.filter((dataset) => mapDataSource.accommodatesType(dataset.id, 'numeric'));
+                break;
         }
-        console.log(availableDatasets);
-
         let defaultDataset = availableDatasets[0];
 
         this.setState(
             {
                 availableDatasets: availableDatasets,
-                dataset: defaultDataset
+                dataset: defaultDataset,
             },
             this._getAvailableFields(defaultDataset));
     }
@@ -125,11 +130,17 @@ class MapStyleMenu extends Component {
         let fields = [],
             currentField = null;
 
-        // Filter fields if using category method
-        if (styleType === 'category') {
-            fields = dataset.fields.filter((field) => field.type === 'category')
-        } else {
-            fields = dataset.fields;
+        // Filter fields based on style method
+        switch (styleType) {
+            case 'category':
+                fields = dataset.fields.filter((field) => field.type === 'category');
+                break;
+            case 'choropleth':
+            case 'range':
+                fields = dataset.fields.filter((field) => field.type === 'numeric');
+                break;
+            default:
+                fields = dataset.fields;
         }
 
         // Currently just using the first field as the default one.
@@ -138,13 +149,12 @@ class MapStyleMenu extends Component {
         this.setState(
             {
                 availableFields: fields,
-                field: currentField
+                field: currentField,
             },
             // Now that there's a new field, get the possible values from it using `_getFieldValues`
             // which will also save those values to the state.
             () => this._getFieldValues(dataset, currentField)
         )
-
     }
 
     /**
@@ -162,6 +172,7 @@ class MapStyleMenu extends Component {
                     console.log(err)
                 })
     };
+
 
     /**
      * When tab is clicked, change it in state, and update available Selects.
@@ -190,7 +201,7 @@ class MapStyleMenu extends Component {
     handleDataSourceMenuChange = name => event => {
         if (name === 'dataset') {
             // Update dataset
-            let newDataset = mapData.getDataset(event.target.value);
+            let newDataset = mapDataSource.getDataset(event.target.value);
             this.setState(
                 {dataset: newDataset},
                 () => {
@@ -203,7 +214,7 @@ class MapStyleMenu extends Component {
         }
         else if (name === 'field') {
             // Get new field
-            let newField = mapData.getField(this.state.dataset.id, event.target.value);
+            let newField = mapDataSource.getField(this.state.dataset.id, event.target.value);
 
             // Update field in state
             this.setState(
@@ -238,8 +249,45 @@ class MapStyleMenu extends Component {
     handleSubmit = () => {
         let styleInfo = this.state.styleInfo;
         this.props.updateStyleLayer(styleInfo.sql, styleInfo.css);
+        this.props.handleRequestClose();
     };
 
+
+    /**
+     *  Runs when props or state change.  Decides if ...update or render methods should run
+     *
+     * @param nextProps - next set of props
+     * @param nextState - next state
+     * @return {boolean} True if there's been a change, false if not
+     */
+    shouldComponentUpdate = (nextProps, nextState) => {
+        // This is the only prop that matters for now.  The methods passed as props don't change
+        if (this.props.open !== nextProps.open) {
+            console.log('new props');
+            return true
+        }
+        else if (this._listChanged(this.state.fieldValues, nextState.fieldValues)) {
+            console.log('list changed');
+            return true
+        } else if( this.state.currentTab !== nextState.currentTab) {
+            return true;
+        }
+
+        return false
+    };
+
+    //
+    _listChanged = (oldList, newList) => {
+        if (!oldList || !newList) {
+            return true;
+        }
+
+        return (oldList.length !== newList.length ||
+            !(oldList.every((item, i) => {
+                return item === newList[i]
+            }))
+        );
+    };
 
     /**
      * When the component mounts, get the datasets, which then gets the fields,
@@ -285,17 +333,27 @@ class MapStyleMenu extends Component {
                                                 availableDatasets={this.state.availableDatasets}
                                                 availableFields={this.state.availableFields}
                     />
-
+                    <br/>
                     {currentTab === 'category' &&
-                    <CategoryStyleMenu dataset={this.state.dataset}
-                                       field={this.state.field}
-                                       fieldValues={this.state.fieldValues}
-                                       handleStyleInfoChange={this.handleStyleInfoChange}
+                    < CategoryStyleMenu dataset={this.state.dataset}
+                                        field={this.state.field}
+                                        fieldValues={this.state.fieldValues}
+                                        handleStyleInfoChange={this.handleStyleInfoChange}
                     />}
-                    {currentTab==='choropleth' &&
-                        <ChoroplethStyleMenu/>
+                    {currentTab === 'choropleth' &&
+                    <ChoroplethStyleMenu
+                        dataset={this.state.dataset}
+                        field={this.state.field}
+                        handleStyleInfoChange={this.handleStyleInfoChange}
+                    />
                     }
-
+                    {currentTab === 'range' &&
+                    <RangeStyleMenu
+                        dataset={this.state.dataset}
+                        field={this.state.field}
+                        handleStyleInfoChange={this.handleStyleInfoChange}
+                    />
+                    }
                 </DialogContent>
 
                 <DialogActions>

@@ -15,11 +15,13 @@ import MapController from "./MapController"
 
 /* Constants */
 const mapDefaults = {
-    position: [40.45, -79.9959],
+    position: [40.438340, -79.961884],
     zoom: 16,
     maxZoom: 18
 };
 
+
+const DEFAULT_BASEMAP = BASEMAPS['voyager'];
 
 export class MapContainer extends Component {
     constructor(props) {
@@ -28,10 +30,7 @@ export class MapContainer extends Component {
         this.state = {
             styleLayer: null,
             selectedShape: null,
-            baseMap: <TileLayer className="basemap"
-                                url='http://{s}.tile.osm.org/{z}/{x}/{y}.png'
-                                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            />,
+            baseMap: <TileLayer className="new-basemap" url={DEFAULT_BASEMAP.url} attribute={DEFAULT_BASEMAP.attribution}/>,
         };
 
         this.handleClick = this.handleClick.bind(this);
@@ -140,9 +139,6 @@ class CartoLayer extends Component {
         this.setTiles();
     }
 
-    componentWillUpdate(){
-        this.setTiles();
-    }
 
     /**
      * Collects tiles from Carto and loads them into component
@@ -158,7 +154,7 @@ class CartoLayer extends Component {
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.sql !== this.props.sql || nextProps.css !== this.props.css) {
-            this.setState({sql: nextProps.sql, css: nextProps.css})
+            this.setState({sql: nextProps.sql, css: nextProps.css}, this.setTiles)
         }
     }
 

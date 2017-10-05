@@ -3,19 +3,14 @@
  */
 
 
-const PARCEL_MAP = {
-    sql: "SELECT * FROM allegheny_parcel_boundaries",
-    css: `#allegheny_county_parcel_boundaries{ +
-            polygon-fill: #FFFFFF; +
-            polygon-opacity: 0.2;+
-            line-color: #4d4d4d; +
-            line-width: 0.5;+ 
-            line-opacity: 0; +
-            [zoom >= 15] {line-opacity: .8;}}`
-};
-
 
 export const BASEMAPS = {
+    voyager: {
+        name: 'Voyager',
+        url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+        avatar: 'osm.png'
+    },
     osm: {
         name: 'OpenStreetMap',
         url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
@@ -63,7 +58,8 @@ export const MAP_DATASETS = [
                 "id": "fairmarkettotal",
                 "name": "Total Assessed Value (Fair Market)",
                 "info": "",
-                "type": "money",
+                "type": "numeric",
+                "subtype": "money",
                 "range": [null, null],
                 "valueFunction": "pow",
                 "base": ".0001"
@@ -72,7 +68,8 @@ export const MAP_DATASETS = [
                 "id": "fairmarketland",
                 "name": "Assessed Land Value (Fair Market)",
                 "info": "",
-                "type": "money",
+                "type": "numeric",
+                "subtype": "money",
                 "range": [null, null],
                 "valueFunction": "pow",
                 "base": "0.0001"
@@ -81,7 +78,8 @@ export const MAP_DATASETS = [
                 "id": "fairmarketbuilding",
                 "name": "Assessed Building Value (Fair Market)",
                 "info": "",
-                "type": "money",
+                "type": "numeric",
+                "subtype": "money",
                 "range": [null, null],
                 "valueFunction": "pow",
                 "base": "0.1"
@@ -144,7 +142,7 @@ export const MAP_DATASETS = [
 ];
 
 
-export class MapDataConnector{
+export class MapDataSource{
     /**
      * Connects to Carto maps' data (currently hardcoded MAP_DATA)
      * @param data - initial set of data
@@ -156,7 +154,7 @@ export class MapDataConnector{
 
     /**
      * Get first dataset that matches datasetId.
-     * TODO: assert unique ids at onset to prevent this ambiguous crap.
+     * TODO: assert unique ids at onset to prevent this ambiguous 'first' crap.
      * @param {string} datasetId - identifier of dataset (e.g. 'assessments')
      * @return {{}} dataset
      */
@@ -214,4 +212,4 @@ export class MapDataConnector{
 
 }
 
-export let mapData = new  MapDataConnector(MAP_DATASETS);
+export let mapDataSource = new  MapDataSource(MAP_DATASETS);

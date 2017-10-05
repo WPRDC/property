@@ -64,14 +64,27 @@ class MainHeader extends Component {
 
     render() {
         const style = {
-            padding: '20px',
+            padding: '10px 7px',
             backgroundColor: themeColors.black,
             color: themeColors.white,
+            img: {
+                height: '70px',
+                display: 'block',
+                float: 'left',
+            },
+            h1: {
+                display: 'block',
+                margin: '0',
+                position: 'relative',
+                top: '20px',
+                left: '5px'
+            }
         }
 
         return (
             <div style={style} className={this.props.className}>
-                <h1>Property Dashboard</h1>
+                <img style={style.img} src="http://www.wprdc.org/wp-content/themes/wprdc-redesign/assets/images/plain_logo_rbg_cropped.svg"/>
+                <h1 style={style.h1} >Property Dashboard</h1>
             </div>
         )
     }
