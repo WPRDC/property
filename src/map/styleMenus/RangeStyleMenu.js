@@ -1,64 +1,163 @@
 import React, {Component, PureComponent} from 'react';
+import ReactDOM from 'react-dom';
 
 /* Material UI Components*/
-import Button from 'material-ui/Button'
-import List, {ListItem, ListItemText, ListItemAvatar, ListItemSecondaryAction} from 'material-ui/List';
 import Input, {InputLabel} from 'material-ui/Input';
 import TextField from 'material-ui/TextField';
 import Select from 'material-ui/Select';
 
-import Avatar from 'material-ui/Avatar';
 import {FormControl, FormHelperText} from 'material-ui/Form';
-
-import IconButton from 'material-ui/IconButton';
-import AddCircleIcon from 'material-ui-icons/AddCircle';
-import RemoveCircleIcon from 'material-ui-icons/RemoveCircle';
-import LayersIcon from 'material-ui-icons/Layers';
+import 'rc-slider/assets/index.css';
+import Slider from 'rc-slider';
 
 /* Defaults & Helper Functions */
-import {createChoroplethCSS, createStyleSQL, QUANTIFICATION_METHODS, COLORS, createRangeCSS} from '../mapUtils';
+import {createStyleSQL, createRangeCSS, findMinMaxValues, QUANTIFICATION_METHODS, COLORS,} from '../mapUtils';
+
+const createSliderWithTooltip = Slider.createSliderWithTooltip;
+
+const Range = createSliderWithTooltip(Slider.Range);
+
 
 class RangeStyleMenu extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            start: 0,
-            end: 1,
+            min: 0,
+            max: 100,
+            values: [0, 1],
             color: 'red'
         }
     }
 
-    handleChange = (name) => (event) => {
-        this.setState({[name]: event.target.value}, this._handleStyleInfoChange)
-    };
-
-    _handleStyleInfoChange(){
+    /**
+     * Updates the SQL and cartoCSS that define style on a Carto Map.
+     * @private
+     */
+    _handleStyleInfoChange = () => {
         let sql = createStyleSQL(this.props.dataset, this.props.field);
-        let css = createRangeCSS(this.props.dataset, this.props.field, this.state.start, this.state.end, this.state.color);
+        let css = createRangeCSS(this.props.dataset, this.props.field, this.state.values[0], this.state.values[1], this.state.color);
 
         this.props.handleStyleInfoChange(sql, css)
-    }
+    };
 
+    /**
+     * When mounted or updated, collect reasonable bounds and starting points for Range.
+     * @private
+     */
+    _initRange = (dataset, field) => {
+        let range = field.range;
+
+        // If there the field has a fully predfined range, we don't need to make an API call
+        if (range && range[0] !== null && range[1] !== null) {
+            let q2 = range[0] + ((range[1] - range[0]) / 4);
+            let q3 = range[0] + (3 * (range[1] - range[0]) / 4);
+            this.setState(
+                {
+                    min: range[0],
+                    max: range[1],
+                    values: [q2, q3]
+                },
+                this._handleStyleInfoChange()
+            )
+        }
+        // Otherwise we'll need to fill in the gaps with live data
+        else {
+            findMinMaxValues(dataset, field)
+                .then(
+                    (data) => {
+                        // Check that values are numbers.
+                        // This may be true when first mounted, before filters fields are provided
+                        // TODO: look into ensuring correct fields before loading specific menu components
+                        if (isNaN(data.min) || isNaN(data.max)) {
+                            console.log(data, 'no numbers')
+                        } else {
+                            let min = range[0] !== null ?  range[0] : data.min;
+                            let max = range[1] !== null ?  range[1] : data.max;
+                            let q2 = min + ((max - min) / 4);
+                            let q3 = min + (3 * (max - min) / 4);
+                            this.setState(
+                                {
+                                    min: min,
+                                    max: max,
+                                    values: [q2, q3]
+                                },
+                                this._handleStyleInfoChange()
+                            )
+                        }
+                    },
+                    (err) => console.log(err)
+                )
+        }
+    };
+
+
+    /**
+     * Runs when a form item is changed. Updates the inut's respective state property.
+     * @param  {string} name - name of state property to be updated
+     */
+    handleChange = (name) => (event) => {
+        switch (name) {
+            case 'color':
+                this.setState({'color': event.target.value}, this._handleStyleInfoChange);
+                break;
+            case 'lower':
+                this.setState({'values': [event.target.value, this.state.values[1]]});
+                break;
+            case 'upper':
+                this.setState({'values': [this.state.values[0], event.target.value]})
+                break;
+        }
+    };
+
+
+    /**
+     * Runs when range slider is moved.  Updates the values in state based on slider state.
+     * @param {array} values - array of two values [lower, upper] ends of range.
+     */
+    onRangeSliderChange = (values) => {
+        this.setState({values,})
+    };
+
+
+    /**
+     * Runs when new props are provided
+     *
+     * @param nextProps
+     */
+    componentWillReceiveProps = (nextProps) => {
+        this._initRange(nextProps.dataset, nextProps.field)
+
+    };
+
+    componentDidMount = () => {
+        this._initRange(this.props.dataset, this.props.field)
+    };
+
+    componentDidUpdate = () => {
+        this._handleStyleInfoChange();
+    };
 
     render() {
         return (
-            <div>
-                <TextField
-                    label="Start"
-                    type="number"
-                    value={this.state.start}
-                    onChange={this.handleChange('start')}
-                />
 
-                <TextField
-                    label="End"
-                    type="number"
-                    value={this.state.end}
-                    onChange={this.handleChange('end')}
-                />
+            <div>
+                <Range min={this.state.min} max={this.state.max} defaultValue={this.state.values}
+                       value={this.state.values}
+                       onChange={this.onRangeSliderChange} allowCross={false}/>
+                <br/>
                 <FormControl>
-                    <InputLabel htmlFor="color-select">Colors</InputLabel>
+                    <InputLabel htmlFor="lower-val">Lower Bound</InputLabel>
+                    <Input id="lower-val" onChange={this.handleChange('lower')} value={this.state.values[0]}/>
+                </FormControl>
+
+                <FormControl>
+                    <InputLabel htmlFor="upper-val">Upper Bound</InputLabel>
+                    <Input id="lower-val" onChange={this.handleChange('upper')} value={this.state.values[1]}/>
+                </FormControl>
+
+                <FormControl>
+                    <InputLabel htmlFor="color-select">Color</InputLabel>
                     <Select
                         native
                         value={this.state.colorName}

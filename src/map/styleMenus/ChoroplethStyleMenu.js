@@ -37,15 +37,11 @@ class ChoroplethStyleMenu extends PureComponent {
      * Updates the SQL and cartoCSS that define style on a Carto Map.
      * @private
      */
-    _handleStyleInfoChange = (dataset, field) => {
-        if (typeof(dataset) === 'undefined')
-            dataset = this.props.dataset;
-        if (typeof(field) === 'undefined')
-            field = this.props.field;
-
+    _handleStyleInfoChange = () => {
         let sql = createStyleSQL(this.props.dataset, this.props.field);
         let css = createChoroplethCSS(this.props.dataset, this.props.field,
             this.state.binCount, this.state.colorName, this.state.quantMethod);
+
         this.props.handleStyleInfoChange(sql, css);
     };
 
@@ -55,8 +51,7 @@ class ChoroplethStyleMenu extends PureComponent {
         this.setState({[name]: event.target.value}, this._handleStyleInfoChange)
     };
 
-    componentDidMount = () => {``
-        console.log("PROPS:", this.props);
+    componentDidMount = () => {
         this._handleStyleInfoChange();
     };
 

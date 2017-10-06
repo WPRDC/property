@@ -92,7 +92,7 @@ export const MAP_DATASETS = [
                 "range": [1755, 2017]
             },
             {
-                "id": "year_sold",
+                "id": "yearsold",
                 "name": "Year of Last Sale",
                 "info": "some info and stuff2",
                 "type": "numeric",

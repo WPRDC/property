@@ -256,3 +256,34 @@ export function createRangeCSS(dataset, field, min, max, color) {
       
     ${dataset.cartoCssId}[ ${field.id} > ${max}] { polygon-opacity: 0;}`
 }
+
+/**
+ * Finds minimum and maximum values in carto table
+ * @param dataset
+ * @param field
+ * @return {Promise}
+ */
+export const findMinMaxValues = (dataset, field) =>{
+    let url = 'https://wprdc.carto.com/api/v2/sql?q=';
+    let sql = `SELECT MIN(${field.id}) as min, MAX(${field.id}) as max FROM ${dataset.cartoTable}`;
+
+    return new Promise((resolve, reject) => {
+        fetch(url + sql).then((response) => {
+            if (response.ok) {
+                response.json()
+                    .then((data) => {
+                        // Check that a parcel was found.
+                        if (data.rows.length)
+                            resolve(data.rows[0]);  // pin is short for Parcel ID Number
+                        else
+                            reject("Query successful, but no min/max found.")
+                    }, (err) => {
+                        reject(err)
+                    })
+            }
+            else {
+                reject(response.status)
+            }
+        })
+    })
+}

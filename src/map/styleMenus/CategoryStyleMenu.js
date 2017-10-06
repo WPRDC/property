@@ -12,10 +12,10 @@ import AddCircleIcon from 'material-ui-icons/AddCircle';
 import RemoveCircleIcon from 'material-ui-icons/RemoveCircle';
 import LayersIcon from 'material-ui-icons/Layers';
 
-/* Defaults & Helper Functions */
-import {createCategoryCSS, createStyleSQL} from '../mapUtils';
 
-const COLOR_OPTIONS = ['red', 'blue', 'green', 'yellow', 'black'];
+
+/* Defaults & Helper Functions */
+import {createCategoryCSS, createStyleSQL, COLORS} from '../mapUtils';
 const DEFAULT_COLOR = 'red';
 
 
@@ -31,7 +31,7 @@ function CategorySelectionLine(props) {
     const itemIdx = props.itemIdx;
     const item = props.menuItem;
     const categoryOptions = props.categoryOptions;
-    const colorOptions = COLOR_OPTIONS;  // TODO: decide whether this should be dynamic or just leave as a constant
+    const colorOptions = COLORS;  // TODO: decide whether this should be dynamic or just leave as a constant
     const handleChangeItem = props.handleChangeItem;
     return (
         <div>
