@@ -40,7 +40,7 @@ export class PropertyDataContainer extends Component {
 
     render() {
         let style = {
-            float: 'right',
+            float: 'left',
             width: '480px',
             overflowY: 'scroll',
             overflowX: 'hidden',

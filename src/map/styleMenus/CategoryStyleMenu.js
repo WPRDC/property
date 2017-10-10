@@ -159,15 +159,23 @@ class CategoryStyleMenu extends Component {
         }
     };
 
+    /**
+     * Runs when component mounts.  Initializes the menu.
+     */
     componentDidMount = () => {
         this._initMenuItems(this.props.fieldValues);
     };
 
+    /**
+     * Runs when component updates.  Updates style information.
+     * @param prevProps
+     */
     componentDidUpdate = (prevProps) => {
+        // First check if anything pertaining to updating the style has changed.
         if (prevProps.dataset !== this.props.dataset ||
             prevProps.field !== this.props.field ||
             prevProps.fieldValues.length !== this.props.fieldValues.length ||
-            !(prevProps.fieldValues.every((fieldValue, i) => {
+            !(prevProps.fieldValues.every((fieldValue, i) => {  // check every value in `fieldValues`
                 return fieldValue === this.props.fieldValues[i]
             }))
         ) {

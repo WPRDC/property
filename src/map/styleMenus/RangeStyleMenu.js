@@ -19,13 +19,17 @@ const Range = createSliderWithTooltip(Slider.Range);
 
 
 class RangeStyleMenu extends Component {
+    /**
+     * Menu for styling based on membership within a range of values.
+     * @param props
+     */
     constructor(props) {
         super(props);
 
         this.state = {
-            min: 0,
-            max: 100,
-            values: [0, 1],
+            min: 0,         // minimum possible value
+            max: 100,       // maximum possible value
+            values: [0, 1], // actual values selected by range slider
             color: 'red'
         }
     }
@@ -121,26 +125,32 @@ class RangeStyleMenu extends Component {
 
 
     /**
-     * Runs when new props are provided
+     * Runs when new props are provided. Initializes the range based on props in `nextProps`
      *
-     * @param nextProps
+     * @param {obj} nextProps - set of new props
      */
     componentWillReceiveProps = (nextProps) => {
         this._initRange(nextProps.dataset, nextProps.field)
 
     };
 
+    /**
+     * Runs when component is mounted.  Initializes the range.
+     */
     componentDidMount = () => {
         this._initRange(this.props.dataset, this.props.field)
     };
 
+    /**
+     * Runs when component is updated.  Updates the style data.
+     */
     componentDidUpdate = () => {
         this._handleStyleInfoChange();
     };
 
+
     render() {
         return (
-
             <div>
                 <Range min={this.state.min} max={this.state.max} defaultValue={this.state.values}
                        value={this.state.values}
@@ -172,7 +182,6 @@ class RangeStyleMenu extends Component {
             </div>
         );
     }
-
 }
 
 export default RangeStyleMenu

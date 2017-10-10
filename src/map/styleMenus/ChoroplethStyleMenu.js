@@ -23,6 +23,10 @@ const DEFAULT_COLOR = Object.keys(CHOROPLETHS)[0];
 
 
 class ChoroplethStyleMenu extends PureComponent {
+    /**
+     * Menu for defining choropleth style for map.
+     * @param {obj} props - react props
+     */
     constructor(props) {
         super(props);
 
@@ -46,15 +50,24 @@ class ChoroplethStyleMenu extends PureComponent {
     };
 
 
+    /**
+     * Runs when item is selected from menu.
+     * @param {string} name - name of state property to be updated
+     */
     handleMenuChange = (name) => (event) => {
-        console.log(name, event);
         this.setState({[name]: event.target.value}, this._handleStyleInfoChange)
     };
 
+    /**
+     * Runs after component mounts.  Updates style info.
+     */
     componentDidMount = () => {
         this._handleStyleInfoChange();
     };
 
+    /**
+     * Runs after component mounts.  Updates style info.
+     */
     componentDidUpdate = () => {
         this._handleStyleInfoChange();
     };

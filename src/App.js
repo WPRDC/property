@@ -19,9 +19,9 @@ class App extends Component {
 
                 <MainContent className="flex-item"/>
 
-                <MainFooter className="flex-item">
-                    <p>This is a footer.</p>
-                </MainFooter>
+                {/*<MainFooter className="flex-item">*/}
+                    {/*<p>This is a footer.</p>*/}
+                {/*</MainFooter>*/}
             </div>
         );
     }

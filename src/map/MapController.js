@@ -24,13 +24,17 @@ class MapController extends Component {
     }
 
     /**
-     *
-     * @param menuName
+     * Open menu described by `menuName`.
+     * @param {string} menuName - name of menu to open.
      */
     handleOpenClick = menuName => event => {
         this.setState({[menuName]: true});
     };
 
+    /**
+     * Close menu described by `menuName`.
+     * @param {string} menuName - name of menu to close.
+     */
     handleRequestClose = menuName => event => {
         this.setState({[menuName]: false});
     };
