@@ -81,6 +81,7 @@ class CategoryStyleMenu extends Component {
         let sql = createStyleSQL(this.props.dataset, this.props.field);
         let css = createCategoryCSS(this.props.dataset, this.props.field, this.state.menuItems);
         this.props.handleStyleInfoChange(sql, css);
+        this._updateSavedState();
     };
 
     /**
@@ -95,6 +96,10 @@ class CategoryStyleMenu extends Component {
             this._handleStyleInfoChange
         )
     };
+
+    _updateSavedState() {
+        this.props.updateSavedState(this.state)
+    }
 
     /**
      * Runs when 'add' button is clicked.  Adds a menu item to the menu item list.
@@ -163,7 +168,14 @@ class CategoryStyleMenu extends Component {
      * Runs when component mounts.  Initializes the menu.
      */
     componentDidMount = () => {
-        this._initMenuItems(this.props.fieldValues);
+        if (this.props.savedState) {
+            console.log(this.props.savedState);
+            this.setState(this.props.savedState, () => {
+                this.render()
+            })
+        } else{
+            this._initMenuItems(this.props.fieldValues);
+        }
     };
 
     /**

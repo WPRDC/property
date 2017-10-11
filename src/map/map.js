@@ -85,6 +85,7 @@ export class MapContainer extends Component {
         };
         return (
             <div style={style.base} className="mapContainer">
+
                 <Map style={style.map}
                      center={mapDefaults.position}
                      zoom={mapDefaults.zoom}

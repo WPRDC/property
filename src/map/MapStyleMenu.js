@@ -2,18 +2,22 @@ import React, {Component} from 'react';
 
 /* Material UI Components 0*/
 import Button from 'material-ui/Button'
+import TextField from 'material-ui/TextField'
 import Dialog, {DialogTitle, DialogContent, DialogActions} from 'material-ui/Dialog';
 import Input, {InputLabel} from 'material-ui/Input';
 import Select from 'material-ui/Select';
 import {FormControl, FormHelperText} from 'material-ui/Form';
 import AppBar from 'material-ui/AppBar';
 import Tabs, {Tab} from 'material-ui/Tabs';
-
-
+import Divider from 'material-ui/Divider';
+import Slide from 'material-ui/transitions/Slide'
 /* Style Menus */
 import CategoryStyleMenu from './styleMenus/CategoryStyleMenu';
 import ChoroplethStyleMenu from './styleMenus/ChoroplethStyleMenu';
 import RangeStyleMenu from './styleMenus/RangeStyleMenu';
+
+
+
 /* Icons */
 import {default as MapIcon} from 'material-ui-icons/Map';
 
@@ -87,7 +91,11 @@ class MapStyleMenu extends Component {
             fieldValues: null,      // possible values of field in carto dataset
             availableDatasets: [],
             availableFields: [],
-            styleInfo: {sql: '', css: ''}   // SQL and CSS that define a carto style - is lifted up to map on submit
+            styleInfo: {sql: '', css: ''},  // SQL and CSS that define a carto style - is lifted up to map on submit
+            layerName: '',
+            colorMode: 'fill',
+            submenuState: null,
+            submenuSaved: false
         };
 
         this.handleDataSourceMenuChange = this.handleDataSourceMenuChange.bind(this);
@@ -170,7 +178,7 @@ class MapStyleMenu extends Component {
      * @private
      */
     _getFieldValues = (dataset, field) => {
-        getFieldValues(dataset.cartoTable, field.id, this.state.currentTab)
+        getFieldValues(dataset, field, this.state.currentTab)
             .then((newOptions) => {
                     this.setState({fieldValues: newOptions})
                 },
@@ -179,13 +187,17 @@ class MapStyleMenu extends Component {
                 })
     };
 
-
+    updateSubmenuSavedState = submenuState =>{
+        this.setState({submenuState: submenuState})
+    }
     /**
      * When tab is clicked, change it in state, and update available Selects.
      * @param e
      * @param value
      */
     handleTabChange(e, value) {
+
+
         this.setState(
             {currentTab: value},
 
@@ -236,6 +248,10 @@ class MapStyleMenu extends Component {
     };
 
 
+    handleChange = name => event => {
+        this.setState({[name]: event.target.value})
+    };
+
     /**
      * Passed to children components that provide menus to define the style.
      * They, in turn, use this function to update this component's `styleInfo` state.
@@ -275,15 +291,19 @@ class MapStyleMenu extends Component {
         if (this.props.open !== nextProps.open) {
             return true
         }
-        else if(this.props.savedState !== nextProps.savedState){
-            return true
+        if (this.state.layerName !== nextState.layerName) {
+            return true;
+        }
+
+        if (this.state.colorMode !== nextState.colorMode) {
+            return true;
         }
 
 
-        else if(this.state.dataset !== nextState.dataset || this.state.field !== nextState.field ||
+        else if (this.state.dataset !== nextState.dataset || this.state.field !== nextState.field ||
             arraysAreDifferent(this.state.fieldValues, nextState.fieldValues)) {
             return true
-        } else if( this.state.currentTab !== nextState.currentTab) {
+        } else if (this.state.currentTab !== nextState.currentTab) {
             return true;
         }
         return false
@@ -296,10 +316,12 @@ class MapStyleMenu extends Component {
      */
     componentWillReceiveProps = nextProps => {
         console.log('nextProps', nextProps);
+        console.log(nextProps.savedState);
         // Check if a saved state was provided (for updating a previously-made layer)
-        if(nextProps.savedState){
-            this.setState(this.props.savedState)
+        if (nextProps.savedState) {
+            this.setState(this.props.savedState, this.render)
         }
+
     };
 
     /**
@@ -322,9 +344,11 @@ class MapStyleMenu extends Component {
         const currentTab = this.state.currentTab;
 
         return (
-            <Dialog style={style.dialog}
-                    open={this.props.open}
-                    onRequestClose={this.props.handleRequestClose}>
+            <Dialog
+                transition={Slide}
+                style={style.dialog}
+                open={this.props.open}
+                onRequestClose={this.props.handleRequestClose}>
 
                 <AppBar position="static" color="default">
                     <DialogTitle>Add Style to the Map</DialogTitle>
@@ -352,12 +376,16 @@ class MapStyleMenu extends Component {
                                         field={this.state.field}
                                         fieldValues={this.state.fieldValues}
                                         handleStyleInfoChange={this.handleStyleInfoChange}
+                                        updateSavedState={this.updateSubmenuSavedState}
+                                        savedState={this.state.submenuState}
                     />}
                     {currentTab === 'choropleth' &&
                     <ChoroplethStyleMenu
                         dataset={this.state.dataset}
                         field={this.state.field}
                         handleStyleInfoChange={this.handleStyleInfoChange}
+                        updateSavedState={this.updateSubmenuSavedState}
+                        savedState={this.state.submenuState}
                     />
                     }
                     {currentTab === 'range' &&
@@ -365,11 +393,21 @@ class MapStyleMenu extends Component {
                         dataset={this.state.dataset}
                         field={this.state.field}
                         handleStyleInfoChange={this.handleStyleInfoChange}
+                        updateSavedState={this.updateSubmenuSavedState}
+                        savedState={this.state.submenuState}
                     />
                     }
                 </DialogContent>
 
                 <DialogActions>
+                    <TextField
+                        id="layerNameField"
+                        label="Layer Name (optional)"
+                        value={this.state.layerName}
+                        placeholder="My Style Name"
+                        onChange={this.handleChange('layerName')}
+                        margin="dense"
+                    />
                     <Button color="accent" onClick={this.props.handleRequestClose}>Cancel</Button>
                     <Button color="primary" onClick={this.handleSubmit}>Put Some Style on It!</Button>
                 </DialogActions>
@@ -377,6 +415,5 @@ class MapStyleMenu extends Component {
         );
     }
 }
-
 
 export default MapStyleMenu;

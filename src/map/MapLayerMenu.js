@@ -34,6 +34,8 @@ import AddIcon from 'material-ui-icons/Add';
 /* Functions */
 import {COLORS} from "../utils/dataUtils";
 
+import {green, blue, red} from 'material-ui/colors';
+
 
 class MapLayerMenu extends Component {
     constructor(props) {
@@ -153,12 +155,12 @@ class MapLayerMenu extends Component {
             {layers: newLayers},
             // Lift SQL and CSS up to Map to render the style
             () => {
-                // TODO: send list of layers for map to handle
                 this.updateStyleLayers()
             }
         );
 
     };
+
 
     updateStyleLayers = () => {
         const minimalStyleLayers = this.state.layers.map((layer) => layer.styleInfo);
@@ -204,16 +206,26 @@ class MapLayerMenu extends Component {
                             </Toolbar>
                         </AppBar>
 
+
                         <List>
                             {this.state.layers.map((layer, i) =>
                                 <LayerListItem key={i.toString()}
+                                               layer={layer}
                                                handleUpdate={this.handleUpdateLayer(i)}
                                                handleDelete={this.handleRemoveLayer(i)}
 
-                                />)}
+                                />)
+                            }
+
                             <AddLayerListItem handleOnClick={this.handleAddLayer}/>
-                            <Divider/>
+
+                            <Divider inset/>
                             <ListItem button onClick={this.toggleBasemapMenu}>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <LayersIcon/>
+                                    </Avatar>
+                                </ListItemAvatar>
                                 <ListItemText primary={"Basemap Layer"} secondary={this.state.basemapName}/>
                                 <BaseMapMenu open={this.state.basemapMenuOpen}
                                              anchorEl={this.state.basemapMenuAnchorEl}
@@ -239,9 +251,11 @@ class MapLayerMenu extends Component {
 }
 
 
-function LayerListItem(props) {
-    const primaryText = props.primaryText || "Style Layer";
-    const secondaryText = props.secondaryText || "";
+const LayerListItem = props => {
+    const layer = props.layer;
+    const primaryText = layer.layerName || layer.currentTab.charAt(0).toUpperCase() + layer.currentTab.slice(1) + " Layer";
+    const secondaryText = `${layer.dataset.name}: ${layer.field.name}`;
+
     return (
         <ListItem button onClick={props.handleUpdate}>
             <ListItemAvatar>
@@ -259,13 +273,17 @@ function LayerListItem(props) {
             </ListItemSecondaryAction>
         </ListItem>
     );
-}
+};
 
 function AddLayerListItem(props) {
+    const style = {
+        backgroundColor: green[600]
+    }
+
     return (
         <ListItem button onClick={props.handleOnClick}>
             <ListItemAvatar>
-                <Avatar>
+                <Avatar style={style}>
                     <AddIcon/>
                 </Avatar>
             </ListItemAvatar>

@@ -47,7 +47,12 @@ class ChoroplethStyleMenu extends PureComponent {
             this.state.binCount, this.state.colorName, this.state.quantMethod);
 
         this.props.handleStyleInfoChange(sql, css);
+        this._updateSavedState();
     };
+
+    _updateSavedState() {
+        this.props.updateSavedState(this.state)
+    }
 
 
     /**
@@ -62,7 +67,14 @@ class ChoroplethStyleMenu extends PureComponent {
      * Runs after component mounts.  Updates style info.
      */
     componentDidMount = () => {
-        this._handleStyleInfoChange();
+        if (this.props.savedState) {
+            console.log(this.props.savedState);
+            this.setState(this.props.savedState, () => {
+                this.render()
+            })
+        } else{
+            this._handleStyleInfoChange();
+        }
     };
 
     /**

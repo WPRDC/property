@@ -30,7 +30,8 @@ class RangeStyleMenu extends Component {
             min: 0,         // minimum possible value
             max: 100,       // maximum possible value
             values: [0, 1], // actual values selected by range slider
-            color: 'red'
+            color: 'red',
+            styleMode: 'fill'      // fill or line
         }
     }
 
@@ -40,10 +41,14 @@ class RangeStyleMenu extends Component {
      */
     _handleStyleInfoChange = () => {
         let sql = createStyleSQL(this.props.dataset, this.props.field);
-        let css = createRangeCSS(this.props.dataset, this.props.field, this.state.values[0], this.state.values[1], this.state.color);
-
+        let css = createRangeCSS(this.props.dataset, this.props.field, this.state.values[0], this.state.values[1], this.state.color, this.state.styleMode);
         this.props.handleStyleInfoChange(sql, css)
-    };
+        this._updateSavedState();
+    }
+
+    _updateSavedState() {
+        this.props.updateSavedState(this.state)
+    }
 
     /**
      * When mounted or updated, collect reasonable bounds and starting points for Range.
@@ -76,8 +81,8 @@ class RangeStyleMenu extends Component {
                         if (isNaN(data.min) || isNaN(data.max)) {
                             console.log(data, 'no numbers')
                         } else {
-                            let min = range[0] !== null ?  range[0] : data.min;
-                            let max = range[1] !== null ?  range[1] : data.max;
+                            let min = range[0] !== null ? range[0] : data.min;
+                            let max = range[1] !== null ? range[1] : data.max;
                             let q2 = min + ((max - min) / 4);
                             let q3 = min + (3 * (max - min) / 4);
                             this.setState(
@@ -103,14 +108,19 @@ class RangeStyleMenu extends Component {
     handleChange = (name) => (event) => {
         switch (name) {
             case 'color':
-                this.setState({'color': event.target.value}, this._handleStyleInfoChange);
+                this.setState({color: event.target.value}, this._handleStyleInfoChange);
                 break;
             case 'lower':
-                this.setState({'values': [event.target.value, this.state.values[1]]});
+                this.setState({values: [event.target.value, this.state.values[1]]});
                 break;
             case 'upper':
-                this.setState({'values': [this.state.values[0], event.target.value]})
+                this.setState({values: [this.state.values[0], event.target.value]});
                 break;
+            case 'styleMode': {
+                this.setState({styleMode: event.target.value}, this._handleStyleInfoChange);
+                break;
+            }
+
         }
     };
 
@@ -131,14 +141,25 @@ class RangeStyleMenu extends Component {
      */
     componentWillReceiveProps = (nextProps) => {
         this._initRange(nextProps.dataset, nextProps.field)
-
     };
+
+
+    componentWillMount = () => {
+
+    }
 
     /**
      * Runs when component is mounted.  Initializes the range.
      */
     componentDidMount = () => {
-        this._initRange(this.props.dataset, this.props.field)
+        if (this.props.savedState) {
+            console.log(this.props.savedState);
+            this.setState(this.props.savedState, () => {
+                this.render()
+            })
+        } else {
+            this._initRange(this.props.dataset, this.props.field)
+        }
     };
 
     /**
@@ -150,6 +171,7 @@ class RangeStyleMenu extends Component {
 
 
     render() {
+        console.log("STATE", this.state.color);
         return (
             <div>
                 <Range min={this.state.min} max={this.state.max} defaultValue={this.state.values}
@@ -170,13 +192,26 @@ class RangeStyleMenu extends Component {
                     <InputLabel htmlFor="color-select">Color</InputLabel>
                     <Select
                         native
-                        value={this.state.colorName}
+                        value={this.state.color}
                         onChange={this.handleChange('color')}
                         input={<Input id="color-select"/>}
                     >
                         {COLORS.map((color) => (
                             <option key={color} value={color}>{color}</option>
                         ))}
+                    </Select>
+                </FormControl>
+                <FormControl>
+                    <InputLabel htmlFor="colorMode">Style Mode</InputLabel>
+                    <Select
+                        native
+                        value={this.state.styleMode}
+                        onChange={this.handleChange('styleMode')}
+                        input={<Input id="colorMode"/>}
+                    >
+                        <option value={'fill'}>Fill</option>
+                        <option value={'line'}>Outline</option>
+
                     </Select>
                 </FormControl>
             </div>

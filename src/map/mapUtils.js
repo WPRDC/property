@@ -154,14 +154,14 @@ export function getParcel(latlng) {
  * @return {Promise} - resolves list of possible values, rejects an error message
  */
 export function getFieldValues(dataset, field) {
-    let url = `https://wprdc.carto.com/api/v2/sql/?q=SELECT DISTINCT(${field}) FROM ${dataset}`
+    let url = `https://wprdc.carto.com/api/v2/sql/?q=SELECT DISTINCT(${field.id}) FROM "${dataset.cartoAccount}"."${dataset.cartoTable}"`;
     return new Promise((resolve, reject) => {
         fetch(url)
             .then((response) => {
                 response.json()
                     .then((data) => {
                         if (data.hasOwnProperty('rows')) {
-                            resolve(data.rows.map((row) => row[field]));
+                            resolve(data.rows.map((row) => row[field.id]));
                         } else {
                             reject('"row" not in results')
                         }
@@ -177,7 +177,7 @@ export function getFieldValues(dataset, field) {
  */
 export function createStyleSQL(dataset, field) {
     return `SELECT ds.cartodb_id, pb.the_geom, pb.the_geom_webmercator, ds.${field.id}, ds.${dataset.parcelIdField}
-        FROM wprdc.allegheny_county_parcel_boundaries pb JOIN ${dataset.cartoTable} ds ON pb.pin = ds.parid`;
+        FROM wprdc.allegheny_county_parcel_boundaries pb JOIN "${dataset.cartoAccount}"."${dataset.cartoTable}" ds ON pb.pin = ds.${dataset.parcelIdField}`;
 }
 
 /**
@@ -243,18 +243,27 @@ export function createChoroplethCSS(dataset, field, binCount, color, quantMethod
  * @param {string} color - to apply parcels in range
  * @return {string}
  */
-export function createRangeCSS(dataset, field, min, max, color) {
+export function createRangeCSS(dataset, field, min, max, color, mode) {
+    let targetType = 'polygon';
+    let colorLine = `polygon-fill: ${color}; line-color: #000;`;
+
+    if(mode === 'line'){
+        targetType = 'line';
+        colorLine = `line-color: ${color}; polygon-fill: #000;`
+    }
+
+
     return `${dataset.cartoCssId}{  
-        polygon-fill: ${color};  
+        ${colorLine}
         polygon-opacity: 0.0;  line-color: #000; line-width: .5;   [zoom < 15]{line-width: 0;}   
         line-opacity: 1;
     }
      
-    ${dataset.cartoCssId}[ ${field.id} <= ${max}] { polygon-opacity: 1;} 
+    ${dataset.cartoCssId}[ ${field.id} <= ${max}] { ${targetType}-opacity: 1;} 
     
-    ${dataset.cartoCssId}[ ${field.id} < ${min}] { polygon-opacity: 0;}
+    ${dataset.cartoCssId}[ ${field.id} < ${min}] { ${targetType}-opacity: 0;}
       
-    ${dataset.cartoCssId}[ ${field.id} > ${max}] { polygon-opacity: 0;}`
+    ${dataset.cartoCssId}[ ${field.id} > ${max}] { ${targetType}-opacity: 0;}`
 }
 
 /**
@@ -265,7 +274,7 @@ export function createRangeCSS(dataset, field, min, max, color) {
  */
 export const findMinMaxValues = (dataset, field) =>{
     let url = 'https://wprdc.carto.com/api/v2/sql?q=';
-    let sql = `SELECT MIN(${field.id}) as min, MAX(${field.id}) as max FROM ${dataset.cartoTable}`;
+    let sql = `SELECT MIN(${field.id}) as min, MAX(${field.id}) as max FROM "${dataset.cartoAccount}"."${dataset.cartoTable}"`;
 
     return new Promise((resolve, reject) => {
         fetch(url + sql).then((response) => {

@@ -48,8 +48,8 @@ export const MAP_DATASETS = [
     {
         "id": 'assessment',
         "name": "Assessment",
-        "cartoAccount": "wprdc-editor",
-        "cartoTable": "wprdc.assessments",
+        "cartoAccount": "wprdc",
+        "cartoTable": "assessments",
         "mapId": "4156fe54-fddc-43e6-993a-6ad37626e9e0",
         "cartoCssId": "#assessments",
         "parcelIdField": 'parid',
@@ -119,7 +119,7 @@ export const MAP_DATASETS = [
         "cartoTable": "allegheny_county_tax_liens",
         "mapId": "2ac98314-c5b9-4730-ae79-71c80dbd8790",
         "cartoCssId": "#liens",
-        "parcelIdField": "#allegheny_county_tax_liens",
+        "parcelIdField": "pin",
         "fields": [
             {
                 "id": "total_amount",
