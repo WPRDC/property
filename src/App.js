@@ -19,9 +19,8 @@ class App extends Component {
 
                 <MainContent className="flex-item"/>
 
-                {/*<MainFooter className="flex-item">*/}
-                    {/*<p>This is a footer.</p>*/}
-                {/*</MainFooter>*/}
+                <MainFooter className="flex-item">
+                </MainFooter>
             </div>
         );
     }
@@ -105,7 +104,7 @@ class MainFooter extends Component {
 
         return (
             <div style={style} className={this.props.className}>
-                <p>Copyright the future WPRDC</p>
+                <p>&copy; 2017 WPRDC</p>
             </div>
         )
     }

@@ -11,11 +11,13 @@ import IconButton from 'material-ui/IconButton';
 import AddCircleIcon from 'material-ui-icons/AddCircle';
 import RemoveCircleIcon from 'material-ui-icons/RemoveCircle';
 import LayersIcon from 'material-ui-icons/Layers';
-
+import {FormControl, FormHelperText} from 'material-ui/Form';
+import Divider from 'material-ui/Divider';
 
 
 /* Defaults & Helper Functions */
 import {createCategoryCSS, createStyleSQL, COLORS} from '../mapUtils';
+
 const DEFAULT_COLOR = 'red';
 
 
@@ -26,7 +28,7 @@ const DEFAULT_COLOR = 'red';
  * @return {XML} <ListItem> containing <Selects> for category and color
  * @constructor
  */
-function CategorySelectionLine(props) {
+const CategorySelectionLine = props => {
     // TODO: fix default value
     const itemIdx = props.itemIdx;
     const item = props.menuItem;
@@ -57,7 +59,7 @@ function CategorySelectionLine(props) {
             </Select>
         </div>
     );
-};
+}
 
 
 class CategoryStyleMenu extends Component {
@@ -70,6 +72,7 @@ class CategoryStyleMenu extends Component {
 
         this.state = {
             menuItems: [],         // List of menu items {'category': '', 'color': ''}
+            styleMode: 'fill'
         };
     }
 
@@ -79,7 +82,7 @@ class CategoryStyleMenu extends Component {
      */
     _handleStyleInfoChange = () => {
         let sql = createStyleSQL(this.props.dataset, this.props.field);
-        let css = createCategoryCSS(this.props.dataset, this.props.field, this.state.menuItems);
+        let css = createCategoryCSS(this.props.dataset, this.props.field, this.state.menuItems, this.state.styleMode);
         this.props.handleStyleInfoChange(sql, css);
         this._updateSavedState();
     };
@@ -145,6 +148,10 @@ class CategoryStyleMenu extends Component {
             });
     };
 
+    handleStyleModeChange = event => {
+        this.setState({styleMode: event.target.value}, this._handleStyleInfoChange)
+    };
+
     /**
      * When receiving new dataset and field props, reset the category dropdowns.
      * @param nextProps - new set of props that were given to component
@@ -169,11 +176,10 @@ class CategoryStyleMenu extends Component {
      */
     componentDidMount = () => {
         if (this.props.savedState) {
-            console.log(this.props.savedState);
             this.setState(this.props.savedState, () => {
                 this.render()
             })
-        } else{
+        } else {
             this._initMenuItems(this.props.fieldValues);
         }
     };
@@ -198,6 +204,7 @@ class CategoryStyleMenu extends Component {
     render() {
         return (
             <div>
+                <Divider/>
                 <List>
                     {this.state.menuItems.map((menuItem, idx) =>
                         <ListItem key={idx.toString()}>
@@ -232,6 +239,20 @@ class CategoryStyleMenu extends Component {
 
                     </ListItem>
                 </List>
+                <Divider/>
+                <FormControl>
+                    <InputLabel htmlFor="colorMode">Style Mode</InputLabel>
+                    <Select
+                        native
+                        value={this.state.styleMode}
+                        onChange={this.handleStyleModeChange}
+                        input={<Input id="colorMode"/>}
+                    >
+                        <option value={'fill'}>Fill</option>
+                        <option value={'line'}>Outline</option>
+
+                    </Select>
+                </FormControl>
             </div>
         );
     }

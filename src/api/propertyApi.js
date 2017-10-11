@@ -21,9 +21,6 @@ const FRESHNESS = 60/*min*/ * 60/*sec*/ * 1000/*ms*/;  // 1 hour
 
 class DataSource {
     constructor() {
-        if (new.target === DataSource) {
-            throw new TypeError("Cannot construct DataSource instances directly.")
-        }
     }
 
     /**

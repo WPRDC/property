@@ -183,22 +183,33 @@ export function createStyleSQL(dataset, field) {
 /**
  * Generate cartoCSS that styles parcels if they fall into a category.
  *
- * @param {object{ dataset - dataset in carto on which style is based
+ * @param {object} dataset - dataset in carto on which style is based
  * @param {object} field - field in `dataset` on which style is based
  * @param {array} categoryColors - array of {category: '', color: ''} objects that define how to style layer
  * @return {string} - cartoCSS string that defines the style
  */
-export function createCategoryCSS(dataset, field, categoryColors) {
+export function createCategoryCSS(dataset, field, categoryColors, mode) {
+    console.log("MODE", mode);
+
+    let opacityTarget = 'polygon-opacity';
+    let fillTarget = 'polygon-fill';
+    if(mode === 'line'){
+        opacityTarget = 'line-opacity';
+        fillTarget = 'line-color'
+
+    }
+
+
     // Base css for category styling
     let css = `#${dataset.cartoCssId}{
                 polygon-opacity: 0.0;  
-                line-color: #000;  line-opacity: 1;
-                line-width: .5; [zoom < 15]{line-width: 0;} 
+                line-color: #000;  line-opacity: 0;
+                line-width: 1;
                 `;
 
     // Add conditional css for each category-color combo entered
     categoryColors.map((item) => {
-        css += `[ ${field.id} = "${item.category}" ]{ polygon-opacity: 1.0; polygon-fill: ${item.color};}`;
+        css += `[ ${field.id} = "${item.category}" ]{ ${opacityTarget}: 1.0; ${fillTarget}: ${item.color};}`;
     });
     css += '}';
     return css
@@ -246,16 +257,17 @@ export function createChoroplethCSS(dataset, field, binCount, color, quantMethod
 export function createRangeCSS(dataset, field, min, max, color, mode) {
     let targetType = 'polygon';
     let colorLine = `polygon-fill: ${color}; line-color: #000;`;
-
+    let lineWidth = 0;
     if(mode === 'line'){
         targetType = 'line';
         colorLine = `line-color: ${color}; polygon-fill: #000;`
+        lineWidth = 1
     }
 
 
     return `${dataset.cartoCssId}{  
         ${colorLine}
-        polygon-opacity: 0.0;  line-color: #000; line-width: .5;   [zoom < 15]{line-width: 0;}   
+        polygon-opacity: 0.0;  line-color: #000; line-width: ${lineWidth};   [zoom < 15]{line-width: 0;}   
         line-opacity: 1;
     }
      

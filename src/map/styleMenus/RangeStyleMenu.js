@@ -42,7 +42,7 @@ class RangeStyleMenu extends Component {
     _handleStyleInfoChange = () => {
         let sql = createStyleSQL(this.props.dataset, this.props.field);
         let css = createRangeCSS(this.props.dataset, this.props.field, this.state.values[0], this.state.values[1], this.state.color, this.state.styleMode);
-        this.props.handleStyleInfoChange(sql, css)
+        this.props.handleStyleInfoChange(sql, css);
         this._updateSavedState();
     }
 
