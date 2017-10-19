@@ -4,6 +4,8 @@
 import React, {Component} from "react";
 import {KeyValueModule, TableModule} from "../components/DataDisplays";
 
+import Searchbar from '../components/Searchbar';
+
 
 import Button from 'material-ui/Button';
 
@@ -13,10 +15,13 @@ import {blue} from 'material-ui/colors'
 import Tooltip from 'material-ui/Tooltip';
 
 import Card, {CardHeader, CardContent} from 'material-ui/Card';
+import Paper from 'material-ui/Paper';
 
 import {LinearProgress} from 'material-ui/Progress';
+import TextField from 'material-ui/TextField';
 
-import {monify} from '../utils/dataUtils'
+
+import {monify, checkSearchQuery} from '../utils/dataUtils'
 
 import {getStreetViewImage} from '../utils/apiUtils'
 
@@ -40,13 +45,13 @@ export class PropertyDataContainer extends Component {
 
     render() {
         let style = {
+            position: 'relative',
             float: 'left',
             width: '480px',
             overflowY: 'scroll',
             overflowX: 'hidden',
             margin: 0,
-            boxShadow: '-10px 0px 10px 1px black',
-            template:{
+            template: {
                 img: {
                     height: '229px',
                     width: '100%',
@@ -55,6 +60,13 @@ export class PropertyDataContainer extends Component {
                     height: '80px',
                     backgroundColor: blue500
                 }
+            },
+            search: {
+                margin: '6px',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '454px'
             }
         };
 
@@ -62,10 +74,10 @@ export class PropertyDataContainer extends Component {
         // TODO: keep old render up until loaded
         if (this.state.isLoaded) {
             return (
-                <div style={style}>
-                    {/* <ParcelIdSearch handleParcelIdChange={this.updateParcel}/>*/}
+                <Paper style={style}>
+                    <ParcelSearch updateParcelId={this.props.updateParcel} style={style.search}/>
 
-                    <PropertyHeader address={this.state.address} parcelId={this.state.parcelId}/>
+                    <PropertyHeader handlePanToRequest={this.props.handlePanToRequest} address={this.state.address} parcelId={this.state.parcelId}/>
 
                     {/*TODO: contain all this stuff in another div that has overflow scroll*/}
                     <PropertyDataSection name="home">
@@ -87,7 +99,7 @@ export class PropertyDataContainer extends Component {
                     <PropertyDataSection name="liens" title="Tax Liens">
                         <TaxLiens data={this.state.data}/>
                     </PropertyDataSection>
-                </div>
+                </Paper>
             );
         }
         else {
@@ -196,7 +208,7 @@ function PropertyHeader(props) {
         <div>
             {img}
             <div style={style.base}>
-                <Button fab style={style.button}>
+                <Button fab style={style.button} onClick={props.handlePanToRequest}>
                     <MyLocation color={blue500}/>
                 </Button>
                 <h1 style={style.addr}>{addrLine}</h1>
@@ -406,39 +418,48 @@ function TaxLiens(props) {
 }
 
 
-class ParcelIdSearch extends Component {
+class ParcelSearch extends Component {
     constructor(props) {
         super(props);
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-
         this.state = {
-            parcelId: ''
+            searchQuery: ''
         }
 
-
     }
 
-    handleChange(event) {
-        this.setState({parcelId: event.target.value});
-    }
+    handleChange = event => {
+        this.setState({searchQuery: event.target.value})
+    };
 
-    handleSubmit(e) {
-        this.props.handleParcelIdChange(this.state.parcelId);
-        this.setState({parcelId: ''});
-        e.preventDefault();
-    }
+    handleSubmit = event => {
+        event.preventDefault();
+        checkSearchQuery(this.state.searchQuery)
+            .then(
+                (parcelId) => {
+                    console.log(parcelId);
+                    this.props.updateParcelId(parcelId, 'search')
+                },
+                (err) => console.log(err)
+            )
+    };
 
     render() {
+        const style = {
+            container: {
+                margin: '6px'
+            },
+            input: {}
+        };
+
         return (
-            <form onSubmit={this.handleSubmit}>
-                <label>
-                    <input name='parcelId' type="text" value={this.state.parcelId} onChange={this.handleChange}
-                           placeholder="PARCEL ID"/>
-                    <input type="submit" value="Search"/>
-                </label>
-            </form>
+            <div style={this.props.style}>
+                <Searchbar
+                    placeholder={"Search by Parcel ID or "}
+                    onChange={this.handleChange}
+                    onSubmit={this.handleSubmit}
+                />
+            </div>
         );
     }
 }

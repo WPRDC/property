@@ -1,6 +1,11 @@
 /**
  * Created by sds25 on 9/19/17.
  */
+
+import {getParcelIdFromAddress} from './apiUtils'
+
+const PARCEL_ID_PATTERN = /^(\d{4}\D\d{4}[a-zA-Z0-9]{7})$/;
+
 /**
  * Checks that all properties of object have values.
  *
@@ -39,8 +44,12 @@ export function monify(number, decimal) {
         return '';
     if(decimal)
         dec = 2;
-    return '$' + number.toFixed(dec);
-};
+
+    // Set decimals and commas
+    number = number.toFixed(dec).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    return '$' + number;
+}
 
 
 /**
@@ -51,7 +60,7 @@ export function monify(number, decimal) {
  * @param {array} b - second array
  * @return {boolean} True if they are different, False if the same
  */
-export let arraysAreDifferent = (a, b) => {
+export const arraysAreDifferent = (a, b) => {
     if (!a || !b) {
         return true;
     }
@@ -62,3 +71,22 @@ export let arraysAreDifferent = (a, b) => {
         }))
     );
 };
+
+
+/**
+ * Checks search query, first to see if it's a Parcel ID, then if it's not, it assumes it's an address.
+ *
+ * @param {string} query - query entered by user could be parcel ID or address
+ * @return {Promise}
+ */
+export const checkSearchQuery = query => {
+     if (PARCEL_ID_PATTERN.test(query)){
+         return new Promise( (resolve, reject) => {
+             resolve(query.toUpperCase());
+         })
+     }
+     else{
+         return getParcelIdFromAddress(query)
+     }
+};
+

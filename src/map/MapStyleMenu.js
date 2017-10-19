@@ -315,8 +315,6 @@ class MapStyleMenu extends Component {
      * @param nextProps
      */
     componentWillReceiveProps = nextProps => {
-        console.log('nextProps', nextProps);
-        console.log(nextProps.savedState);
         // Check if a saved state was provided (for updating a previously-made layer)
         if (nextProps.savedState) {
             this.setState(this.props.savedState, this.render)

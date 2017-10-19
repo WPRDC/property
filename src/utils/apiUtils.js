@@ -10,6 +10,8 @@ const streetViewParams = {
     size: "600x300"
 };
 
+const geocodeUrl = "http://tools.wprdc.org/geo/api/v0/geocode/";
+
 
 export function paramaterize(params) {
     let paramList = [];
@@ -42,3 +44,33 @@ export function getStreetViewImage(address) {
             })
     })
 }
+
+export const getParcelIdFromAddress = address => {
+    return new Promise((resolve, reject) => {
+        fetch(geocodeUrl + '?addr=' + address)
+            .then((response) => {
+                response.json()
+                    .then((data) => {
+                        resolve(data.data.parcel_id)
+                    }, (err) => reject(err))
+            }, (err) => {
+                reject(err);
+            })
+    })
+};
+
+
+export const getParcelCentroid = parcelId => {
+    return new Promise((resolve, reject) => {
+        fetch("http://tools.wprdc.org/property-api/v1/parcels/" + parcelId)
+            .then((response) => {
+                response.json()
+                    .then((data) => {
+                        resolve(data.results[0].geos.centroid)
+                    }, (err) => reject(err))
+            }, (err) => {
+                reject(err);
+            })
+    })
+}
+

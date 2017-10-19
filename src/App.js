@@ -7,6 +7,7 @@ import {PropertyDataContainer} from "./containers/propertyData";
 import {MapContainer} from "./map/map";
 
 import {themeColors} from "./utils/settings"
+import {getParcelCentroid} from "./utils/apiUtils"
 
 const api = new WPRDCPropertyAPI('http://tools.wprdc.org/property-api/v1/parcels/');
 
@@ -29,28 +30,56 @@ class App extends Component {
 
 class MainContent extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            parcelId: '0028B00154000000'
-        }
-        this.updateParcel = this.updateParcel.bind(this)
+            parcelId: '0028B00154000000',
+            centroid: [-79.961884, 40.438340],
+            changeMapZoom: false,
+        };
     }
 
-    updateParcel(parcelId) {
-        this.setState({parcelId: parcelId})
-    }
+    handlePanToRequest = () => {
+        this.setState({changeMapZoom: true})
+    };
+
+    updateParcel = (parcelId, method) => {
+        console.log(parcelId, method);
+        // Only change the zoom if the use searched, not clicked
+        let changeZoom = method === 'search';
+        // Get parcel's centroid and save it along with the parcel's ID
+        getParcelCentroid(parcelId)
+            .then((centroid) => {
+                    console.log(centroid);
+                    this.setState(
+                        {
+                            parcelId: parcelId,
+                            centroid: centroid.coordinates.map((p) => +p),
+                            changeMapZoom: changeZoom
+                        }
+                    )
+                }, (err) => {
+                    this.setState({parcelId: parcelId, changeMapZoom: changeZoom});
+                    console.log(err)
+
+                }
+            );
+    };
 
     render() {
-        console.log(this.state.parcelId);
         return (
             <div className={this.props.className}>
                 <MapContainer className="map" id="map"
                               parcelId={this.state.parcelId}
-                              updateParcel={this.updateParcel}/>
+                              center={this.state.centroid}
+                              updateParcel={this.updateParcel}
+                              changeMapZoom={this.state.changeMapZoom}
+                />
 
                 <PropertyDataContainer api={api}
                                        parcelId={this.state.parcelId}
-                                       updateParcel={this.updateParcel}> </PropertyDataContainer>
+                                       updateParcel={this.updateParcel}
+                                       handlePanToRequest={this.handlePanToRequest}>
+                </PropertyDataContainer>
             </div>
         );
     }
@@ -78,12 +107,13 @@ class MainHeader extends Component {
                 top: '20px',
                 left: '5px'
             }
-        }
+        };
 
         return (
             <div style={style} className={this.props.className}>
-                <img style={style.img} src="http://www.wprdc.org/wp-content/themes/wprdc-redesign/assets/images/plain_logo_rbg_cropped.svg"/>
-                <h1 style={style.h1} >Property Dashboard</h1>
+                <img style={style.img}
+                     src="http://www.wprdc.org/wp-content/themes/wprdc-redesign/assets/images/plain_logo_rbg_cropped.svg"/>
+                <h1 style={style.h1}>Property Dashboard (beta)</h1>
             </div>
         )
     }

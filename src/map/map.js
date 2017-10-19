@@ -29,10 +29,12 @@ export class MapContainer extends Component {
         super(props);
 
         this.state = {
+            viewport: {center: mapDefaults.position, zoom: mapDefaults.zoom},
             styleLayers: [],
             selectedShape: null,
             baseMap: <TileLayer className="new-basemap" url={DEFAULT_BASEMAP.url}
                                 attribute={DEFAULT_BASEMAP.attribution}/>,
+
         };
     }
 
@@ -42,7 +44,7 @@ export class MapContainer extends Component {
         this.setState({
             baseMap: <TileLayer className="new-basemap" url={basemap.url} attribute={basemap.attribution}/>
         });
-    }
+    };
 
 
     /**
@@ -53,17 +55,40 @@ export class MapContainer extends Component {
         // Highlight the Parcel Polygon
         let sql = `SELECT pin, the_geom, the_geom_webmercator FROM allegheny_county_parcel_boundaries WHERE ST_Contains(the_geom, ST_SetSRID(ST_Point(${event.latlng.lng}, ${event.latlng.lat}), 4326))`;
         this.setState({selectedShape: null});   // Hacky fix that tricks react into rerendering the layer.  Aparently changing the `selectedShape` isn't enough.
-        this.setState({
-            selectedShape: <CartoLayer sql={sql}
-                                       css="#layer {line-color: #00F; polygon-fill: #00F; polygon-opacity: 0.4}"/>
-        });
+        this.setState(
+            {
+                selectedShape: <CartoLayer sql={sql}
+                                           css="#layer {line-color: #00F; polygon-fill: #00F; polygon-opacity: 0.4}"/>
+            }
+        );
 
         // Lift parcelId state up
         getParcel(event.latlng)
             .then((parcelId) => {
-                this.props.updateParcel(parcelId)
+                this.props.updateParcel(parcelId, 'click')
             });
     };
+
+    _selectParcel = (parcelId) => {
+        let sql = `SELECT pin, the_geom, the_geom_webmercator FROM allegheny_county_parcel_boundaries WHERE pin = '${parcelId}'`;
+        this.setState({
+                selectedShape: <CartoLayer sql={sql}
+                                           css="#layer {line-color: #00F; polygon-fill: #00F; polygon-opacity: 0.4}"/>
+            },
+        );
+    };
+
+
+    panToPoint = (lng, lat, zoom) => {
+        console.log('pannin\' it up, son!', lat, lng, zoom);
+        if (typeof(zoom) === 'undefined') {
+            zoom = this.state.viewport.zoom;
+        }
+        this.setState({viewport: {center: [lat, lng], zoom: zoom}}, () => {
+            console.log(this.state)
+        })
+    }
+
 
     /**
      * Update list of style layers
@@ -71,7 +96,17 @@ export class MapContainer extends Component {
      */
     updateStyleLayers = (newStyleLayers) => {
         this.setState({styleLayers: newStyleLayers});
-    }
+    };
+
+
+    componentWillReceiveProps = nextProps => {
+        console.log(nextProps);
+
+        if(nextProps.changeMapZoom){
+            this._selectParcel(nextProps.parcelId)
+            this.panToPoint(nextProps.center[0], nextProps.center[1])
+        }
+    };
 
     render() {
         const style = {
@@ -87,8 +122,7 @@ export class MapContainer extends Component {
             <div style={style.base} className="mapContainer">
 
                 <Map style={style.map}
-                     center={mapDefaults.position}
-                     zoom={mapDefaults.zoom}
+                     viewport={this.state.viewport}
                      maxZoom={mapDefaults.maxZoom}
                      onClick={this.handleClick}
                      zoomControl={false}

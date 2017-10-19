@@ -163,4 +163,5 @@ export class WPRDCPropertyAPI extends DataSource {
             return this.getKeyValueData(parcelId, options.fieldMapping())
         }
     }
+
 }
