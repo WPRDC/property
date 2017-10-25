@@ -17,7 +17,6 @@ import ChoroplethStyleMenu from './styleMenus/ChoroplethStyleMenu';
 import RangeStyleMenu from './styleMenus/RangeStyleMenu';
 
 
-
 /* Icons */
 import {default as MapIcon} from 'material-ui-icons/Map';
 
@@ -85,12 +84,15 @@ class MapStyleMenu extends Component {
 
         this.state = {
             currentTab: 'category',
-            geometry: 'parcel_boundary',
-            dataset: null,          // Carto dataset
-            field: null,            // field in carto dataset
-            fieldValues: null,      // possible values of field in carto dataset
-            availableDatasets: [],
-            availableFields: [],
+            geometry: 'parcel_boundary',    // currently not used
+
+            dataset: null,                  // Carto dataset
+            field: null,                    // field in carto dataset
+            fieldValues: null,              // possible values of field in carto dataset
+
+            availableDatasets: [],          // for menus
+            availableFields: [],            // available fields for state.dataset, for menus
+
             styleInfo: {sql: '', css: ''},  // SQL and CSS that define a carto style - is lifted up to map on submit
             layerName: '',
             colorMode: 'fill',
@@ -187,9 +189,16 @@ class MapStyleMenu extends Component {
                 })
     };
 
-    updateSubmenuSavedState = submenuState =>{
+
+    /**
+     * Updates the saved state of submenu.
+     * @param submenuState - current state of submenu
+     */
+    updateSubmenuSavedState = submenuState => {
         this.setState({submenuState: submenuState})
-    }
+    };
+
+
     /**
      * When tab is clicked, change it in state, and update available Selects.
      * @param e

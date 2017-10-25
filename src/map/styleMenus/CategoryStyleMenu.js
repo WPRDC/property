@@ -36,17 +36,21 @@ const CategorySelectionLine = props => {
     // TODO: fix default value
     return (
         <div>
-            <Select native value={props.menuItem.category}
-                    onChange={props.handleChangeSelect('category', props.itemIdx)}
-                    input={<Input id={'category-value-' + props.itemIdx}/>}
-            >
-                {props.categoryOptions.map((opt, optionIdx) => (
-                    <option key={optionIdx.toString()}
-                            value={props.categoryOptions[optionIdx]}>{props.categoryOptions[optionIdx]}
-                    </option>
-                ))}
-            </Select>
-            <ColorPicker onChange={props.handleChangeColor(props.itemIdx)}/>
+            <FormControl>
+                <Select native value={props.menuItem.category}
+                        onChange={props.handleChangeSelect('category', props.itemIdx)}
+                        input={<Input id={'category-value-' + props.itemIdx}/>}
+                >
+                    {props.categoryOptions.map((opt, optionIdx) => (
+                        <option key={optionIdx.toString()}
+                                value={props.categoryOptions[optionIdx]}>{props.categoryOptions[optionIdx]}
+                        </option>
+                    ))}
+                </Select>
+            </FormControl>
+            <FormControl>
+                <ColorPicker onChange={props.handleChangeColor(props.itemIdx)}/>
+            </FormControl>
         </div>
     );
 };
@@ -104,7 +108,7 @@ class CategoryStyleMenu extends Component {
             if (targetIdx !== currentIdx) {
                 return menuItem;
             } else {
-                // udpate menuItem with new value for field
+                // update menuItem with new value for field
                 return {...menuItem, [field]: value};
             }
         });
@@ -257,7 +261,7 @@ class CategoryStyleMenu extends Component {
                 </List>
                 <Divider/>
                 <FormControl>
-                    <InputLabel htmlFor="colorMode">Style Mode</InputLabel>a
+                    <InputLabel htmlFor="colorMode">Style Mode</InputLabel>
                     <Select
                         native
                         value={this.state.styleMode}

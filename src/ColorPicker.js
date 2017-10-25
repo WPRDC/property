@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { TwitterPicker } from 'react-color'
-
+import { GithubPicker } from 'react-color';
+import Button from 'material-ui/Button';
 
 class ColorPicker extends Component {
     constructor(props) {
@@ -31,20 +31,14 @@ class ColorPicker extends Component {
     };
 
     render() {
-        const styles = {
+         const styles = {
             color: {
-                width: '36px',
-                height: '14px',
+                width: '24px',
+                height: '16px',
                 borderRadius: '2px',
                 background: this.state.color,
             },
             swatch: {
-                padding: '5px',
-                background: '#fff',
-                borderRadius: '1px',
-                boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
-                display: 'inline-block',
-                cursor: 'pointer',
             },
             popover: {
                 position: 'absolute',
@@ -57,18 +51,19 @@ class ColorPicker extends Component {
                 bottom: '0px',
                 left: '0px',
             },
+            base: this.props.style
         };
 
 
 
         return (
-            <div>
-                <div style={styles.swatch} onClick={this.handleClick}>
+            <div style={styles.base}>
+                <Button dense style={styles.swatch} onClick={this.handleClick}>
                     <div style={styles.color}/>
-                </div>
+                </Button>
                 {this.state.displayColorPicker ? <div style={styles.popover}>
                     <div style={styles.cover} onClick={this.handleClose}/>
-                    <TwitterPicker color={this.state.color}
+                    <GithubPicker color={this.state.color}
                                    onChange={this.handleChange}
                                    onChangeComplete={this.handleChangeComplete}/>
                 </div> : null}
