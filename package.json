@@ -1,6 +1,6 @@
 {
   "name": "property",
-  "homepage" : "http://tools.wprdc.org/property-dashboard",
+  "homepage": "http://tools.wprdc.org/property-dashboard",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -15,6 +15,7 @@
     "rc-slider": "^8.3.1",
     "react": "^16.0.0",
     "react-bootstrap": "^0.31.3",
+    "react-color": "^2.13.8",
     "react-dnd": "^2.5.4",
     "react-dom": "^16.0.0",
     "react-foundation": "^0.9.1",

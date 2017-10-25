@@ -14,6 +14,10 @@ import LayersIcon from 'material-ui-icons/Layers';
 import {FormControl, FormHelperText} from 'material-ui/Form';
 import Divider from 'material-ui/Divider';
 
+import ColorPicker from '../../ColorPicker'
+
+import {GithubPicker} from 'react-color';
+
 
 /* Defaults & Helper Functions */
 import {createCategoryCSS, createStyleSQL, COLORS} from '../mapUtils';
@@ -30,36 +34,22 @@ const DEFAULT_COLOR = 'red';
  */
 const CategorySelectionLine = props => {
     // TODO: fix default value
-    const itemIdx = props.itemIdx;
-    const item = props.menuItem;
-    const categoryOptions = props.categoryOptions;
-    const colorOptions = COLORS;  // TODO: decide whether this should be dynamic or just leave as a constant
-    const handleChangeItem = props.handleChangeItem;
     return (
         <div>
-            <Select native value={item.category}
-                    onChange={handleChangeItem('category', itemIdx)}
-                    input={<Input id={'category-value-' + {itemIdx}}/>}
+            <Select native value={props.menuItem.category}
+                    onChange={props.handleChangeSelect('category', props.itemIdx)}
+                    input={<Input id={'category-value-' + props.itemIdx}/>}
             >
-                {categoryOptions.map((opt, optionIdx) => (
+                {props.categoryOptions.map((opt, optionIdx) => (
                     <option key={optionIdx.toString()}
-                            value={categoryOptions[optionIdx]}>{categoryOptions[optionIdx]}
+                            value={props.categoryOptions[optionIdx]}>{props.categoryOptions[optionIdx]}
                     </option>
                 ))}
             </Select>
-            <Select native value={item.color}
-                    onChange={handleChangeItem('color', itemIdx)}
-                    input={<Input id={'color-value-' + {itemIdx}}/>}
-            >
-                {colorOptions.map((opt, optionIdx) => (
-                    <option key={optionIdx.toString()}
-                            value={colorOptions[optionIdx]}>{colorOptions[optionIdx]}
-                    </option>
-                ))}
-            </Select>
+            <ColorPicker onChange={props.handleChangeColor(props.itemIdx)}/>
         </div>
     );
-}
+};
 
 
 class CategoryStyleMenu extends Component {
@@ -90,6 +80,7 @@ class CategoryStyleMenu extends Component {
     /**
      * Sets `menuItem` to default state. Currently this means setting that category to the first fieldValue and color
      * to the default color
+     *
      * @param {array} fieldValues - possible values for field being styled
      * @private
      */
@@ -100,9 +91,34 @@ class CategoryStyleMenu extends Component {
         )
     };
 
+    /**
+     * Replaces menu item at index `targetIdx` with `n
+     * @param targetIdx
+     * @param field
+     * @param value
+     * @param callback function to run after setting state
+     * @private
+     */
+    _updateMenuItems = (targetIdx, field, value, callback) => {
+        const newMenuItems = this.state.menuItems.map((menuItem, currentIdx) => {
+            if (targetIdx !== currentIdx) {
+                return menuItem;
+            } else {
+                // udpate menuItem with new value for field
+                return {...menuItem, [field]: value};
+            }
+        });
+
+        this.setState(
+            {menuItems: newMenuItems},
+            callback
+        )
+    };
+
     _updateSavedState() {
         this.props.updateSavedState(this.state)
     }
+
 
     /**
      * Runs when 'add' button is clicked.  Adds a menu item to the menu item list.
@@ -127,26 +143,25 @@ class CategoryStyleMenu extends Component {
 
     /**
      * Runs when an menu item is changed
+     *
      * @param {string} field - name of field which changed
      * @param {int} targetIdx - index of menu item in `this.state.menuItems` that was changed
      */
     handleChangeMenuItem = (field, targetIdx) => (event) => {
-        // Update the list of menu items
-        const newMenuItems = this.state.menuItems.map((menuItem, currentIdx) => {
-            if (targetIdx !== currentIdx) {
-                return menuItem;
-            } else {
-                return {...menuItem, [field]: event.target.value};
-            }
-        });
-        this.setState(
-            {menuItems: newMenuItems},
-
-            // Generate new SQL and CSS from the current user selections and lift up to
-            () => {
-                this._handleStyleInfoChange();
-            });
+        this._updateMenuItems(targetIdx, field, event.target.value, this._handleStyleInfoChange);
     };
+
+
+    /**
+     * Runs when color is changed
+     *
+     * @param targetIdx
+     */
+    handleChangeColor = targetIdx => color => {
+        console.log("COLOR", color);
+        this._updateMenuItems(targetIdx, 'color', color, this._handleStyleInfoChange);
+    };
+
 
     handleStyleModeChange = event => {
         this.setState({styleMode: event.target.value}, this._handleStyleInfoChange)
@@ -216,7 +231,8 @@ class CategoryStyleMenu extends Component {
                                     itemIdx={idx}
                                     menuItem={menuItem}
                                     categoryOptions={this.props.fieldValues}
-                                    handleChangeItem={this.handleChangeMenuItem}
+                                    handleChangeSelect={this.handleChangeMenuItem}
+                                    handleChangeColor={this.handleChangeColor}
                                 />
                             }/>
                             <ListItemSecondaryAction>
@@ -241,7 +257,7 @@ class CategoryStyleMenu extends Component {
                 </List>
                 <Divider/>
                 <FormControl>
-                    <InputLabel htmlFor="colorMode">Style Mode</InputLabel>
+                    <InputLabel htmlFor="colorMode">Style Mode</InputLabel>a
                     <Select
                         native
                         value={this.state.styleMode}
