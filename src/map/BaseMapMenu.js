@@ -29,7 +29,7 @@ class BaseMapMenu extends Component {
             this.props.updateBasemap(event.target.getAttribute('value'))
         );
     };
-
+6
 
     render() {
         const basemaps = this.props.basemaps;

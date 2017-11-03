@@ -12,7 +12,7 @@ import {getCartoTiles, getParcel} from './mapUtils'
 import {BASEMAPS} from './mapDefaults'
 
 import MapLayerMenu from "./MapLayerMenu";
-import MapController from "./MapController";
+
 
 /* Constants */
 const mapDefaults = {
@@ -98,15 +98,12 @@ export class MapContainer extends Component {
         this.setState({styleLayers: newStyleLayers});
     };
 
-
-    componentWillReceiveProps = nextProps => {
-        console.log(nextProps);
-
-        if(nextProps.changeMapZoom){
-            this._selectParcel(nextProps.parcelId)
-            this.panToPoint(nextProps.center[0], nextProps.center[1])
+    componentWillReceiveProps = (nextProps) => {
+        if(nextProps.parcelId !== this.props.parcelId){
+            console.log("UPDATING MAP SELECTION");
+            this._selectParcel(nextProps.parcelId);
         }
-    };
+    }
 
     render() {
         const style = {

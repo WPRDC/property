@@ -90,3 +90,14 @@ export const checkSearchQuery = query => {
      }
 };
 
+export const makeAddress = data => {
+    return (
+        {
+            "number": data['assessments'][0]['PROPERTYHOUSENUM'],
+            "street": data['assessments'][0]['PROPERTYADDRESS'],
+            "city": data['assessments'][0]['PROPERTYCITY'],
+            "state": data['assessments'][0]['PROPERTYSTATE'],
+            "zip": data['assessments'][0]['PROPERTYZIP'],
+        }
+    )
+}
