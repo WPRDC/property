@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 
-import {KeyValueModule} from "../DataDisplays";
+import KeyValueListDisplay from "../dashboard/dataDisplays/KeyValueListDisplay";
 
 const PropertyTaxReductions =props => {
     return (
-        <KeyValueModule title="Tax Reductions"
-                        sourceData={props.data}
+        <KeyValueListDisplay title="Tax Reductions"
+                        data={props.data}
                         fields={
                             [
                                 {

@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 
-import {KeyValueModule} from "../DataDisplays";
+import KeyValueListDisplay from "../dashboard/dataDisplays/KeyValueListDisplay";
 import {monify} from "../../utils/dataUtils";
 
 const TaxLiens = props => {
     return (
-        <KeyValueModule sourceData={props.data}
+        <KeyValueListDisplay data={props.data}
                         title="Tax Liens Summary"
                         note="The information provided here is merely an estimate. Please refer to Allegheny County's Department of Court Records for official tax lien information."
                         fields={[

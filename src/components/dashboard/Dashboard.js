@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import propTypes from 'prop-types'
 
 /* Material UI Components */
@@ -10,7 +10,7 @@ import {blue} from 'material-ui/colors'
 
 
 /* Helper functions */
-import {monify, makeAddress} from '../utils/dataUtils'
+import {monify, extractAddressFromData} from '../../utils/dataUtils'
 
 
 /*Project Components*/
@@ -25,7 +25,7 @@ import {
     PropertyTaxReductions,
     SalesTable,
     TaxLiens
-} from '../components/customModules'
+} from '../customModules/index'
 
 
 
@@ -33,7 +33,7 @@ import {
 
 
 /* Project Components */
-import ParcelSearch from '../containers/ParcelSearch'
+import ParcelSearch from '../../containers/ParcelSearch'
 
 const blue500 = blue[500];
 
@@ -66,9 +66,8 @@ const style = {
 const Dashboard = props => {
     const {parcelId, data, isFetching, panMapToTarget} = props;
 
-
     if (data && !isFetching) {
-        const address = makeAddress(data); //todo: have address generated earlier in the stream (maybe at api server level?)
+        const address = extractAddressFromData(data); //todo: have address generated earlier in the stream (maybe at api server level?)
 
         return (
             <Paper style={style}>

@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 
-import {KeyValueModule} from "../DataDisplays";
+import KeyValueListDisplay from "../dashboard/dataDisplays/KeyValueListDisplay";
 
 const DwellingCharacteristics =props => {
     return (
-        <KeyValueModule title="Dwelling  Characteristics"
-                        sourceData={props.data}
+        <KeyValueListDisplay title="Dwelling  Characteristics"
+                        data={props.data}
                         missingDataMsg="Dwelling characteristics are only available for residential parcels."
                         fields={[
                             {resource: 'assessments', id: 'STYLEDESC', title: 'Style'},
@@ -26,6 +26,6 @@ const DwellingCharacteristics =props => {
                         ]}
         />
     );
-}
+};
 
 export default DwellingCharacteristics

@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {themeColors} from "../utils/settings"
 
 const Footer = props => {

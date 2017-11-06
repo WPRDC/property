@@ -4,7 +4,9 @@ import {
     SELECT_PARCEL,
     INVALIDATE_PARCEL,
     REQUEST_PARCEL_DATA,
-    RECEIVE_PARCEL_DATA, UPDATE_SEARCH_QUERY
+    RECEIVE_PARCEL_DATA,
+    REQUEST_PARCEL_IMAGE,
+    RECEIVE_PARCEL_IMAGE
 } from "../actions/index";
 
 const DEFAULT_PARCEL = '0028F00194000000';
@@ -49,15 +51,46 @@ const parcelDataById = (state = {}, action) => {
         case REQUEST_PARCEL_DATA:
             return Object.assign({}, state, {
                 [action.parcelId]: parcelData(state[action.parcelId], action)
-            })
+            });
         default:
             return state
     }
 };
 
+
+const parcelImage = (state = {isFetching: false, imageUrl: null}, action) => {
+    switch (action.type) {
+        case REQUEST_PARCEL_IMAGE:
+            return Object.assign({}, state, {
+                isFetching: true,
+            });
+        case RECEIVE_PARCEL_IMAGE:
+            return Object.assign({}, state, {
+                isFetching: false,
+                imageUrl: action.imageUrl
+            });
+        default:
+            return state
+    }
+};
+
+
+const parcelImagesById = (state = {}, action) => {
+    switch (action.type) {
+        case RECEIVE_PARCEL_IMAGE:
+        case REQUEST_PARCEL_IMAGE:
+            return Object.assign({}, state, {
+                [action.parcelId]: parcelImage(state[action.parcelId], action)
+            });
+        default:
+            return state;
+    }
+};
+
 const rootReducer = combineReducers({
+    currentParcelId,
     parcelDataById,
-    currentParcelId
+    parcelImagesById
 });
 
 export default rootReducer

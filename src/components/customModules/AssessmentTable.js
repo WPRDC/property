@@ -1,12 +1,12 @@
 import React from 'react';
 
-import {TableModule} from "../DataDisplays";
+import TableDisplay from "../dashboard/dataDisplays/TableDisplay";
 import {monify} from "../../utils/dataUtils";
 
 const AssessmentTable = props => {
     return (
-        <TableModule title="Assessment Values"
-                     sourceData={props.data}
+        <TableDisplay title="Assessment Values"
+                     data={props.data}
                      tableInfo={
                          {
                              showHeading: true,

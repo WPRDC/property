@@ -1,15 +1,11 @@
-/**
- * Created by sds25 on 9/19/17.
- */
 import React from 'react';
 import {withStyles} from 'material-ui/styles';
 
-const styles = theme => ({
-});
+const styles = theme => ({});
 
 
-function KeyValuePairList(props) {
-    const data = props.data;
+const KeyValueList = props => {
+    const {data} = props;
     const style = {
         listStyle: 'none',
         margin: '0 0 0 0',
@@ -23,9 +19,9 @@ function KeyValuePairList(props) {
             )}
         </ul>
     );
-}
+};
 
-function KeyValuePair(props) {
+const KeyValuePair = props => {
     const listStyle = {
         padding: '8px 0'
     };
@@ -36,17 +32,17 @@ function KeyValuePair(props) {
             <KeyValueValue key={props.field} val={props.val}/>
         </dl>
     </li>
-}
+};
 
-function KeyValueKey(props) {
+const KeyValueKey = props => {
     const style = {
         paddingLeft: '',
         fontSize: '13px',
     };
     return <dt style={style} className="kv-key">{props.field}</dt>
-}
+};
 
-function KeyValueValue(props) {
+const KeyValueValue = props => {
     const style = {
         paddingLeft: '',
         marginLeft: '0',
@@ -55,6 +51,6 @@ function KeyValueValue(props) {
     };
 
     return <dd style={style} className="kv-val">{props.val}</dd>
-}
+};
 
-export default withStyles(styles)(KeyValuePairList)
+export default withStyles(styles)(KeyValueList)

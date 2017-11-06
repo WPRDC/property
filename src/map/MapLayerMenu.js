@@ -4,13 +4,7 @@ import React, {Component} from 'react';
 import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
-import Drawer from 'material-ui/Drawer';
-import Dialog, {DialogTitle, DialogContent, DialogActions} from 'material-ui/Dialog';
-import Input, {InputLabel} from 'material-ui/Input';
-import Select from 'material-ui/Select';
-import {FormControl, FormHelperText} from 'material-ui/Form';
 import AppBar from 'material-ui/AppBar';
-import Card, {CardActions, CardContent, CardHeader, CardMedia} from 'material-ui/Card';
 import List, {ListItem, ListItemIcon, ListItemText, ListItemAvatar, ListItemSecondaryAction} from 'material-ui/List';
 
 
@@ -21,8 +15,7 @@ import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 
 import Slide from 'material-ui/transitions/Slide';
-import Fade from 'material-ui/transitions/Fade'
-import Tabs, {Tab} from 'material-ui/Tabs';
+
 import BaseMapMenu from './BaseMapMenu'
 import MapStyleMenu from './MapStyleMenu'
 /* Icons */
@@ -34,7 +27,7 @@ import AddIcon from 'material-ui-icons/Add';
 /* Functions */
 import {COLORS} from "../utils/dataUtils";
 
-import {green, blue, red} from 'material-ui/colors';
+import {green} from 'material-ui/colors';
 
 
 class MapLayerMenu extends Component {

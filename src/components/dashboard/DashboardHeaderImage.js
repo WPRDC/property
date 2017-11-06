@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 /* Material UI Components */
 import {LinearProgress} from 'material-ui/Progress';
 
-import {getStreetViewImage} from '../utils/apiUtils' // Todo: replace with redux stuff
+import {makeStreetViewUrl} from '../../utils/apiUtils' // Todo: replace with redux stuff
 
 
 export class DashboardHeaderImage extends Component {
@@ -13,19 +13,16 @@ export class DashboardHeaderImage extends Component {
             streetViewImg: null,
         }
     }
-
-    componentDidMount() {
-        this.setState({
-            streetViewImg: null,
-        });
-        getStreetViewImage(this.props.address)
-            .then((url) => {
-                this.setState({streetViewImg: url})
-                console.log("new image, son!");
-            }, (err) => {
-                console.log('err', err);
-            })
-    }
+    //
+    // componentDidMount() {
+    //     console.log("DID MOUNT");
+    //     getStreetViewImage(this.props.address)
+    //         .then((url) => {
+    //             this.setState({streetViewImg: url})
+    //         }, (err) => {
+    //             console.log('ERROR:', err);
+    //         })
+    // }
 
 
     render() {
@@ -37,6 +34,7 @@ export class DashboardHeaderImage extends Component {
         };
 
         if (this.state.streetViewImg === null) {
+
             return (
                 <div>
                     <div style={{width: '100%', height: '232px'}}/>
@@ -44,7 +42,7 @@ export class DashboardHeaderImage extends Component {
                 </div>);
         } else {
             return (
-                <img alt={address} style={{...defaultStyle, ...this.props.style}} src={this.state.streetViewImg}/>
+                <img alt={address} style={{...defaultStyle, ...this.props.style}} src={makeStreetViewUrl(this.props.address)}/>
             );
         }
 

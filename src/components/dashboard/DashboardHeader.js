@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 
 /* Material UI Components */
 import Button from 'material-ui/Button';
@@ -10,6 +10,7 @@ import {blue} from 'material-ui/colors'
 
 /* Project Components */
 import DashboardHeaderImage from './DashboardHeaderImage'
+import {makeAddressLine} from "../../utils/dataUtils";
 
 const blue500 = blue[500];
 
@@ -41,7 +42,7 @@ const DashboardHeader = props => {
     const {address} = props;
     let addrLine = '';
     if (typeof(address) !== 'undefined') {
-        addrLine = `${address.number} ${address.street.toLowerCase()} ${address.city.toLowerCase()} ${address.state} ${address.zip}`;
+        addrLine = makeAddressLine(address)
 
         return (
             <div>

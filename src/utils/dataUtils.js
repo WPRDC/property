@@ -90,7 +90,8 @@ export const checkSearchQuery = query => {
      }
 };
 
-export const makeAddress = data => {
+export const extractAddressFromData = data => {
+    console.log("data", data);
     return (
         {
             "number": data['assessments'][0]['PROPERTYHOUSENUM'],
@@ -100,4 +101,100 @@ export const makeAddress = data => {
             "zip": data['assessments'][0]['PROPERTYZIP'],
         }
     )
+}
+
+export const makeAddressLine = addressParts => {
+    const {number, street, city, state, zip} = addressParts;
+    return `${number} ${street} ${city} ${state} ${zip}`
+}
+
+
+/**
+ * Extract single field from source data and format it if necessary.
+ *
+ * @param sourceData
+ * @param fieldMapping
+ * @return {*}
+ */
+export const extractField = (sourceData, fieldMapping) => {
+    let value = sourceData[fieldMapping.resource][0][fieldMapping.id];
+    if (typeof(fieldMapping.formatter) !== 'undefined') {
+        value = fieldMapping.formatter(value);
+    }
+    return value;
+}
+
+/**
+ * Pulls out key-value mapping {title: value} from a source of data
+ * @param data
+ * @param fieldMapping
+ * @return {{}}
+ */
+export const extractKeyValueSubset = (data, fieldMapping) => {
+    let subset = {};
+    for (let field of fieldMapping) {
+        let title = '',
+            value = '';
+
+        // items not dependent on `data`
+        if (exists(field.value, field.title)) {
+            title = field.title;
+            value = field.value;
+
+        }
+        // items pulled from data
+        else if (exists(field.resource, field.id)) {
+            if (exists(field.title))
+                title = field.title;
+            else
+                title = field.id;
+            if (data[field.resource].length && data[field.resource][0].hasOwnProperty(field.id))
+                value = data[field.resource][0][field.id]
+        }
+
+        if (exists(field.formatter))
+            subset[title] = field.formatter(value);
+        else
+            subset[title] = value;
+    }
+
+    return subset;
+}
+
+/**
+ * Pulls a table ( [[]...] ) from  a source of data
+ * @param data
+ * @param tableMapping
+ * @param colLabels
+ * @param rowLabels
+ * @return {Array}
+ */
+export const extractTable = (data, tableProps) => {
+    let table = [];
+
+    // Generate heading row
+    if (tableProps.showHeading) {
+        let heading = [];
+        for (let field of tableProps.heading) {
+            if (field === '__label__')
+                heading.push('');
+            else
+                heading.push(field)
+        }
+        table.push(heading);
+    }
+
+    // Collect Data for rows
+    for (let row of tableProps.rows) {
+        let tempRow = [];
+        for (let field of tableProps.heading) {
+            if (field === '__label__')
+                tempRow.push(row[field]);
+            else
+                tempRow.push(extractField(data, row[field]))
+        }
+        table.push(tempRow);
+    }
+
+    return table;
 }

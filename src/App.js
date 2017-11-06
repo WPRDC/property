@@ -5,14 +5,11 @@ import { connect } from 'react-redux'
 import ParcelDashboard from './containers/ParcelDashboard'
 import {MapContainer} from "./map/map";
 
-import {getParcelCentroid} from "./utils/apiUtils"
-
-
 import Footer from './components/Footer'
 import Header from './components/Header'
 
 import {
-    fetchParcelDataIfNeeded,
+    fetchParcelDataIfNeeded, fetchParcelImageIfNeeded,
     selectParcel
 
 } from "./actions/index";
@@ -22,14 +19,14 @@ class App extends Component {
     // When it mounts, get the data
     componentDidMount = () => {
         const {dispatch, currentParcelId} = this.props;
-        dispatch(fetchParcelDataIfNeeded(currentParcelId))
+        dispatch(fetchParcelDataIfNeeded(currentParcelId));
     };
 
     // When it updates, if there's a new parcel ID, get the data for it
     componentDidUpdate = prevProps => {
         if (this.props.currentParcelId !== prevProps.currentParcelId) {
             const {dispatch, currentParcelId} = this.props;
-            dispatch(fetchParcelDataIfNeeded(currentParcelId))
+            dispatch(fetchParcelDataIfNeeded(currentParcelId));
         }
     };
 

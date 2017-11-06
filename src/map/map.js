@@ -3,7 +3,7 @@
  */
 
 import React, {Component} from 'react';
-import {Map, TileLayer, GeoJSON, ZoomControl} from 'react-leaflet';
+import {Map, TileLayer, ZoomControl} from 'react-leaflet';
 
 /* Material UI Components*/
 

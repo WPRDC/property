@@ -1,11 +1,11 @@
 import React, {Component} from 'react'
 
-import {KeyValueModule} from "../DataDisplays";
+import KeyValueListDisplay from "../dashboard/dataDisplays/KeyValueListDisplay";
 
 const ParcelCharacteristics = props => {
     return (
-        <KeyValueModule title="Property Characteristics"
-                        sourceData={props.data}
+        <KeyValueListDisplay title="Property Characteristics"
+                        data={props.data}
                         fields={[
                             {resource: 'assessments', id: 'CLASSDESC', title: 'Use Class'},
                             {resource: 'assessments', id: 'OWNERDESC', title: 'Owner Type'},
