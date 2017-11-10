@@ -1,9 +1,13 @@
 /**
  * Created by sds25 on 9/20/17.
  */
-
+import React from 'react';
 import cartodb from 'cartodb'
-import {PARCEL} from "./mapDefaults";
+
+import CartoMapLayer from '../components/map/CartoMapLayer'
+
+import {PARCEL} from "../map/mapDefaults";
+
 
 const cartoSQL = cartodb.SQL({user: 'wprdc'});
 
@@ -14,8 +18,6 @@ export const QUANTIFICATION_METHODS = {
     equal: {title: 'Equal Intervals'},
     headtails: {title: 'Head/Tails'}
 };
-
-
 
 
 export const COLORS = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'teal', 'black', 'white', 'gray'];
@@ -124,8 +126,7 @@ export function getCartoTiles(sql, css) {
  *                          The point should use the WGS84 projection (SRID: 4326)
  * @return {Promise} - resolves with parcel id string, rejects with error message
  */
-export function getParcel(latlng) {
-    console.log(latlng);
+export function getParcelFromPoint(latlng) {
     let url = 'https://wprdc.carto.com/api/v2/sql?q=';
     let sql = `SELECT pin FROM allegheny_county_parcel_boundaries WHERE ST_Contains(the_geom, ST_SetSRID(ST_Point(${latlng.lng}, ${latlng.lat}), 4326))`;
 
@@ -197,7 +198,7 @@ export function createCategoryCSS(dataset, field, categoryColors, mode) {
 
     let opacityTarget = 'polygon-opacity';
     let fillTarget = 'polygon-fill';
-    if(mode === 'line'){
+    if (mode === 'line') {
         opacityTarget = 'line-opacity';
         fillTarget = 'line-color'
 
@@ -262,7 +263,7 @@ export function createRangeCSS(dataset, field, min, max, color, mode) {
     let targetType = 'polygon';
     let colorLine = `polygon-fill: ${color}; line-color: #000;`;
     let lineWidth = 0;
-    if(mode === 'line'){
+    if (mode === 'line') {
         targetType = 'line';
         colorLine = `line-color: ${color}; polygon-fill: #000;`
         lineWidth = 1
@@ -288,7 +289,7 @@ export function createRangeCSS(dataset, field, min, max, color, mode) {
  * @param field
  * @return {Promise}
  */
-export const findMinMaxValues = (dataset, field) =>{
+export const findMinMaxValues = (dataset, field) => {
     let url = 'https://wprdc.carto.com/api/v2/sql?q=';
     let sql = `SELECT MIN(${field.id}) as min, MAX(${field.id}) as max FROM "${dataset.cartoAccount}"."${dataset.cartoTable}"`;
 
@@ -313,3 +314,26 @@ export const findMinMaxValues = (dataset, field) =>{
     })
 }
 
+/**
+ * Shape layer factory.
+ * @param id
+ * @param shapeClass
+ */
+export const singleShapeLayer = (id, shapeClass = PARCEL) => {
+    const {idField, tableId} = shapeClass;
+
+    const sql =
+        `SELECT "${idField}", the_geom, the_geom_webmercator 
+         FROM ${tableId} 
+         WHERE "${idField}" = '${id}'`;
+
+    const css =
+        `#layer {
+            line-color: #00F; 
+            polygon-fill: #00F; 
+            polygon-opacity: 0.4
+        }`;
+
+    return {sql, css}
+
+}

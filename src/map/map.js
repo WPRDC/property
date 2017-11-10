@@ -24,7 +24,7 @@ const mapDefaults = {
 
 const DEFAULT_BASEMAP = BASEMAPS['voyager'];
 
-export class MapContainer extends Component {
+class MapContainer extends Component {
     constructor(props) {
         super(props);
 
@@ -200,3 +200,5 @@ class CartoLayer extends Component {
 
     }
 }
+
+export default MapContainer

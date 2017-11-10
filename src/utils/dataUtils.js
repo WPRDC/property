@@ -91,7 +91,6 @@ export const checkSearchQuery = query => {
 };
 
 export const extractAddressFromData = data => {
-    console.log("data", data);
     return (
         {
             "number": data['assessments'][0]['PROPERTYHOUSENUM'],

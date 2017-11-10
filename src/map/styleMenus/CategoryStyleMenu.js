@@ -71,7 +71,7 @@ class CategoryStyleMenu extends Component {
     }
 
     /**
-     * Updates the SQL and cartoCSS that define style on a Carto Map.
+     * Updates the SQL and cartoCSS that define style on a Carto InterfaceMap.
      * @private
      */
     _handleStyleInfoChange = () => {

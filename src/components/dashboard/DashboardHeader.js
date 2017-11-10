@@ -39,30 +39,29 @@ const style = {
 };
 
 const DashboardHeader = props => {
-    const {address} = props;
+    const {address, imageUrl} = props;
     let addrLine = '';
     if (typeof(address) !== 'undefined') {
-        addrLine = makeAddressLine(address)
-
-        return (
-            <div>
-                <DashboardHeaderImage address={addrLine}/>
-                <div style={style.base}>
-                    <Button fab style={style.button} onClick={props.handlePanToRequest}>
-                        <MyLocation color={blue500}/>
-                    </Button>
-                    <h1 style={style.addr}>{addrLine}</h1>
-
-                    <div style={style.parcelId}>
-                        <Tooltip title="Parcel ID">
-                            <span style={style.parcelId}>{props.parcelId}</span>
-                        </Tooltip>
-                    </div>
-
-                </div>
-            </div>
-        );
+        addrLine = makeAddressLine(address);
     }
-}
+    return (
+        <div>
+            <DashboardHeaderImage imageUrl={imageUrl} address={address}/>
+            <div style={style.base}>
+                <Button fab style={style.button} onClick={props.handlePanToRequest}>
+                    <MyLocation color={blue500}/>
+                </Button>
+                <h1 style={style.addr}>{addrLine}</h1>
+
+                <div style={style.parcelId}>
+                    <Tooltip title="Parcel ID">
+                        <span style={style.parcelId}>{props.parcelId}</span>
+                    </Tooltip>
+                </div>
+
+            </div>
+        </div>
+    );
+};
 
 export default DashboardHeader

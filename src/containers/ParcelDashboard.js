@@ -4,7 +4,7 @@ import Dashboard from '../components/dashboard/Dashboard'
 
 
 const mapStateToProps = (state) => {
-    const {currentParcelId, parcelDataById} = state;
+    const {currentParcelId, parcelDataById, parcelImagesById} = state;
     const {
         isFetching,
         lastUpdated,
@@ -13,12 +13,15 @@ const mapStateToProps = (state) => {
         isFetching: true,
         data: null
     };
+    const {imageUrl} = parcelImagesById[currentParcelId] || {imageUrl: null};
 
     return {
-        parcelId: currentParcelId,
+        parcelId:
+        currentParcelId,
         data,
         isFetching,
-        lastUpdated
+        lastUpdated,
+        imageUrl
     }
 };
 
@@ -28,7 +31,6 @@ const mapDispatchToProps = dispatch => {
         } // noop TODO: implement new panToMapThing function
     }
 };
-
 
 const ParcelDashboard = connect(
     mapStateToProps,

@@ -4,6 +4,20 @@
 
 
 
+export const PARCEL = {
+    idField: 'pin',
+    tableId: 'allegheny_county_parcel_boundaries',
+    srid: 4326
+}
+/*
+    let sql = `SELECT pin, the_geom, the_geom_webmercator
+        FROM allegheny_county_parcel_boundaries
+        WHERE ST_Contains(the_geom, ST_SetSRID(ST_Point(${lng}, ${lat}), 4326))`;
+ */
+
+
+
+
 export const BASEMAPS = {
     voyager: {
         name: 'Voyager',
@@ -30,7 +44,7 @@ export const BASEMAPS = {
         avatar: 'osm.png'
     },
     esri: {
-        name: 'Esri World Street Map',
+        name: 'Esri World Street InterfaceMap',
         url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
         avatar: 'osm.png'

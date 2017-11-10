@@ -3,7 +3,8 @@ import React, {Component} from 'react';
 import './App.css';
 import { connect } from 'react-redux'
 import ParcelDashboard from './containers/ParcelDashboard'
-import {MapContainer} from "./map/map";
+//import InterfaceMap from "./map/map";
+import InterfaceMap from "./containers/InterfaceMap";
 
 import Footer from './components/Footer'
 import Header from './components/Header'
@@ -13,19 +14,22 @@ import {
     selectParcel
 
 } from "./actions/index";
+import {setSelectedParcelShape} from "./actions/mapActions";
 
 class App extends Component {
 
     // When it mounts, get the data
     componentDidMount = () => {
         const {dispatch, currentParcelId} = this.props;
+        dispatch(setSelectedParcelShape(currentParcelId));
         dispatch(fetchParcelDataIfNeeded(currentParcelId));
     };
 
     // When it updates, if there's a new parcel ID, get the data for it
     componentDidUpdate = prevProps => {
         if (this.props.currentParcelId !== prevProps.currentParcelId) {
-            const {dispatch, currentParcelId} = this.props;
+            const {dispatch, currentParcelId} = this.props
+            dispatch(setSelectedParcelShape(currentParcelId));
             dispatch(fetchParcelDataIfNeeded(currentParcelId));
         }
     };
@@ -41,7 +45,7 @@ class App extends Component {
                 <Header className="flex-item"/>
 
                 <div className="flex-item">
-                    <MapContainer className="map" id="map"
+                    <InterfaceMap className="map" id="map"
                                   parcelId={currentParcelId}
                                   center={[-79.961884, 40.438340]}
                                   updateParcel={this.handleParcelChange}

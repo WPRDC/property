@@ -1,5 +1,5 @@
 import React from 'react';
-import propTypes from 'prop-types'
+import PropTypes from 'prop-types'
 
 /* Material UI Components */
 import Paper from 'material-ui/Paper';
@@ -26,10 +26,6 @@ import {
     SalesTable,
     TaxLiens
 } from '../customModules/index'
-
-
-
-
 
 
 /* Project Components */
@@ -64,7 +60,7 @@ const style = {
 };
 
 const Dashboard = props => {
-    const {parcelId, data, isFetching, panMapToTarget} = props;
+    const {parcelId, data, isFetching, imageUrl, panMapToTarget} = props;
 
     if (data && !isFetching) {
         const address = extractAddressFromData(data); //todo: have address generated earlier in the stream (maybe at api server level?)
@@ -74,8 +70,8 @@ const Dashboard = props => {
                 <ParcelSearch style={style.search}/>
 
 
-                <DashboardHeader handlePanToRequest={props.panMapToTarget} address={address}
-                                parcelId={parcelId}/>
+                <DashboardHeader handlePanToRequest={props.panMapToTarget} imageUrl={imageUrl} address={address}
+                                 parcelId={parcelId}/>
 
                 {/*TODO: contain all this stuff in another div that has overflow scroll*/}
                 <DataSection name="home">
@@ -111,8 +107,14 @@ const Dashboard = props => {
             </div>
         );
     }
+};
 
-
+Dashboard.propTypes = {
+    parcelId: PropTypes.string.isRequired,
+    data: PropTypes.object,
+    isFetching: PropTypes.bool.isRequired,
+    imageUrl: PropTypes.string,
+    panMapToTarget: PropTypes.func
 }
 
 export default Dashboard;

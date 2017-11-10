@@ -8,6 +8,9 @@ import {
     REQUEST_PARCEL_IMAGE,
     RECEIVE_PARCEL_IMAGE
 } from "../actions/index";
+import {SET_SELECTED_PARCEL_SHAPE} from "../actions/mapActions";
+import {singleShapeLayer} from "../utils/mapUtils";
+import {BASEMAPS} from "../map/mapDefaults";
 
 const DEFAULT_PARCEL = '0028F00194000000';
 
@@ -87,10 +90,48 @@ const parcelImagesById = (state = {}, action) => {
     }
 };
 
+const basemapLayer = (state = BASEMAPS.voyager, action) => {
+    return state;
+}
+
+const selectedLayer = (state = {}, action) => {
+    switch (action.type) {
+        case SET_SELECTED_PARCEL_SHAPE:
+            console.log(action);
+            return {
+                id: action.parcelId,
+                stuff: 'stuff',
+                class: action.shapeClass,
+                ...(singleShapeLayer(action.parcelId, action.shapeClass))
+            };
+        default:
+            return state
+    }
+};
+
+const mapOptions = (state = {center: [40.438340, -79.961884], zoom: 16}, action) => {
+    // TODO: handle mapOption changes here
+    return state
+}
+
+const styleLayers = (state = [], action) => {
+    return state
+}
+
+const availableShapesLayer = (state = null, action) => {
+    return state
+}
+
+
 const rootReducer = combineReducers({
     currentParcelId,
     parcelDataById,
-    parcelImagesById
+    parcelImagesById,
+    basemapLayer,
+    selectedLayer,
+    styleLayers,
+    availableShapesLayer,
+    mapOptions
 });
 
 export default rootReducer

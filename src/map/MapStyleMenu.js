@@ -77,7 +77,7 @@ class MapStyleMenu extends Component {
      *
      * @param props - open: is this dialog open;
      *                handleRequestClose: run when closing dialog
-     *                updateStyleLayer: function that updates the attached CartoLayer
+     *                updateStyleLayer: function that updates the attached CartoMapLayer
      */
     constructor(props) {
         super(props);
@@ -276,7 +276,7 @@ class MapStyleMenu extends Component {
 
     /**
      * Runs when submit button is clicked. Lifts the entire state of this layer to the layer menu to
-     * be processed and further lifted to the Map for rendering.
+     * be processed and further lifted to the InterfaceMap for rendering.
      */
     handleSubmit = () => {
         // Send state up to menu
