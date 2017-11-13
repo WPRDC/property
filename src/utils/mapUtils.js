@@ -6,7 +6,7 @@ import cartodb from 'cartodb'
 
 import CartoMapLayer from '../components/map/CartoMapLayer'
 
-import {PARCEL} from "../map/mapDefaults";
+import {PARCEL} from "./mapDefaults";
 
 
 const cartoSQL = cartodb.SQL({user: 'wprdc'});
@@ -18,6 +18,9 @@ export const QUANTIFICATION_METHODS = {
     equal: {title: 'Equal Intervals'},
     headtails: {title: 'Head/Tails'}
 };
+
+
+
 
 
 export const COLORS = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'teal', 'black', 'white', 'gray'];

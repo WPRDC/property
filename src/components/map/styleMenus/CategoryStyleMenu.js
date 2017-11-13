@@ -14,13 +14,13 @@ import LayersIcon from 'material-ui-icons/Layers';
 import {FormControl, FormHelperText} from 'material-ui/Form';
 import Divider from 'material-ui/Divider';
 
-import ColorPicker from '../../ColorPicker'
+import ColorPicker from '../../../ColorPicker'
 
 import {GithubPicker} from 'react-color';
 
 
 /* Defaults & Helper Functions */
-import {createCategoryCSS, createStyleSQL, COLORS} from '../mapUtils';
+import {createCategoryCSS, createStyleSQL, COLORS} from '../../../utils/mapUtils';
 
 const DEFAULT_COLOR = 'red';
 
@@ -162,7 +162,6 @@ class CategoryStyleMenu extends Component {
      * @param targetIdx
      */
     handleChangeColor = targetIdx => color => {
-        console.log("COLOR", color);
         this._updateMenuItems(targetIdx, 'color', color, this._handleStyleInfoChange);
     };
 

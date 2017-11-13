@@ -11,7 +11,7 @@ import 'rc-slider/assets/index.css';
 import Slider from 'rc-slider';
 
 /* Defaults & Helper Functions */
-import {createStyleSQL, createRangeCSS, findMinMaxValues, QUANTIFICATION_METHODS, COLORS,} from '../mapUtils';
+import {createStyleSQL, createRangeCSS, findMinMaxValues, QUANTIFICATION_METHODS, COLORS,} from '../../../utils/mapUtils';
 
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 
@@ -171,7 +171,6 @@ class RangeStyleMenu extends Component {
 
 
     render() {
-        console.log("STATE", this.state.color);
         return (
             <div>
                 <Range min={this.state.min} max={this.state.max} defaultValue={this.state.values}

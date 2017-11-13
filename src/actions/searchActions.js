@@ -1,17 +1,10 @@
 import {getStreetViewImage} from "../utils/apiUtils";
 import {extractAddressFromData} from "../utils/dataUtils";
 
-export const updateParcelID = parcelId => {
-    return {type: 'SELECT_PARCEL', parcelId}
-};
-
-
 export const SELECT_PARCEL = 'SELECT_PARCEL';
 export const INVALIDATE_PARCEL = 'INVALIDATE_PARCEL';
 export const REQUEST_PARCEL_DATA = 'REQUEST_PARCEL_DATA';
 export const RECEIVE_PARCEL_DATA = 'RECEIVE_PARCEL_DATA';
-
-
 export const REQUEST_PARCEL_IMAGE = 'REQUEST_PARCEL_IMAGE';
 export const RECEIVE_PARCEL_IMAGE = 'RECEIVE_PARCEL_IMAGE';
 
@@ -74,7 +67,6 @@ export const fetchParcelData = (parcelId) => {
             .then(
                 data => {
                     dispatch(receivePropertyData(parcelId, data));
-                    dispatch(updateParcelID(parcelId));
                 }
             )
     }

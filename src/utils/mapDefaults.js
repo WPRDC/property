@@ -9,13 +9,20 @@ export const PARCEL = {
     tableId: 'allegheny_county_parcel_boundaries',
     srid: 4326
 }
-/*
-    let sql = `SELECT pin, the_geom, the_geom_webmercator
-        FROM allegheny_county_parcel_boundaries
-        WHERE ST_Contains(the_geom, ST_SetSRID(ST_Point(${lng}, ${lat}), 4326))`;
- */
 
+export const SELECTION_LAYERS = {
+    PARCEL: {
+        sql: "SELECT * FROM allegheny_county_parcel_boundaries",
+        css: "#allegheny_county_parcel_boundaries{" +
+        "polygon-fill: #FFFFFF;" +
+        "polygon-opacity: 0.0;" +
+        "line-color: #4d4d4d;" +
+        "line-opacity: 0;" +
+        "[zoom >= 15] {line-opacity: .8; line-width: .5}" +
+        "[zoom >=17] {line-opacity: .8; line-width: 1}}"
 
+    }
+}
 
 
 export const BASEMAPS = {
@@ -44,7 +51,7 @@ export const BASEMAPS = {
         avatar: 'osm.png'
     },
     esri: {
-        name: 'Esri World Street InterfaceMap',
+        name: 'Esri World Street',
         url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
         avatar: 'osm.png'
@@ -156,12 +163,12 @@ export const MAP_DATASETS = [
 ];
 
 
-export class MapDataSource{
+export class MapDataSource {
     /**
      * Connects to Carto maps' data (currently hardcoded MAP_DATA)
      * @param data - initial set of data
      */
-    constructor(data){
+    constructor(data) {
         this.datasets = data
     }
 
@@ -172,7 +179,7 @@ export class MapDataSource{
      * @param {string} datasetId - identifier of dataset (e.g. 'assessments')
      * @return {{}} dataset
      */
-    getDataset(datasetId){
+    getDataset(datasetId) {
         return this.datasets.filter((dataset) => dataset.id === datasetId)[0]
     }
 
@@ -182,15 +189,15 @@ export class MapDataSource{
      * @param {string} fieldId - identifier of field (e.g. 'price')
      * @return {{}} field object identified by `fieldId`
      */
-    getField(datasetId, fieldId){
-        return this.getDataset(datasetId).fields.filter((field)=> field.id === fieldId)[0]
+    getField(datasetId, fieldId) {
+        return this.getDataset(datasetId).fields.filter((field) => field.id === fieldId)[0]
     }
 
     /**
      * Returns all datasets
      * @return {[{}]} all datasets
      */
-    getDatasets(){
+    getDatasets() {
         return this.datasets;
     }
 
@@ -200,8 +207,8 @@ export class MapDataSource{
      * @param {string} type - type of data the field is (e.g. numeric ,category)
      * @return {[]} array of field objects from dataset
      */
-    getFields(datasetId, type){
-        if(type){
+    getFields(datasetId, type) {
+        if (type) {
             return this.getDatasets(datasetId).fields.filter((field) => field.type === type)
         }
         return this.getDataset(datasetId).fields;
@@ -214,9 +221,9 @@ export class MapDataSource{
      * @param {string} type - name of style type
      * @return {boolean} True if the dataset does accommodate the `type`
      */
-    accommodatesType(datasetId, type){
-        for(let field of this.getFields(datasetId)){
-            if(field.type === type){
+    accommodatesType(datasetId, type) {
+        for (let field of this.getFields(datasetId)) {
+            if (field.type === type) {
                 return true
             }
         }
@@ -226,4 +233,4 @@ export class MapDataSource{
 
 }
 
-export let mapDataSource = new  MapDataSource(MAP_DATASETS);
+export let mapDataSource = new MapDataSource(MAP_DATASETS);

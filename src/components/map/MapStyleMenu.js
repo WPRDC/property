@@ -11,6 +11,7 @@ import AppBar from 'material-ui/AppBar';
 import Tabs, {Tab} from 'material-ui/Tabs';
 import Divider from 'material-ui/Divider';
 import Slide from 'material-ui/transitions/Slide'
+
 /* Style Menus */
 import CategoryStyleMenu from './styleMenus/CategoryStyleMenu';
 import ChoroplethStyleMenu from './styleMenus/ChoroplethStyleMenu';
@@ -21,55 +22,11 @@ import RangeStyleMenu from './styleMenus/RangeStyleMenu';
 import {default as MapIcon} from 'material-ui-icons/Map';
 
 /* Functions */
-import {mapDataSource} from "./mapDefaults";
-import {getFieldValues} from './mapUtils';
-import {arraysAreDifferent, COLORS} from "../utils/dataUtils";
+import {mapDataSource} from "../../utils/mapDefaults";
+import {getFieldValues} from '../../utils/mapUtils';
+import {arraysAreDifferent, COLORS} from "../../utils/dataUtils";
 
-/**
- * Form Group with dataset and field options
- *
- * @param props
- * @return {XML}
- * @constructor
- */
-function DatasetFieldSelectionGroup(props) {
-    if (props.currentDataset && props.currentField) {
-        return (
-            <form>
-                <FormControl>
-                    <InputLabel htmlFor="dataset">Dataset</InputLabel>
-                    <Select
-                        native
-                        value={props.currentDataset.id}
-                        onChange={props.handleChange('dataset')}
-                        input={<Input id="dataset"/>}
-                    >
-                        {props.availableDatasets.map((dataset, i) => {
-                            return <option key={i.toString()}
-                                           value={dataset.id}>{dataset.name}</option>
-                        })}
-                    </Select>
-                </FormControl>
-                <FormControl>
-                    <InputLabel htmlFor="field">Field</InputLabel>
-                    <Select
-                        native
-                        value={props.currentField.id}
-                        onChange={props.handleChange('field')}
-                        input={<Input id="field"/>}
-                    >
-                        {props.availableFields.map((field, i) => {
-                            return <option key={i.toString()} value={field.id}>{field.name}</option>
-                        })}
-                    </Select>
-                </FormControl>
-            </form>
-        );
-    } else {
-        return <form/>;
-    }
-}
-
+import DatasetFieldSelectionGroup from './DatasetFieldSelectionGroup'
 
 class MapStyleMenu extends Component {
     /**
@@ -100,10 +57,6 @@ class MapStyleMenu extends Component {
             submenuSaved: false
         };
 
-        this.handleDataSourceMenuChange = this.handleDataSourceMenuChange.bind(this);
-        this.handleTabChange = this.handleTabChange.bind(this);
-        this._getAvailableDatasets = this._getAvailableDatasets.bind(this);
-        this._getAvailableFields = this._getAvailableFields.bind(this);
     }
 
 
@@ -111,7 +64,7 @@ class MapStyleMenu extends Component {
      * Update State with available datasets
      * @private
      */
-    _getAvailableDatasets() {
+    _getAvailableDatasets = () => {
         const styleType = this.state.currentTab;
         let availableDatasets = mapDataSource.getDatasets();
 
@@ -141,7 +94,7 @@ class MapStyleMenu extends Component {
      * @param {obj} dataset - carto dataset
      * @private
      */
-    _getAvailableFields(dataset) {
+    _getAvailableFields = dataset => {
         const styleType = this.state.currentTab;
         let fields = [],
             currentField = null;
@@ -204,7 +157,7 @@ class MapStyleMenu extends Component {
      * @param e
      * @param value
      */
-    handleTabChange(e, value) {
+    handleTabChange = (e, value) => {
 
 
         this.setState(

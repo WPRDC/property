@@ -14,7 +14,7 @@ import RemoveCircleIcon from 'material-ui-icons/RemoveCircle';
 import LayersIcon from 'material-ui-icons/Layers';
 
 /* Defaults & Helper Functions */
-import {createChoroplethCSS, createStyleSQL, QUANTIFICATION_METHODS, CHOROPLETHS} from '../mapUtils';
+import {createChoroplethCSS, createStyleSQL, QUANTIFICATION_METHODS, CHOROPLETHS} from '../../../utils/mapUtils';
 
 const BIN_OPTIONS = [3, 4, 5, 6, 7];
 

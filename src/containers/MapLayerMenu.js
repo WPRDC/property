@@ -1,28 +1,23 @@
 import React, {Component} from 'react';
-
+import {connect} from 'react-redux';
 /* Material UI Components 0*/
 import Paper from 'material-ui/Paper';
-import Button from 'material-ui/Button';
-import IconButton from 'material-ui/IconButton';
 import AppBar from 'material-ui/AppBar';
 import List, {ListItem, ListItemIcon, ListItemText, ListItemAvatar, ListItemSecondaryAction} from 'material-ui/List';
-
-
 import Avatar from 'material-ui/Avatar';
-
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
-
 import Slide from 'material-ui/transitions/Slide';
 
-import BaseMapMenu from './BaseMapMenu'
-import MapStyleMenu from './MapStyleMenu'
 /* Icons */
 import LayersIcon from 'material-ui-icons/Layers';
-import DeleteIcon from 'material-ui-icons/Delete';
-import AddIcon from 'material-ui-icons/Add';
 
+/* Custom Components */
+import LayerListItem from '../components/map/LayerListItem'
+import AddLayerListItem from '../components/map/AddLayerListItem'
+import BaseMapMenu from '../components/map/BaseMapMenu'
+import MapStyleMenu from '../components/map/MapStyleMenu'
 
 /* Functions */
 import {COLORS} from "../utils/dataUtils";
@@ -30,28 +25,49 @@ import {COLORS} from "../utils/dataUtils";
 import {green} from 'material-ui/colors';
 
 
+const style = {
+    drawer: {
+        width: '250px',
+    },
+    button: {
+        position: 'absolute',
+        top: '12px',
+        right: '52px',
+        zIndex: '1001',
+    },
+    paper: {
+        position: 'absolute',
+        top: '12px',
+        left: '12px',
+        zIndex: '1001',
+        width: "320px",
+    }
+};
+
+const STYLE_MENU_MODES = {ADD: 'ADD', UPDATE: 'UPDATE'};
+
+
 class MapLayerMenu extends Component {
     constructor(props) {
         super(props);
 
-        const defaultBasemap = props.basemaps[Object.keys(props.basemaps)[0]]
-
         this.state = {
+            // UI states
             open: false,
-
-            basemapName: defaultBasemap.name,
-
             basemapMenuOpen: false,
             styleMenuOpen: false,
-
             basemapMenuAnchorEl: null,
+
+            // Menu Controls
+            styleMenuMode: '',
+
 
             layers: [],
             currentLayerIdx: 0  // The current layer that is being styled
         }
     }
 
-    toggleSlide = (open) => () => {
+    toggleSlide = open => () => {
         this.setState({
             'open': open,
         });
@@ -80,33 +96,26 @@ class MapLayerMenu extends Component {
     };
 
     /**
-     * Updates the basemaps name on the menu, and lifts the selected basemap's id state, `basemap`
-     * to the InterfaceMap for rendering.
-     *
-     * @param {id} basemap - id of basemap that was selected
-     */
-    updateBasemap = basemap => {
-        this.setState(
-            {basemapName: this.props.basemaps[basemap].name},
-            this.props.updateBasemap(basemap)// lift up to InterfaceMap for actual rendering of new basemap
-        )
-    };
-
-
-    /**
      * Brings up new layer dialog.
      * Runs when add new layer button is clicked.
      */
     handleAddLayer = () => {
         this.setState(
-            {styleMenuOpen: true, currentLayerIdx: this.state.layers.length}
+            {
+                styleMenuOpen: true,
+                styleLayerMode: STYLE_MENU_MODES.ADD
+            }
         )
     };
 
-
+    /** Open style menu and let it know the index of the layer to style */
     handleUpdateLayer = idx => () => {
+        const targetIdx = this.props.styleLayers.length
         this.setState(
-            {styleMenuOpen: true, currentLayerIdx: idx}
+            {
+                styleMenuOpen: true,
+                styleLayerMode: STYLE_MENU_MODES.ADD
+            }
         )
     };
 
@@ -157,40 +166,17 @@ class MapLayerMenu extends Component {
 
     updateStyleLayers = () => {
         const minimalStyleLayers = this.state.layers.map((layer) => layer.styleInfo);
+        console.log(minimalStyleLayers);
         this.props.updateStyleLayers(minimalStyleLayers)
     };
 
 
     render() {
-        const style = {
-            drawer: {
-                width: '250px',
-            },
-            button: {
-                position: 'absolute',
-                top: '12px',
-                right: '52px',
-                zIndex: '1001',
-            },
-            paper: {
-                position: 'absolute',
-                top: '12px',
-                left: '12px',
-                zIndex: '1001',
-                width: "320px",
-            }
-        };
-
-
         return (
             <div>
-                <Button fab color="primary" aria-label="add" onClick={this.toggleSlide(!(this.state.open))}
-                        style={style.button}>
-                    <LayersIcon/>
-                </Button>
-
-                <Slide in={this.state.open} direction="right">
+                <Slide in={this.props.open} direction="right">
                     <Paper style={style.paper}>
+                        {/* Heading */}
                         <AppBar position="static" color="default">
                             <Toolbar>
                                 <Typography type="title" color="inherit">
@@ -199,7 +185,7 @@ class MapLayerMenu extends Component {
                             </Toolbar>
                         </AppBar>
 
-
+                        {/* Layer List */}
                         <List>
                             {this.state.layers.map((layer, i) =>
                                 <LayerListItem key={i.toString()}
@@ -220,15 +206,15 @@ class MapLayerMenu extends Component {
                                     </Avatar>
                                 </ListItemAvatar>
                                 <ListItemText primary={"Basemap Layer"} secondary={this.state.basemapName}/>
+
                                 <BaseMapMenu open={this.state.basemapMenuOpen}
                                              anchorEl={this.state.basemapMenuAnchorEl}
                                              handleRequestClose={this.handleRequestClose('basemapMenuOpen')}
-                                             updateBasemap={this.updateBasemap}
-                                             basemaps={this.props.basemaps}
                                 />
                             </ListItem>
                         </List>
 
+                        {/*Map Style Menu*/}
                         <MapStyleMenu open={this.state.styleMenuOpen}
                                       savedState={this.state.layers[this.state.currentLayerIdx]}
                                       handleRequestClose={this.handleRequestClose('styleMenuOpen')}
@@ -242,3 +228,25 @@ class MapLayerMenu extends Component {
     }
 
 }
+
+function mapStateToProps(state) {
+    const {
+        styleLayers,
+    } = state;
+
+    return {
+        styleLayers
+    }
+}
+
+//
+// function mapDispatchToProps(dispatch){
+//     return {
+//         updateStyleLayer: (index, data) => {
+//             dispatch(updateStyleLayer(index, data))
+//         }
+//     }
+// }
+
+
+export default connect()(MapLayerMenu)

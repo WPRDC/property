@@ -1,14 +1,23 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types'
 
-
 import {Map, TileLayer, ZoomControl} from 'react-leaflet';
+
+
+/* Material UI components */
+import Button from 'material-ui/Button'
+
+/* Material UI Icons */
+import LayersIcon from 'material-ui-icons/Layers'
+
+
 import {fetchParcelFromPoint} from "../actions/";
 import CartoMapLayer from "../components/map/CartoMapLayer";
-import MapLayerMenu from "../map/MapLayerMenu"
+import MapLayerMenu from "./MapLayerMenu"
 import {connect} from 'react-redux'
 
-import {BASEMAPS} from "../map/mapDefaults";
+
+import {BASEMAPS} from "../utils/mapDefaults";
 
 
 const style = {
@@ -18,12 +27,22 @@ const style = {
     map: {
         height: '100%',
         cursor: 'pointer'
-    }
+    },
+    button: {
+        position: 'absolute',
+        top: '12px',
+        right: '52px',
+        zIndex: '1001',
+    },
 };
 
 class InterfaceMap extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            layerMenuOpen: false
+        }
     }
 
     /**
@@ -37,34 +56,27 @@ class InterfaceMap extends Component {
         handleParcelClick(latlng)
     };
 
-    panToPoint = (lng, lat, zoom) => {
-        console.log('pannin\' it up, son!', lat, lng, zoom);
-        if (typeof(zoom) === 'undefined') {
-            zoom = this.state.viewport.zoom;
-        }
-        this.setState({viewport: {center: [lat, lng], zoom: zoom}}, () => {
-            console.log(this.state)
-        })
+    toggleLayerMenu = () => {
+        this.setState({layerMenuOpen: !this.state.layerMenuOpen})
     }
-
-    componentWillReceiveProps = (nextProps) => {
-        if (nextProps.parcelId !== this.props.parcelId) {
-            this.render();
-        }
-        console.log("w000000000000000t");
-        this.render();
-
-    }
-
 
     render() {
-        const {basemapLayer, availableRegionsLayer, selectedLayer, styleLayers} = this.props;
-        //const {viewport, maxZoom} = mapOptions;
-        console.log(basemapLayer);
+        const {mapOptions, basemapLayer, availableShapesLayer, selectedLayer, styleLayers} = this.props;
+        const {center, maxZoom} = mapOptions;
+
         return (
             <div style={style.base} className="mapContainer">
+                <Button fab color="primary" aria-label="add" onClick={this.toggleLayerMenu}
+                        style={style.button}>
+                    <LayersIcon/>
+                </Button>
+
+
+                <MapLayerMenu open={this.state.layerMenuOpen}/>
 
                 <Map style={style.map}
+                     center={center}
+                     zoom={15}
                      onClick={this.handleClick}
                      zoomControl={false}
                 >
@@ -73,18 +85,21 @@ class InterfaceMap extends Component {
                     <TileLayer className="the-thing-basemap" url={basemapLayer.url}
                                attribute={basemapLayer.attribution}/>
 
-                    {/*{styleLayers.map((styleLayer, id) =>*/}
-                        {/*<CartoMapLayer sql={styleLayer.sql}*/}
-                                       {/*css={styleLayer.css}*/}
-                        {/*/>*/}
-                    {/*)}*/}
+                    {styleLayers.map((styleLayer, id) =>
+                        <CartoMapLayer sql={styleLayer.sql}
+                                       css={styleLayer.css}
+                        />
+                    )}
 
-                    {/*{selectedLayer ?*/}
-                        {/*<CartoMapLayer sql={selectedLayer.sql} css={selectedLayer.css}/> :*/}
-                        {/*null*/}
-                    {/*}*/}
-
-                    {/*{availableRegionsLayer}*/}
+                    {selectedLayer
+                        ? <CartoMapLayer sql={selectedLayer.sql} css={selectedLayer.css}/>
+                        : null
+                    }
+                    {availableShapesLayer
+                        ? <CartoMapLayer sql={availableShapesLayer.sql}
+                                         css={availableShapesLayer.css}/>
+                        : null
+                    }
 
                 </Map>
 
@@ -110,18 +125,18 @@ InterfaceMap.propTypes = {
 function mapStateToProps(state) {
     const {
         basemapLayer,
-        // availableShapesLayer,
-        // selectedLayer,
-        // styleLayers,
-        // mapOptions
+        availableShapesLayer,
+        selectedLayer,
+        styleLayers,
+        mapOptions
     } = state;
 
     return {
         basemapLayer,
-        // availableShapesLayer,
-        // selectedLayer,
-        // styleLayers,
-        // mapOptions
+        availableShapesLayer,
+        selectedLayer,
+        styleLayers,
+        mapOptions
     }
 }
 

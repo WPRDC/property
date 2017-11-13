@@ -1,8 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import ListItem, {ListItemAvatar, ListItemSecondaryAction} from 'material-ui/List';
+import ListItem, {ListItemAvatar, ListItemSecondaryAction, ListItemText} from 'material-ui/List';
+import IconButton from 'material-ui/IconButton'
 import LayersIcon from 'material-ui-icons/Layers'
+import DeleteIcon from 'material-ui-icons/Delete'
+
+import Avatar from 'material-ui/Avatar';
+
 
 const LayerListItem = props => {
     const {layer, handleUpdate, handleDelete} = props;
@@ -35,4 +40,4 @@ LayerListItem.propTypes = {
     handleDelete: PropTypes.func.isRequired
 };
 
-export default LayersIcon
+export default LayerListItem

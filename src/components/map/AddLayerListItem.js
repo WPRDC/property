@@ -1,7 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import ListItem, {ListItemAvatar, ListItemSecondaryAction} from 'material-ui/List';
+import {ListItem, ListItemAvatar, ListItemText} from 'material-ui/List';
+import Avatar from 'material-ui/Avatar';
+
+
 import AddIcon from 'material-ui-icons/Add'
 import {green} from 'material-ui/colors'
 
