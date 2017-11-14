@@ -85,9 +85,9 @@ class InterfaceMap extends Component {
                     <TileLayer className="the-thing-basemap" url={basemapLayer.url}
                                attribute={basemapLayer.attribution}/>
 
-                    {styleLayers.map((styleLayer, id) =>
-                        <CartoMapLayer sql={styleLayer.sql}
-                                       css={styleLayer.css}
+                    {styleLayers.map((styleLayer, idx) =>
+                        <CartoMapLayer key={idx.toString()} sql={styleLayer.styleInfo.sql}
+                                       css={styleLayer.styleInfo.css}
                         />
                     )}
 

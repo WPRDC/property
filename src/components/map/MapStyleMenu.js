@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux'
 
-/* Material UI Components 0*/
+/* Material UI Components */
 import Button from 'material-ui/Button'
 import TextField from 'material-ui/TextField'
 import Dialog, {DialogTitle, DialogContent, DialogActions} from 'material-ui/Dialog';
@@ -12,21 +13,32 @@ import Tabs, {Tab} from 'material-ui/Tabs';
 import Divider from 'material-ui/Divider';
 import Slide from 'material-ui/transitions/Slide'
 
+/* Material UI Icons */
+import {default as MapIcon} from 'material-ui-icons/Map';
+
 /* Style Menus */
 import CategoryStyleMenu from './styleMenus/CategoryStyleMenu';
 import ChoroplethStyleMenu from './styleMenus/ChoroplethStyleMenu';
 import RangeStyleMenu from './styleMenus/RangeStyleMenu';
 
-
-/* Icons */
-import {default as MapIcon} from 'material-ui-icons/Map';
+/* Custom Components */
+import DatasetFieldSelectionGroup from './DatasetFieldSelectionGroup'
 
 /* Functions */
 import {mapDataSource} from "../../utils/mapDefaults";
 import {getFieldValues} from '../../utils/mapUtils';
 import {arraysAreDifferent, COLORS} from "../../utils/dataUtils";
+import {addStyleLayer, updateStyleLayer} from "../../actions/mapActions";
 
-import DatasetFieldSelectionGroup from './DatasetFieldSelectionGroup'
+import {STYLE_MENU_MODES} from "../../utils/mapDefaults";
+
+const style = {
+    dialog: {},
+    content: {
+        paddingTop: '16px'
+    }
+};
+
 
 class MapStyleMenu extends Component {
     /**
@@ -54,7 +66,6 @@ class MapStyleMenu extends Component {
             layerName: '',
             colorMode: 'fill',
             submenuState: null,
-            submenuSaved: false
         };
 
     }
@@ -71,11 +82,13 @@ class MapStyleMenu extends Component {
         // Filter out datasets that have no fields that accommodate the style type
         switch (styleType) {
             case 'category':
-                availableDatasets = availableDatasets.filter((dataset) => mapDataSource.accommodatesType(dataset.id, 'category'));
+                availableDatasets = availableDatasets.filter((dataset) =>
+                    mapDataSource.accommodatesType(dataset.id, 'category'));
                 break;
             case 'choropleth':
             case 'range':
-                availableDatasets = availableDatasets.filter((dataset) => mapDataSource.accommodatesType(dataset.id, 'numeric'));
+                availableDatasets = availableDatasets.filter((dataset) =>
+                    mapDataSource.accommodatesType(dataset.id, 'numeric'));
                 break;
         }
         let defaultDataset = availableDatasets[0];
@@ -158,8 +171,6 @@ class MapStyleMenu extends Component {
      * @param value
      */
     handleTabChange = (e, value) => {
-
-
         this.setState(
             {currentTab: value},
 
@@ -234,9 +245,20 @@ class MapStyleMenu extends Component {
     handleSubmit = () => {
         // Send state up to menu
         let savedState = this.state;
-        // We currently pass the entire state back up to the menu.  This way we can repopulate this menu when
+        const {addStyleLayer, updateStyleLayer, mode, layerIndex} = this.props;
+        const {ADD, UPDATE} = STYLE_MENU_MODES;
+        // We currently pass the entire state of this menu into the store.  This way we can repopulate this menu when
         // modifying a previously-made layer. We can also display some of the metadata on the menu.
-        this.props.updateStyleLayer(savedState);
+        switch(mode){
+            case ADD:
+                addStyleLayer(savedState);
+                break;
+            case UPDATE:
+                updateStyleLayer(layerIndex, savedState)
+                break;
+            default:
+                throw RangeError(`${mode} is not a valid mode for updating styles`)
+        }
         this.props.handleRequestClose();
     };
 
@@ -294,26 +316,32 @@ class MapStyleMenu extends Component {
 
 
     render() {
-        const style = {
-            dialog: {},
-            content: {
-                paddingTop: '16px'
-            }
-        };
-
-        const currentTab = this.state.currentTab;
+        const {
+            open,
+            handleRequestClose
+        } = this.props;
+        const {
+            currentTab,
+            dataset,
+            field,
+            availableDatasets,
+            availableFields,
+            fieldValues,
+            submenuState,
+            layerName
+        } = this.state;
 
         return (
             <Dialog
                 transition={Slide}
                 style={style.dialog}
-                open={this.props.open}
-                onRequestClose={this.props.handleRequestClose}>
+                open={open}
+                onRequestClose={handleRequestClose}>
 
                 <AppBar position="static" color="default">
                     <DialogTitle>Add Style to the Map</DialogTitle>
                     <Tabs fullWidth
-                          value={this.state.currentTab}
+                          value={currentTab}
                           onChange={this.handleTabChange}
                           indicatorColor="primary" textColor="primary"
                     >
@@ -325,36 +353,36 @@ class MapStyleMenu extends Component {
 
 
                 <DialogContent style={style.content}>
-                    <DatasetFieldSelectionGroup currentDataset={this.state.dataset} currentField={this.state.field}
+                    <DatasetFieldSelectionGroup currentDataset={dataset} currentField={field}
                                                 handleChange={this.handleDataSourceMenuChange}
-                                                availableDatasets={this.state.availableDatasets}
-                                                availableFields={this.state.availableFields}
+                                                availableDatasets={availableDatasets}
+                                                availableFields={availableFields}
                     />
                     <br/>
                     {currentTab === 'category' &&
-                    < CategoryStyleMenu dataset={this.state.dataset}
-                                        field={this.state.field}
-                                        fieldValues={this.state.fieldValues}
+                    < CategoryStyleMenu dataset={dataset}
+                                        field={field}
+                                        fieldValues={fieldValues}
                                         handleStyleInfoChange={this.handleStyleInfoChange}
                                         updateSavedState={this.updateSubmenuSavedState}
-                                        savedState={this.state.submenuState}
+                                        savedState={submenuState}
                     />}
                     {currentTab === 'choropleth' &&
                     <ChoroplethStyleMenu
-                        dataset={this.state.dataset}
-                        field={this.state.field}
+                        dataset={dataset}
+                        field={field}
                         handleStyleInfoChange={this.handleStyleInfoChange}
                         updateSavedState={this.updateSubmenuSavedState}
-                        savedState={this.state.submenuState}
+                        savedState={submenuState}
                     />
                     }
                     {currentTab === 'range' &&
                     <RangeStyleMenu
-                        dataset={this.state.dataset}
-                        field={this.state.field}
+                        dataset={dataset}
+                        field={field}
                         handleStyleInfoChange={this.handleStyleInfoChange}
                         updateSavedState={this.updateSubmenuSavedState}
-                        savedState={this.state.submenuState}
+                        savedState={submenuState}
                     />
                     }
                 </DialogContent>
@@ -363,12 +391,12 @@ class MapStyleMenu extends Component {
                     <TextField
                         id="layerNameField"
                         label="Layer Name (optional)"
-                        value={this.state.layerName}
+                        value={layerName}
                         placeholder="My Style Name"
                         onChange={this.handleChange('layerName')}
                         margin="dense"
                     />
-                    <Button color="accent" onClick={this.props.handleRequestClose}>Cancel</Button>
+                    <Button color="accent" onClick={handleRequestClose}>Cancel</Button>
                     <Button color="primary" onClick={this.handleSubmit}>Put Some Style on It!</Button>
                 </DialogActions>
             </Dialog>
@@ -376,4 +404,20 @@ class MapStyleMenu extends Component {
     }
 }
 
-export default MapStyleMenu;
+const mapStateToProps = () => {
+    return {}
+}
+const mapDispatchToProps = dispatch => {
+    return {
+         addStyleLayer: layerData => {
+             dispatch(addStyleLayer(layerData))
+         },
+        updateStyleLayer: (index, layerData) => {
+             dispatch(updateStyleLayer(index, layerData))
+        }
+    }
+}
+
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(MapStyleMenu);

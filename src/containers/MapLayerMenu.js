@@ -19,11 +19,13 @@ import AddLayerListItem from '../components/map/AddLayerListItem'
 import BaseMapMenu from '../components/map/BaseMapMenu'
 import MapStyleMenu from '../components/map/MapStyleMenu'
 
-/* Functions */
+/* Functions & Constants */
 import {COLORS} from "../utils/dataUtils";
 
 import {green} from 'material-ui/colors';
 
+import {STYLE_MENU_MODES} from "../utils/mapDefaults";
+import {removeStyleLayer} from "../actions/mapActions";
 
 const style = {
     drawer: {
@@ -44,8 +46,6 @@ const style = {
     }
 };
 
-const STYLE_MENU_MODES = {ADD: 'ADD', UPDATE: 'UPDATE'};
-
 
 class MapLayerMenu extends Component {
     constructor(props) {
@@ -60,10 +60,8 @@ class MapLayerMenu extends Component {
 
             // Menu Controls
             styleMenuMode: '',
-
-
             layers: [],
-            currentLayerIdx: 0  // The current layer that is being styled
+            targetLayerIdx: 0  // The current layer that is being styled
         }
     }
 
@@ -100,34 +98,22 @@ class MapLayerMenu extends Component {
      * Runs when add new layer button is clicked.
      */
     handleAddLayer = () => {
+        console.log("adding a layer");
         this.setState(
             {
                 styleMenuOpen: true,
-                styleLayerMode: STYLE_MENU_MODES.ADD
+                styleMenuMode: STYLE_MENU_MODES.ADD
             }
         )
     };
 
     /** Open style menu and let it know the index of the layer to style */
     handleUpdateLayer = idx => () => {
-        const targetIdx = this.props.styleLayers.length
         this.setState(
             {
                 styleMenuOpen: true,
-                styleLayerMode: STYLE_MENU_MODES.ADD
-            }
-        )
-    };
-
-
-    handleRemoveLayer = targetIdx => () => {
-        // Remove target layer from layers
-        let newLayers = this.state.layers.filter((layer, currIdx) => currIdx !== targetIdx);
-        this.setState(
-            {layers: newLayers},
-            // Tell have map update the styled layers
-            () => {
-                this.updateStyleLayers();
+                styleMenuMode: STYLE_MENU_MODES.UPDATE,
+                targetLayerIndex: idx
             }
         )
     };
@@ -164,17 +150,16 @@ class MapLayerMenu extends Component {
     };
 
 
-    updateStyleLayers = () => {
-        const minimalStyleLayers = this.state.layers.map((layer) => layer.styleInfo);
-        console.log(minimalStyleLayers);
-        this.props.updateStyleLayers(minimalStyleLayers)
-    };
-
-
     render() {
+        const {
+            open,
+            styleLayers,
+            handleRemoveStyleLayer
+        } = this.props;
+
         return (
             <div>
-                <Slide in={this.props.open} direction="right">
+                <Slide in={open} direction="right">
                     <Paper style={style.paper}>
                         {/* Heading */}
                         <AppBar position="static" color="default">
@@ -187,11 +172,11 @@ class MapLayerMenu extends Component {
 
                         {/* Layer List */}
                         <List>
-                            {this.state.layers.map((layer, i) =>
+                            {styleLayers.map((layer, i) =>
                                 <LayerListItem key={i.toString()}
                                                layer={layer}
                                                handleUpdate={this.handleUpdateLayer(i)}
-                                               handleDelete={this.handleRemoveLayer(i)}
+                                               handleDelete={handleRemoveStyleLayer(i)}
 
                                 />)
                             }
@@ -216,9 +201,11 @@ class MapLayerMenu extends Component {
 
                         {/*Map Style Menu*/}
                         <MapStyleMenu open={this.state.styleMenuOpen}
-                                      savedState={this.state.layers[this.state.currentLayerIdx]}
+                                      savedState={this.state.layers[this.state.targetLayerIdx]}
+                                      layerIndex={this.state.targetLayerIndex}
+                                      mode={this.state.styleMenuMode}
                                       handleRequestClose={this.handleRequestClose('styleMenuOpen')}
-                                      updateStyleLayer={this.handleStyleMenuResults(this.state.currentLayerIdx)}/>
+                        />
 
 
                     </Paper>
@@ -239,14 +226,14 @@ function mapStateToProps(state) {
     }
 }
 
-//
-// function mapDispatchToProps(dispatch){
-//     return {
-//         updateStyleLayer: (index, data) => {
-//             dispatch(updateStyleLayer(index, data))
-//         }
-//     }
-// }
+
+function mapDispatchToProps(dispatch){
+    return {
+        handleRemoveStyleLayer: (index) => () => {
+            dispatch(removeStyleLayer(index))
+        }
+    }
+}
 
 
-export default connect()(MapLayerMenu)
+export default connect(mapStateToProps, mapDispatchToProps)(MapLayerMenu)

@@ -3,7 +3,7 @@ import {BASEMAPS, SELECTION_LAYERS} from "../utils/mapDefaults";
 
 import {
     SET_BASEMAP, SET_SELECTED_PARCEL_SHAPE, CENTER_MAP_ON_POINT, ADD_STYLE_LAYER,
-    UPDATE_STYLE_LAYER
+    UPDATE_STYLE_LAYER, REMOVE_STYLE_LAYER
 } from "../actions/mapActions";
 
 export const availableShapesLayer = (state = SELECTION_LAYERS.PARCEL, action) => {
@@ -48,10 +48,12 @@ export const styleLayers = (state = [], action) => {
             return [...state, action.styleLayerData];
         case UPDATE_STYLE_LAYER:
             return state.map((styleLayer, idx) =>
-                (idx = action.index)
+                (idx === action.index)
                     ? action.styleLayerData
                     : styleLayer
             );
+        case REMOVE_STYLE_LAYER:
+            return state.filter((styleLayer, currIndex) => currIndex !== action.index);
         default:
             return state
     }

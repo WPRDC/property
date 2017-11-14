@@ -2,6 +2,7 @@
  * Created by sds25 on 9/20/17.
  */
 
+export const STYLE_MENU_MODES = {ADD: 'ADD', UPDATE: 'UPDATE'};
 
 
 export const PARCEL = {

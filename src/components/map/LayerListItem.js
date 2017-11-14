@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import ListItem, {ListItemAvatar, ListItemSecondaryAction, ListItemText} from 'material-ui/List';
+import {ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText} from 'material-ui/List';
 import IconButton from 'material-ui/IconButton'
 import LayersIcon from 'material-ui-icons/Layers'
 import DeleteIcon from 'material-ui-icons/Delete'

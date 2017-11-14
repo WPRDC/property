@@ -8,7 +8,8 @@ export const SET_SELECTED_PARCEL_SHAPE = 'SET_SELECTED_PARCEL_SHAPE';
 export const CENTER_MAP_ON_POINT = 'CENTER_MAP_ON_POINT';
 
 export const ADD_STYLE_LAYER = 'ADD_STYLE_LAYER';
-export const UPDATE_STYLE_LAYER = 'UPDATE_STYLE_LAYER'
+export const UPDATE_STYLE_LAYER = 'UPDATE_STYLE_LAYER';
+export const REMOVE_STYLE_LAYER = 'REMOVE_STYLE_LAYER';
 
 export const SET_BASEMAP = 'SET_BASEMAP'
 
@@ -49,6 +50,13 @@ export const updateStyleLayer = (index, styleLayerData) => {
         type: UPDATE_STYLE_LAYER,
         index,
         styleLayerData
+    }
+};
+
+export const removeStyleLayer =(index) => {
+    return {
+        type: REMOVE_STYLE_LAYER,
+        index
     }
 };
 
