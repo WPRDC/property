@@ -24,7 +24,8 @@ import {
     AssessmentTable,
     PropertyTaxReductions,
     SalesTable,
-    TaxLiens
+    TaxLiens,
+    OwnerAddress
 } from '../customModules/index'
 
 
@@ -78,6 +79,8 @@ const Dashboard = props => {
                     <ParcelCharacteristics data={data}/>
                     <br/>
                     <DwellingCharacteristics data={data}/>
+                    <br/>
+                    <OwnerAddress data={data}/>
                 </DataSection>
 
                 <DataSection name="assessment" title="Assessment">

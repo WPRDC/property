@@ -91,15 +91,16 @@ class InterfaceMap extends Component {
                         />
                     )}
 
-                    {selectedLayer
-                        ? <CartoMapLayer sql={selectedLayer.sql} css={selectedLayer.css}/>
-                        : null
-                    }
                     {availableShapesLayer
                         ? <CartoMapLayer sql={availableShapesLayer.sql}
                                          css={availableShapesLayer.css}/>
                         : null
                     }
+                    {selectedLayer
+                        ? <CartoMapLayer sql={selectedLayer.sql} css={selectedLayer.css}/>
+                        : null
+                    }
+
 
                 </Map>
 

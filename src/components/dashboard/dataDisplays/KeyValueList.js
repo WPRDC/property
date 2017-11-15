@@ -37,7 +37,7 @@ const KeyValuePair = props => {
 const KeyValueKey = props => {
     const style = {
         paddingLeft: '',
-        fontSize: '13px',
+        fontSize: '14px',
     };
     return <dt style={style} className="kv-key">{props.field}</dt>
 };
@@ -46,7 +46,7 @@ const KeyValueValue = props => {
     const style = {
         paddingLeft: '',
         marginLeft: '0',
-        fontSize: '13px',
+        fontSize: '14px',
         color: 'dimgray'
     };
 

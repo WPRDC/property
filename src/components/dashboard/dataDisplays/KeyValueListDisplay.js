@@ -10,7 +10,7 @@ const KeyValueListDisplay =props => {
     const displayData = extractKeyValueSubset(data, fields);
 
     return (
-        <div className="dataModule">
+        <div>
             <Typography type="title">{title}</Typography>
             <Typography type="subheading">{note}</Typography>
             <div>

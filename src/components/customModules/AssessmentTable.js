@@ -1,6 +1,6 @@
 import React from 'react';
 
-import TableDisplay from "../dashboard/dataDisplays/TableDisplay";
+import TableDisplay from "../dashboard/dataDisplays/DataTableDisplay";
 import {monify} from "../../utils/dataUtils";
 
 const AssessmentTable = props => {

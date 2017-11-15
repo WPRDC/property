@@ -91,6 +91,7 @@ class MapStyleMenu extends Component {
                     mapDataSource.accommodatesType(dataset.id, 'numeric'));
                 break;
         }
+        availableDatasets.sort();
         let defaultDataset = availableDatasets[0];
 
         this.setState(
@@ -125,6 +126,7 @@ class MapStyleMenu extends Component {
                 fields = dataset.fields;
         }
 
+        fields.sort()
         // Currently just using the first field as the default one.
         currentField = fields[0];
 
@@ -148,6 +150,7 @@ class MapStyleMenu extends Component {
     _getFieldValues = (dataset, field) => {
         getFieldValues(dataset, field, this.state.currentTab)
             .then((newOptions) => {
+                    newOptions.sort();
                     this.setState({fieldValues: newOptions})
                 },
                 (err) => {

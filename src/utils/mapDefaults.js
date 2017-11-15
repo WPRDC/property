@@ -19,9 +19,8 @@ export const SELECTION_LAYERS = {
         "polygon-opacity: 0.0;" +
         "line-color: #4d4d4d;" +
         "line-opacity: 0;" +
-        "[zoom >= 15] {line-opacity: .8; line-width: .5}" +
-        "[zoom >=17] {line-opacity: .8; line-width: 1}}"
-
+        "[zoom >= 15] {line-opacity: 1; line-width: .5}" +
+        "[zoom >=17] {line-opacity: 1; line-width: 1}}"
     }
 }
 
@@ -73,7 +72,7 @@ export const MAP_DATASETS = [
         "cartoAccount": "wprdc",
         "cartoTable": "assessments",
         "mapId": "4156fe54-fddc-43e6-993a-6ad37626e9e0",
-        "cartoCssId": "#assessments",
+        "cartoCssId": "assessments",
         "parcelIdField": 'parid',
         "fields": [
             {
@@ -140,7 +139,7 @@ export const MAP_DATASETS = [
         "cartoAccount": "wprdc-editor",
         "cartoTable": "allegheny_county_tax_liens",
         "mapId": "2ac98314-c5b9-4730-ae79-71c80dbd8790",
-        "cartoCssId": "#liens",
+        "cartoCssId": "liens",
         "parcelIdField": "pin",
         "fields": [
             {

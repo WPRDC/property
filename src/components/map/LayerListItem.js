@@ -35,7 +35,7 @@ const LayerListItem = props => {
 };
 
 LayerListItem.propTypes = {
-    layer: PropTypes.node.isRequired,
+    layer: PropTypes.object.isRequired,
     handleUpdate: PropTypes.func.isRequired,
     handleDelete: PropTypes.func.isRequired
 };

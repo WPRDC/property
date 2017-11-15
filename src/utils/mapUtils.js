@@ -246,7 +246,7 @@ export function createChoroplethCSS(dataset, field, binCount, color, quantMethod
     // Pull an array of color values
     let colors = CHOROPLETHS[color][binCount.toString()];
 
-    return `${dataset.cartoCssId}{
+    return `#${dataset.cartoCssId}{
                 polygon-opacity: 1.0;  line-color: #000;  line-width: .5; [zoom < 15]{line-width: 0;}   line-opacity: 1;
                 polygon-fill: ramp([${field.id}], (${colors.join(',')}), ${quantMethod}(${binCount}))
                 }`
@@ -273,7 +273,7 @@ export function createRangeCSS(dataset, field, min, max, color, mode) {
     }
 
 
-    return `${dataset.cartoCssId}{  
+    return `#${dataset.cartoCssId}{  
         ${colorLine}
         polygon-opacity: 0.0;  line-color: #000; line-width: ${lineWidth};   [zoom < 15]{line-width: 0;}   
         line-opacity: 1;

@@ -8,18 +8,18 @@ const DwellingCharacteristics =props => {
                         data={props.data}
                         missingDataMsg="Dwelling characteristics are only available for residential parcels."
                         fields={[
-                            {resource: 'assessments', id: 'STYLEDESC', title: 'Style'},
-                            {resource: 'assessments', id: 'STORIES', title: 'Stories'},
-                            {resource: 'assessments', id: 'YEARBLT', title: 'Year Built'},
-                            {resource: 'assessments', id: 'EXTFINISH_DESC', title: 'Exterior Finish'},
-                            {resource: 'assessments', id: 'HEATINGCOOLINGDESC', title: 'Heating/Cooling'},
-                            {resource: 'assessments', id: 'ROOFDESC', title: 'Roof'},
-                            {resource: 'assessments', id: 'BASEMENTDESC', title: 'Basement'},
-                            {resource: 'assessments', id: 'GRADE', title: 'Grade'},
-                            {resource: 'assessments', id: 'CONDITIONDESC', title: 'Condition'},
+                            {resource: 'assessments', field: 'STYLEDESC', title: 'Style'},
+                            {resource: 'assessments', field: 'STORIES', title: 'Stories'},
+                            {resource: 'assessments', field: 'YEARBLT', title: 'Year Built'},
+                            {resource: 'assessments', field: 'EXTFINISH_DESC', title: 'Exterior Finish'},
+                            {resource: 'assessments', field: 'HEATINGCOOLINGDESC', title: 'Heating/Cooling'},
+                            {resource: 'assessments', field: 'ROOFDESC', title: 'Roof'},
+                            {resource: 'assessments', field: 'BASEMENTDESC', title: 'Basement'},
+                            {resource: 'assessments', field: 'GRADE', title: 'Grade'},
+                            {resource: 'assessments', field: 'CONDITIONDESC', title: 'Condition'},
                             {
                                 resource: 'assessments',
-                                id: 'CDUDESC',
+                                field: 'CDUDESC',
                                 title: 'CDU',
                                 note: 'Condition/Desirability/Utility'
                             },

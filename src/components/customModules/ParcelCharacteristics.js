@@ -7,17 +7,18 @@ const ParcelCharacteristics = props => {
         <KeyValueListDisplay title="Property Characteristics"
                         data={props.data}
                         fields={[
-                            {resource: 'assessments', id: 'CLASSDESC', title: 'Use Class'},
-                            {resource: 'assessments', id: 'OWNERDESC', title: 'Owner Type'},
-                            {resource: 'assessments', id: 'USEDESC', title: 'Land Use'},
+                            {resource: 'assessments', field: 'CLASSDESC', title: 'Use Class'},
+                            {resource: 'assessments', field: 'OWNERDESC', title: 'Owner Type'},
+                            {resource: 'assessments', field: 'USEDESC', title: 'Land Use'},
                             {
-                                resource: 'assessments', id: 'LOTAREA', title: 'Lot Size', formatter: (input) => {
+                                resource: 'assessments', field: 'LOTAREA', title: 'Lot Size', formatter: (input) => {
                                 return [`${input} ft`,
                                     <sup style={{verticalAlign: 'baseline', position: 'relative', bottom: '1ex'}}
                                          key="1">2</sup>]
                             }
 
-                            }
+                            },
+
                         ]}
         />
     );

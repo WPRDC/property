@@ -10,7 +10,7 @@ const PropertyTaxReductions =props => {
                             [
                                 {
                                     title: 'Homestead',
-                                    id: 'HOMESTEADFLAG',
+                                    field: 'HOMESTEADFLAG',
                                     resource: 'assessments',
                                     formatter: (data) => {
                                         return data ? "YES" : "NO"
@@ -18,7 +18,7 @@ const PropertyTaxReductions =props => {
                                 },
                                 {
                                     title: 'Farmstead',
-                                    id: 'FARMSTEADFLAG',
+                                    field: 'FARMSTEADFLAG',
                                     resource: 'assessments',
                                     formatter: (data) => {
                                         return data ? "YES" : "NO"
@@ -26,7 +26,7 @@ const PropertyTaxReductions =props => {
                                 },
                                 {
                                     title: 'Clean & Green',
-                                    id: 'CLEANGREEN',
+                                    field: 'CLEANGREEN',
                                     resource: 'assessments',
                                     formatter: (data) => {
                                         return data ? "YES" : "NO"
@@ -34,7 +34,7 @@ const PropertyTaxReductions =props => {
                                 },
                                 {
                                     title: 'Abatement',
-                                    id: 'ABATEMENTFLAG',
+                                    field: 'ABATEMENTFLAG',
                                     resource: 'assessments',
                                     formatter: (data) => {
                                         return data ? "YES" : "NO"

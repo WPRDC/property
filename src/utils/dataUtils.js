@@ -142,13 +142,13 @@ export const extractKeyValueSubset = (data, fieldMapping) => {
 
         }
         // items pulled from data
-        else if (exists(field.resource, field.id)) {
+        else if (exists(field.resource, field.field)) {
             if (exists(field.title))
                 title = field.title;
             else
-                title = field.id;
-            if (data[field.resource].length && data[field.resource][0].hasOwnProperty(field.id))
-                value = data[field.resource][0][field.id]
+                title = field.field;
+            if (data[field.resource].length && data[field.resource][0].hasOwnProperty(field.field))
+                value = data[field.resource][0][field.field]
         }
 
         if (exists(field.formatter))
