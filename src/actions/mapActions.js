@@ -11,7 +11,11 @@ export const ADD_STYLE_LAYER = 'ADD_STYLE_LAYER';
 export const UPDATE_STYLE_LAYER = 'UPDATE_STYLE_LAYER';
 export const REMOVE_STYLE_LAYER = 'REMOVE_STYLE_LAYER';
 
-export const SET_BASEMAP = 'SET_BASEMAP'
+export const SET_BASEMAP = 'SET_BASEMAP';
+
+
+export const OPEN_HIGHLIGHT_MENU = "OPEN_HIGHLIGHT_MENU";
+export const CLOSE_HIGHLIGHT_MENU = "CLOSE_HIGHLIGHT_MENU";
 
 export const fetchParcelFromPoint = point => {
     return dispatch => {
@@ -38,22 +42,25 @@ export const centerMapOnPoint = point => {
     }
 };
 
-export const addStyleLayer = styleLayerData => {
+export const addStyleLayer = (layerType, menuState, styleInfo) => {
     return {
         type: ADD_STYLE_LAYER,
-        styleLayerData
+        layerType,
+        menuState,
+        styleInfo
     }
 };
 
-export const updateStyleLayer = (index, styleLayerData) => {
+export const updateStyleLayer = (index, menuState, styleInfo) => {
     return {
         type: UPDATE_STYLE_LAYER,
         index,
-        styleLayerData
+        menuState,
+        styleInfo
     }
 };
 
-export const removeStyleLayer =(index) => {
+export const removeStyleLayer = (index) => {
     return {
         type: REMOVE_STYLE_LAYER,
         index
@@ -66,3 +73,15 @@ export const setBasemap = basemapName => {
         basemapName
     }
 };
+
+export const openHighlightMenu = () => {
+    return {
+        type: OPEN_HIGHLIGHT_MENU,
+    }
+}
+
+export const closeHighlightMenu = () => {
+    return {
+        type: CLOSE_HIGHLIGHT_MENU,
+    }
+}

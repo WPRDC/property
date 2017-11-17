@@ -19,7 +19,7 @@ export const currentParcelId = (state = DEFAULT_PARCEL, action) => {
     }
 };
 
-export const parcelData = (state = {isFetching: false, didInvalidate: false, data: {}}, action) => {
+const parcelData = (state = {isFetching: false, didInvalidate: false, data: {}}, action) => {
     switch (action.type) {
         case INVALIDATE_PARCEL:
             return Object.assign({}, state, {

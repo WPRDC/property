@@ -1,45 +1,50 @@
 import React from 'react';
 
+import DataCard from '../dashboard/DataCard'
 import TableDisplay from "../dashboard/dataDisplays/DataTableDisplay";
 import {monify} from "../../utils/dataUtils";
 
-const SalesTable = props=> {
+const SalesTable = props => {
     return (
-        <TableDisplay title="Previous Sales"
-                     data={props.data}
-                     tableInfo={
-                         {
-                             showHeading: true,
-                             showLabel: false,
-                             heading: ['Sale Date', 'Price'],
-                             rows: [
-                                 {
-                                     'Sale Date': {resource: 'assessments', id: 'PREVSALEDATE2'},
-                                     'Price': {
-                                         resource: 'assessments', id: 'PREVSALEPRICE2', formatter: (number) => {
-                                             return monify(number, 0)
-                                         }
-                                     },
-                                 }, {
-                                     'Sale Date': {resource: 'assessments', id: 'PREVSALEDATE'},
-                                     'Price': {
-                                         resource: 'assessments', id: 'PREVSALEPRICE', formatter: (number) => {
-                                             return monify(number, 0)
-                                         }
-                                     },
-                                 }, {
-                                     'Sale Date': {resource: 'assessments', id: 'SALEDATE'},
-                                     'Price': {
-                                         resource: 'assessments', id: 'SALEPRICE', formatter: (number) => {
-                                             return monify(number, 0)
-                                         }
-                                     },
-                                 },
-                             ]
-                         }
-                     }
+        <DataCard title="Previous Sales"
+                  datasetId="sales"
+        >
+            <TableDisplay
+                data={props.data}
+                tableInfo={
+                    {
+                        showHeading: true,
+                        showLabel: false,
+                        heading: ['Sale Date', 'Price'],
+                        rows: [
+                            {
+                                'Sale Date': {resource: 'assessments', id: 'PREVSALEDATE2'},
+                                'Price': {
+                                    resource: 'assessments', id: 'PREVSALEPRICE2', formatter: (number) => {
+                                        return monify(number, 0)
+                                    }
+                                },
+                            }, {
+                                'Sale Date': {resource: 'assessments', id: 'PREVSALEDATE'},
+                                'Price': {
+                                    resource: 'assessments', id: 'PREVSALEPRICE', formatter: (number) => {
+                                        return monify(number, 0)
+                                    }
+                                },
+                            }, {
+                                'Sale Date': {resource: 'assessments', id: 'SALEDATE'},
+                                'Price': {
+                                    resource: 'assessments', id: 'SALEPRICE', formatter: (number) => {
+                                        return monify(number, 0)
+                                    }
+                                },
+                            },
+                        ]
+                    }
+                }
 
-        />
+            />
+        </DataCard>
     );
 }
 

@@ -25,7 +25,7 @@ import RangeStyleMenu from './styleMenus/RangeStyleMenu';
 import DatasetFieldSelectionGroup from './DatasetFieldSelectionGroup'
 
 /* Functions */
-import {mapDataSource} from "../../utils/mapDefaults";
+import {dataSource} from "../../utils/mapDefaults";
 import {getFieldValues} from '../../utils/mapUtils';
 import {arraysAreDifferent, COLORS} from "../../utils/dataUtils";
 import {addStyleLayer, updateStyleLayer} from "../../actions/mapActions";
@@ -77,18 +77,18 @@ class MapStyleMenu extends Component {
      */
     _getAvailableDatasets = () => {
         const styleType = this.state.currentTab;
-        let availableDatasets = mapDataSource.getDatasets();
+        let availableDatasets = dataSource.getDatasets();
 
         // Filter out datasets that have no fields that accommodate the style type
         switch (styleType) {
             case 'category':
                 availableDatasets = availableDatasets.filter((dataset) =>
-                    mapDataSource.accommodatesType(dataset.id, 'category'));
+                    dataSource.accommodatesType(dataset.id, 'category'));
                 break;
             case 'choropleth':
             case 'range':
                 availableDatasets = availableDatasets.filter((dataset) =>
-                    mapDataSource.accommodatesType(dataset.id, 'numeric'));
+                    dataSource.accommodatesType(dataset.id, 'numeric'));
                 break;
         }
         availableDatasets.sort();
@@ -101,7 +101,7 @@ class MapStyleMenu extends Component {
             },
             // Proceed to get the available fields for the default dataset
             this._getAvailableFields(defaultDataset));
-    }
+    };
 
     /**
      * Update State with available fields from `dataset`
@@ -139,7 +139,7 @@ class MapStyleMenu extends Component {
             // which will also save those values to the state.
             () => this._getFieldValues(dataset, currentField)
         )
-    }
+    };
 
     /**
      * Collects possible values for `field` of Carto `dataset` adds them to the state.
@@ -195,7 +195,7 @@ class MapStyleMenu extends Component {
     handleDataSourceMenuChange = name => event => {
         if (name === 'dataset') {
             // Update dataset
-            let newDataset = mapDataSource.getDataset(event.target.value);
+            let newDataset = dataSource.getDataset(event.target.value);
             this.setState(
                 {dataset: newDataset},
                 () => {
@@ -208,7 +208,7 @@ class MapStyleMenu extends Component {
         }
         else if (name === 'field') {
             // Get new field
-            let newField = mapDataSource.getField(this.state.dataset.id, event.target.value);
+            let newField = dataSource.getField(this.state.dataset.id, event.target.value);
 
             // Update field in state
             this.setState(
@@ -246,18 +246,23 @@ class MapStyleMenu extends Component {
      * be processed and further lifted to the InterfaceMap for rendering.
      */
     handleSubmit = () => {
-        // Send state up to menu
-        let savedState = this.state;
-        const {addStyleLayer, updateStyleLayer, mode, layerIndex} = this.props;
         const {ADD, UPDATE} = STYLE_MENU_MODES;
+        const {addStyleLayer, updateStyleLayer, mode, layerIndex} = this.props;
+        const {styleInfo} = this.state;
+
+        // Send state up to menu
+        let savedState = Object.assign({}, this.state);
+        delete savedState.styleInfo;
+
         // We currently pass the entire state of this menu into the store.  This way we can repopulate this menu when
         // modifying a previously-made layer. We can also display some of the metadata on the menu.
         switch(mode){
             case ADD:
-                addStyleLayer(savedState);
+                console.log(savedState, styleInfo)
+                addStyleLayer('STYLE_LAYER', savedState, styleInfo);
                 break;
             case UPDATE:
-                updateStyleLayer(layerIndex, savedState)
+                updateStyleLayer(layerIndex, savedState, styleInfo);
                 break;
             default:
                 throw RangeError(`${mode} is not a valid mode for updating styles`)
@@ -409,17 +414,18 @@ class MapStyleMenu extends Component {
 
 const mapStateToProps = () => {
     return {}
-}
+};
+
 const mapDispatchToProps = dispatch => {
     return {
-         addStyleLayer: layerData => {
-             dispatch(addStyleLayer(layerData))
+         addStyleLayer: (layerType, menuState, styleInfo) => {
+             dispatch(addStyleLayer(layerType, menuState, styleInfo))
          },
-        updateStyleLayer: (index, layerData) => {
-             dispatch(updateStyleLayer(index, layerData))
+        updateStyleLayer: (index, menuState, styleInfo) => {
+             dispatch(updateStyleLayer(index, menuState, styleInfo))
         }
     }
-}
+};
 
 
 

@@ -17,7 +17,6 @@ import {monify, extractAddressFromData} from '../../utils/dataUtils'
 import DashboardHeader from './DashboardHeader'
 import DataSection from './DataSection'
 /* Components that need to be moved */
-// TODO MOVE THESE!
 import {
     ParcelCharacteristics,
     DwellingCharacteristics,
@@ -68,32 +67,26 @@ const Dashboard = props => {
 
         return (
             <Paper style={style}>
+                <DataSection>
                 <ParcelSearch style={style.search}/>
-
-
                 <DashboardHeader handlePanToRequest={props.panMapToTarget} imageUrl={imageUrl} address={address}
                                  parcelId={parcelId}/>
 
-                {/*TODO: contain all this stuff in another div that has overflow scroll*/}
-                <DataSection name="home">
+                {/* TODO: don't pass data, but map state to these props */}
+
                     <ParcelCharacteristics data={data}/>
-                    <br/>
+
                     <DwellingCharacteristics data={data}/>
-                    <br/>
-                    <OwnerAddress data={data}/>
-                </DataSection>
 
-                <DataSection name="assessment" title="Assessment">
+                    <OwnerAddress data={data} parcelId={parcelId}/>
+
                     <AssessmentTable data={data}/>
-                    <br/>
+
                     <PropertyTaxReductions data={data}/>
-                </DataSection>
 
-                <DataSection name="sales" title="Sales">
+
                     <SalesTable data={data}/>
-                </DataSection>
 
-                <DataSection name="liens" title="Tax Liens">
                     <TaxLiens data={data}/>
                 </DataSection>
             </Paper>

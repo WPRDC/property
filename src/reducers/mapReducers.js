@@ -3,7 +3,7 @@ import {BASEMAPS, SELECTION_LAYERS} from "../utils/mapDefaults";
 
 import {
     SET_BASEMAP, SET_SELECTED_PARCEL_SHAPE, CENTER_MAP_ON_POINT, ADD_STYLE_LAYER,
-    UPDATE_STYLE_LAYER, REMOVE_STYLE_LAYER
+    UPDATE_STYLE_LAYER, REMOVE_STYLE_LAYER, OPEN_HIGHLIGHT_MENU, CLOSE_HIGHLIGHT_MENU
 } from "../actions/mapActions";
 
 export const availableShapesLayer = (state = SELECTION_LAYERS.PARCEL, action) => {
@@ -43,13 +43,14 @@ export const mapOptions = (state = {center: [40.438340, -79.961884], zoom: 16}, 
 };
 
 export const styleLayers = (state = [], action) => {
+    const {layerType, menuState, styleInfo} = action;
     switch (action.type) {
         case ADD_STYLE_LAYER:
-            return [...state, action.styleLayerData];
+            return [...state, {layerType, menuState, styleInfo}];
         case UPDATE_STYLE_LAYER:
             return state.map((styleLayer, idx) =>
                 (idx === action.index)
-                    ? action.styleLayerData
+                    ? Object.assign({}, styleLayer, {layerType, menuState, styleInfo})
                     : styleLayer
             );
         case REMOVE_STYLE_LAYER:
@@ -57,5 +58,15 @@ export const styleLayers = (state = [], action) => {
         default:
             return state
     }
-}
+};
 
+export const highlightMenu = (state = {isOpen: false}, action) => {
+    switch(action.type) {
+        case OPEN_HIGHLIGHT_MENU:
+            return Object.assign({}, state, {isOpen: true});
+        case CLOSE_HIGHLIGHT_MENU:
+            return Object.assign({}, state, {isOpen: false});
+        default:
+            return state
+    }
+};

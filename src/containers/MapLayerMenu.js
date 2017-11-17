@@ -157,6 +157,8 @@ class MapLayerMenu extends Component {
             handleRemoveStyleLayer
         } = this.props;
 
+
+
         return (
             <div>
                 <Slide in={open} direction="right">
@@ -172,9 +174,9 @@ class MapLayerMenu extends Component {
 
                         {/* Layer List */}
                         <List>
-                            {styleLayers.map((layer, i) =>
+                            {styleLayers.map(({layerType, menuState, styleInfo}, i) =>
                                 <LayerListItem key={i.toString()}
-                                               layer={layer}
+                                               layer={menuState}
                                                handleUpdate={this.handleUpdateLayer(i)}
                                                handleDelete={handleRemoveStyleLayer(i)}
 

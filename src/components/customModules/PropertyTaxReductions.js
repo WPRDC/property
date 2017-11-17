@@ -1,50 +1,47 @@
 import React, {Component} from 'react'
 
 import KeyValueListDisplay from "../dashboard/dataDisplays/KeyValueListDisplay";
+import DataCard from '../dashboard/DataCard'
 
-const PropertyTaxReductions =props => {
+
+const PropertyTaxReductions = props => {
     return (
-        <KeyValueListDisplay title="Tax Reductions"
-                        data={props.data}
-                        fields={
-                            [
-                                {
-                                    title: 'Homestead',
-                                    field: 'HOMESTEADFLAG',
-                                    resource: 'assessments',
-                                    formatter: (data) => {
-                                        return data ? "YES" : "NO"
-                                    }
-                                },
-                                {
-                                    title: 'Farmstead',
-                                    field: 'FARMSTEADFLAG',
-                                    resource: 'assessments',
-                                    formatter: (data) => {
-                                        return data ? "YES" : "NO"
-                                    }
-                                },
-                                {
-                                    title: 'Clean & Green',
-                                    field: 'CLEANGREEN',
-                                    resource: 'assessments',
-                                    formatter: (data) => {
-                                        return data ? "YES" : "NO"
-                                    }
-                                },
-                                {
-                                    title: 'Abatement',
-                                    field: 'ABATEMENTFLAG',
-                                    resource: 'assessments',
-                                    formatter: (data) => {
-                                        return data ? "YES" : "NO"
-                                    }
-                                },
-                            ]
-                        }
-                        allowNulls={true}
-
-        />
+        <DataCard title="Tax Reductions"
+                  datasetId="assessment"
+        >
+            <KeyValueListDisplay
+                data={props.data}
+                fields={
+                    [
+                        {
+                            title: 'Homestead',
+                            field: 'HOMESTEADFLAG',
+                            resource: 'assessments',
+                            formatter: data => data ? "YES" : "NO"
+                        },
+                        {
+                            title: 'Farmstead',
+                            field: 'FARMSTEADFLAG',
+                            resource: 'assessments',
+                            formatter: data => data ? "YES" : "NO"
+                        },
+                        {
+                            title: 'Clean & Green',
+                            field: 'CLEANGREEN',
+                            resource: 'assessments',
+                            formatter: data => data ? "YES" : "NO"
+                        },
+                        {
+                            title: 'Abatement',
+                            field: 'ABATEMENTFLAG',
+                            resource: 'assessments',
+                            formatter: data => data ? "YES" : "NO"
+                        },
+                    ]
+                }
+                allowNulls={true}
+            />
+        </DataCard>
     );
 };
 
