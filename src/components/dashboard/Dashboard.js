@@ -25,7 +25,7 @@ import {
     SalesTable,
     TaxLiens,
     OwnerAddress
-} from '../customModules/index'
+} from './customModules/index'
 
 
 /* Project Components */
@@ -68,11 +68,9 @@ const Dashboard = props => {
         return (
             <Paper style={style}>
                 <DataSection>
-                <ParcelSearch style={style.search}/>
-                <DashboardHeader handlePanToRequest={props.panMapToTarget} imageUrl={imageUrl} address={address}
-                                 parcelId={parcelId}/>
-
-                {/* TODO: don't pass data, but map state to these props */}
+                    <ParcelSearch style={style.search}/>
+                    <DashboardHeader handlePanToRequest={props.panMapToTarget} imageUrl={imageUrl} address={address}
+                                     parcelId={parcelId}/>
 
                     <ParcelCharacteristics data={data}/>
 
@@ -95,11 +93,11 @@ const Dashboard = props => {
     else {
         return (
             <div style={style}>
-                <div className="template">
+                <DataSection>
                     <div style={style.template.img}/>
                     <LinearProgress mode="query"/>
                     <div style={style.template.header}/>
-                </div>
+                </DataSection>
             </div>
         );
     }

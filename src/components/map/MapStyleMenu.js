@@ -256,7 +256,7 @@ class MapStyleMenu extends Component {
 
         // We currently pass the entire state of this menu into the store.  This way we can repopulate this menu when
         // modifying a previously-made layer. We can also display some of the metadata on the menu.
-        switch(mode){
+        switch (mode) {
             case ADD:
                 console.log(savedState, styleInfo)
                 addStyleLayer('STYLE_LAYER', savedState, styleInfo);
@@ -309,9 +309,8 @@ class MapStyleMenu extends Component {
     componentWillReceiveProps = nextProps => {
         // Check if a saved state was provided (for updating a previously-made layer)
         if (nextProps.savedState) {
-            this.setState(this.props.savedState, this.render)
+            this.setState(Object.assign({}, nextProps.savedState, {styleInfo: nextProps.styleInfo}));
         }
-
     };
 
     /**
@@ -418,15 +417,14 @@ const mapStateToProps = () => {
 
 const mapDispatchToProps = dispatch => {
     return {
-         addStyleLayer: (layerType, menuState, styleInfo) => {
-             dispatch(addStyleLayer(layerType, menuState, styleInfo))
-         },
+        addStyleLayer: (layerType, menuState, styleInfo) => {
+            dispatch(addStyleLayer(layerType, menuState, styleInfo))
+        },
         updateStyleLayer: (index, menuState, styleInfo) => {
-             dispatch(updateStyleLayer(index, menuState, styleInfo))
+            dispatch(updateStyleLayer(index, menuState, styleInfo))
         }
     }
 };
-
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(MapStyleMenu);

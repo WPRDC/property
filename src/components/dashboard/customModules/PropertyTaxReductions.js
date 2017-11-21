@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 
-import KeyValueListDisplay from "../dashboard/dataDisplays/KeyValueListDisplay";
-import DataCard from '../dashboard/DataCard'
+import KeyValueListDisplay from "../dataDisplays/KeyValueListDisplay";
+import DataCard from '../DataCard'
 
 
 const PropertyTaxReductions = props => {

@@ -74,9 +74,12 @@ export const setBasemap = basemapName => {
     }
 };
 
-export const openHighlightMenu = () => {
+export const openHighlightMenu = (dataset, fields, values) => {
     return {
         type: OPEN_HIGHLIGHT_MENU,
+        dataset,
+        fields,
+        values,
     }
 }
 

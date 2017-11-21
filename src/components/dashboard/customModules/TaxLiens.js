@@ -1,8 +1,8 @@
 import React, {Component} from 'react'
 
-import KeyValueListDisplay from "../dashboard/dataDisplays/KeyValueListDisplay";
-import {monify} from "../../utils/dataUtils";
-import DataCard from '../dashboard/DataCard'
+import KeyValueListDisplay from "../dataDisplays/KeyValueListDisplay";
+import {monify} from "../../../utils/dataUtils";
+import DataCard from '../DataCard'
 
 const TaxLiens = props => {
     return (

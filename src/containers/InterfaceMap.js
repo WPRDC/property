@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types'
 
 import {Map, TileLayer, ZoomControl} from 'react-leaflet';
-import DataHighlightMenu from '../components/highlightMenu/DataHighlightMenu'
+import DataHighlightMenu from '../components/map/highlightMenu/DataHighlightMenu'
 
 /* Material UI components */
 import Button from 'material-ui/Button'

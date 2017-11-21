@@ -61,10 +61,20 @@ export const styleLayers = (state = [], action) => {
 };
 
 export const highlightMenu = (state = {isOpen: false}, action) => {
-    switch(action.type) {
+    const {dataset, fields, values} = action;
+
+    switch (action.type) {
         case OPEN_HIGHLIGHT_MENU:
-            return Object.assign({}, state, {isOpen: true});
-        case CLOSE_HIGHLIGHT_MENU:
+            return Object.assign({}, state,
+                {
+                    dataset,
+                    fields,
+                    values,
+                    isOpen: true
+                }
+            );
+        case
+        CLOSE_HIGHLIGHT_MENU:
             return Object.assign({}, state, {isOpen: false});
         default:
             return state

@@ -1,18 +1,18 @@
 import React from 'react';
 import Typography from 'material-ui/Typography';
-import SingleItemDisplay from "../dashboard/dataDisplays/SingleItemDisplay";
+import SingleItemDisplay from "../dataDisplays/SingleItemDisplay";
 
-import DataCard from '../dashboard/DataCard'
-import {fetchParcelFromPoint} from "../../actions/mapActions";
+import DataCard from '../DataCard'
+import {fetchParcelFromPoint} from "../../../actions/mapActions";
 
-import {dataSource} from '../../utils/mapDefaults'
+import {dataSource} from '../../../utils/mapDefaults'
 
 const style = {
     div: {
         margin: '6px 0',
         fontSize: '13px !important'
     },
-}
+};
 
 const mapInfo = data => {
     const {
@@ -38,23 +38,29 @@ const mapInfo = data => {
 const dataset = dataSource.getDataset('assessment');
 
 const OwnerAddress = props => {
+    const {data} = props;
+    const assessmentData = data.assessments[0];
+    const {
+        CHANGENOTICEADDRESS1,
+        CHANGENOTICEADDRESS2,
+        CHANGENOTICEADDRESS3,
+        CHANGENOTICEADDRESS4
+    } = assessmentData;
+
+    const addressString = CHANGENOTICEADDRESS1
+        + CHANGENOTICEADDRESS2
+        + CHANGENOTICEADDRESS3
+        + CHANGENOTICEADDRESS4;
     return (
         <DataCard
             title="Owner Address"
             datasetId="assessment"
-            mapInfo={mapInfo(props.data)}
+            map={{dataset, fields: ['Owner Address'], values: [addressString]}}
         >
             <SingleItemDisplay
-                data={props.data}
+                data={data}
                 formatter={
                     data => {
-                        const assessmentData = data.assessments[0];
-                        const {
-                            CHANGENOTICEADDRESS1,
-                            CHANGENOTICEADDRESS2,
-                            CHANGENOTICEADDRESS3,
-                            CHANGENOTICEADDRESS4
-                        } = assessmentData;
                         return (<div style={style.div}>
                             <Typography type="body1">{CHANGENOTICEADDRESS1}</Typography>
                             <Typography type="body1">{CHANGENOTICEADDRESS2}</Typography>

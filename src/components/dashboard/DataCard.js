@@ -37,7 +37,7 @@ class DataCard extends Component {
     };
 
     render() {
-        const {title, subtitle, children, mapInfo, datasetId, openHighlightMenu} = this.props;
+        const {title, subtitle, children, datasetId, openHighlightMenu, map} = this.props;
         const dataset = dataSource.getDataset(datasetId);
         const {datasetUrl} = dataset || {datasetUrl: ''};
 
@@ -58,10 +58,16 @@ class DataCard extends Component {
                         : null
                     }
 
+                    {map
+                        ? <Button dense color="primary"
+                                  onClick={openHighlightMenu(map.dataset, map.fields, map.values)}>
+                            Highlight Similar
+                        </Button>
+                        : null
 
-                    <Button dense color="primary" onClick={openHighlightMenu}>
-                        Add to Map
-                    </Button>
+
+                    }
+
                 </CardActions>
             </Card>
         )
@@ -74,8 +80,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        openHighlightMenu: () => {
-            dispatch(openHighlightMenu())
+        openHighlightMenu: (dataset, fields, values) => () => {
+            console.log(dataset, fields, values)
+            dispatch(openHighlightMenu(dataset, fields, values))
         }
     }
 }

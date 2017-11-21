@@ -24,38 +24,6 @@ import {createCategoryCSS, createStyleSQL, COLORS} from '../../../utils/mapUtils
 
 const DEFAULT_COLOR = 'red';
 
-
-/**
- * Line that has a category-color pair for styling the map by category
- *
- * @param props
- * @return {XML} <ListItem> containing <Selects> for category and color
- * @constructor
- */
-const CategorySelectionLine = props => {
-    // TODO: fix default value
-    return (
-        <div>
-            <FormControl>
-                <Select native value={props.menuItem.category}
-                        onChange={props.handleChangeSelect('category', props.itemIdx)}
-                        input={<Input id={'category-value-' + props.itemIdx}/>}
-                >
-                    {props.categoryOptions.map((opt, optionIdx) => (
-                        <option key={optionIdx.toString()}
-                                value={props.categoryOptions[optionIdx]}>{props.categoryOptions[optionIdx]}
-                        </option>
-                    ))}
-                </Select>
-            </FormControl>
-            <FormControl>
-                <ColorPicker onChange={props.handleChangeColor(props.itemIdx)}/>
-            </FormControl>
-        </div>
-    );
-};
-
-
 class CategoryStyleMenu extends Component {
     /**
      * Provides menu for defining style based on coloring parcels by category.
@@ -276,5 +244,38 @@ class CategoryStyleMenu extends Component {
         );
     }
 }
+
+
+/**
+ * Line that has a category-color pair for styling the map by category
+ *
+ * @param props
+ * @return {XML} <ListItem> containing <Selects> for category and color
+ * @constructor
+ */
+const CategorySelectionLine = props => {
+    // TODO: fix default value
+    return (
+        <div>
+            <FormControl>
+                <Select native value={props.menuItem.category}
+                        onChange={props.handleChangeSelect('category', props.itemIdx)}
+                        input={<Input id={'category-value-' + props.itemIdx}/>}
+                >
+                    {props.categoryOptions.map((opt, optionIdx) => (
+                        <option key={optionIdx.toString()}
+                                value={props.categoryOptions[optionIdx]}>{props.categoryOptions[optionIdx]}
+                        </option>
+                    ))}
+                </Select>
+            </FormControl>
+            <FormControl>
+                <ColorPicker onChange={props.handleChangeColor(props.itemIdx)}/>
+            </FormControl>
+        </div>
+    );
+};
+
+
 
 export default CategoryStyleMenu;
