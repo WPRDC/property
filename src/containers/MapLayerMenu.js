@@ -28,21 +28,12 @@ import {STYLE_MENU_MODES} from "../utils/mapDefaults";
 import {removeStyleLayer} from "../actions/mapActions";
 
 const style = {
-    drawer: {
-        width: '250px',
-    },
-    button: {
-        position: 'absolute',
-        top: '12px',
-        right: '52px',
-        zIndex: '1001',
-    },
-    paper: {
+    base: {
         position: 'absolute',
         top: '12px',
         left: '12px',
-        zIndex: '1001',
-        width: "320px",
+        zIndex: '2',
+        width: "280px",
     }
 };
 
@@ -152,19 +143,19 @@ class MapLayerMenu extends Component {
 
     render() {
         const {
-            open,
             styleLayers,
+            styleLayerMenu,
             handleRemoveStyleLayer
         } = this.props;
 
-
+        const {isOpen} = styleLayerMenu;
 
         return (
-            <div>
-                <Slide in={open} direction="right">
-                    <Paper style={style.paper}>
+            <div style={style.base}>
+                <Slide in={isOpen} direction="right">
+                    <Paper>
                         {/* Heading */}
-                        <AppBar position="static" color="default">
+                        <AppBar position="static" color="primary">
                             <Toolbar>
                                 <Typography type="title" color="inherit">
                                     Map Layers
@@ -186,7 +177,7 @@ class MapLayerMenu extends Component {
                             <AddLayerListItem handleOnClick={this.handleAddLayer}/>
 
                             <Divider inset/>
-                            <ListItem button onClick={this.toggleBasemapMenu}>
+                            <ListItem button={true} onClick={this.toggleBasemapMenu}>
                                 <ListItemAvatar>
                                     <Avatar>
                                         <LayersIcon/>
@@ -221,10 +212,12 @@ class MapLayerMenu extends Component {
 function mapStateToProps(state) {
     const {
         styleLayers,
+        styleLayerMenu,
     } = state;
 
     return {
-        styleLayers
+        styleLayers,
+        styleLayerMenu
     }
 }
 
@@ -234,6 +227,7 @@ function mapDispatchToProps(dispatch){
         handleRemoveStyleLayer: (index) => () => {
             dispatch(removeStyleLayer(index))
         }
+
     }
 }
 

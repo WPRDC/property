@@ -3,9 +3,9 @@ import Typography from 'material-ui/Typography';
 import SingleItemDisplay from "../dataDisplays/SingleItemDisplay";
 
 import DataCard from '../DataCard'
-import {fetchParcelFromPoint} from "../../../actions/mapActions";
 
 import {dataSource} from '../../../utils/mapDefaults'
+import {nl2br} from "../../../utils/dataUtils";
 
 const style = {
     div: {
@@ -14,7 +14,7 @@ const style = {
     },
 };
 
-const mapInfo = data => {
+const styleInfo = data => {
     const {
         CHANGENOTICEADDRESS1,
         CHANGENOTICEADDRESS2,
@@ -23,8 +23,6 @@ const mapInfo = data => {
     } = data.assessments[0];
     const address = CHANGENOTICEADDRESS1 + CHANGENOTICEADDRESS2 + CHANGENOTICEADDRESS3 + CHANGENOTICEADDRESS4;
     return {
-        dataset: "Assessment",
-        field: "Owner Address (custom)",
         sql: `SELECT * FROM (
             SELECT ds.cartodb_id, pb.the_geom, pb.the_geom_webmercator, 
                 (ds.changenoticeaddress1 || ds.changenoticeaddress2 || ds.changenoticeaddress3 || ds.changenoticeaddress4) as owner_address, ds.parid 
@@ -41,23 +39,24 @@ const OwnerAddress = props => {
     const {data} = props;
     const assessmentData = data.assessments[0];
     const {
-        CHANGENOTICEADDRESS1,
-        CHANGENOTICEADDRESS2,
-        CHANGENOTICEADDRESS3,
-        CHANGENOTICEADDRESS4
+        CHANGENOTICEADDRESS1, CHANGENOTICEADDRESS2, CHANGENOTICEADDRESS3, CHANGENOTICEADDRESS4
     } = assessmentData;
 
-    const addressString = CHANGENOTICEADDRESS1
-        + CHANGENOTICEADDRESS2
-        + CHANGENOTICEADDRESS3
-        + CHANGENOTICEADDRESS4;
+    const addressString = [CHANGENOTICEADDRESS1, CHANGENOTICEADDRESS2, CHANGENOTICEADDRESS3 + CHANGENOTICEADDRESS4].join('\n');
+
     return (
         <DataCard
             title="Owner Address"
             datasetId="assessment"
-            map={{dataset, fields: ['Owner Address'], values: [addressString]}}
+            map={{
+                dataset,
+                items: [
+                    {field: 'Owner Address', value: addressString, formatter: nl2br, styleInfo: styleInfo(data)},
+                    {field: 'Owner Address', value: addressString, formatter: e => e}
+                ]
+            }}
         >
-            <SingleItemDisplay
+            < SingleItemDisplay
                 data={data}
                 formatter={
                     data => {

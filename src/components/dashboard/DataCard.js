@@ -60,7 +60,7 @@ class DataCard extends Component {
 
                     {map
                         ? <Button dense color="primary"
-                                  onClick={openHighlightMenu(map.dataset, map.fields, map.values)}>
+                                  onClick={openHighlightMenu(map.dataset, map.items)}>
                             Highlight Similar
                         </Button>
                         : null
@@ -80,9 +80,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        openHighlightMenu: (dataset, fields, values) => () => {
-            console.log(dataset, fields, values)
-            dispatch(openHighlightMenu(dataset, fields, values))
+        openHighlightMenu: (dataset, items) => () => {
+            dispatch(openHighlightMenu(dataset, items))
         }
     }
 }

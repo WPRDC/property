@@ -29,7 +29,7 @@ const DataTable = props => {
             {header &&
             <TableHead>
                 <TableRow>
-                    {header.map((h, i) => <TableCell compact={true} numeric={Boolean(i)} key={i.toString()}
+                    {header.map((h, i) => <TableCell padding="dense" numeric={Boolean(i)} key={i.toString()}
                                                      className={props.classes.cell}>{h}</TableCell>)}
                 </TableRow>
             </TableHead>}
@@ -39,7 +39,7 @@ const DataTable = props => {
                     if (hasValues(row)) {
                         return (
                             <TableRow key={i.toString()}>
-                                {row.map((cell, j) => <TableCell compact={true} numeric={Boolean(j)} key={j.toString()}
+                                {row.map((cell, j) => <TableCell padding="dense" numeric={Boolean(j)} key={j.toString()}
                                                                  className={props.classes.cell}>{cell}</TableCell>)}
                             </TableRow>
                         );

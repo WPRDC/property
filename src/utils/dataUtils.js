@@ -1,7 +1,7 @@
 /**
  * Created by sds25 on 9/19/17.
  */
-
+import React from 'react';
 import {getParcelIdFromAddress} from './apiUtils'
 
 const PARCEL_ID_PATTERN = /^(\d{4}\D\d{4}[a-zA-Z0-9]{7})$/;
@@ -42,7 +42,7 @@ export function monify(number, decimal) {
     let dec = 0;
     if (number !== 0 && (!number || isNaN(number)))
         return '';
-    if(decimal)
+    if (decimal)
         dec = 2;
 
     // Set decimals and commas
@@ -80,14 +80,14 @@ export const arraysAreDifferent = (a, b) => {
  * @return {Promise}
  */
 export const checkSearchQuery = query => {
-     if (PARCEL_ID_PATTERN.test(query)){
-         return new Promise( (resolve, reject) => {
-             resolve(query.toUpperCase());
-         })
-     }
-     else{
-         return getParcelIdFromAddress(query)
-     }
+    if (PARCEL_ID_PATTERN.test(query)) {
+        return new Promise((resolve, reject) => {
+            resolve(query.toUpperCase());
+        })
+    }
+    else {
+        return getParcelIdFromAddress(query)
+    }
 };
 
 export const extractAddressFromData = data => {
@@ -196,4 +196,14 @@ export const extractTable = (data, tableProps) => {
     }
 
     return table;
+};
+
+export const nl2br = multilineString => {
+    console.log('w00000t');
+    return <div>
+        {
+            multilineString.split('\n').map((item, key) =>
+                <span key={key}>{item}<br/></span>)
+        }
+    </div>
 }

@@ -11,11 +11,15 @@ export const ADD_STYLE_LAYER = 'ADD_STYLE_LAYER';
 export const UPDATE_STYLE_LAYER = 'UPDATE_STYLE_LAYER';
 export const REMOVE_STYLE_LAYER = 'REMOVE_STYLE_LAYER';
 
-export const SET_BASEMAP = 'SET_BASEMAP';
+export const OPEN_STYLE_LAYER_MENU = 'OPEN_STYLE_LAYER_MENU';
+export const CLOSE_STYLE_LAYER_MENU = 'CLOSE_STYLE_LAYER_MENU';
 
+export const SET_BASEMAP = 'SET_BASEMAP';
 
 export const OPEN_HIGHLIGHT_MENU = "OPEN_HIGHLIGHT_MENU";
 export const CLOSE_HIGHLIGHT_MENU = "CLOSE_HIGHLIGHT_MENU";
+export const SELECT_HIGHLIGHT_MENU_FIELD = 'SELECT_HIGHLIGHT_MENU_FIELD'
+
 
 export const fetchParcelFromPoint = point => {
     return dispatch => {
@@ -60,6 +64,18 @@ export const updateStyleLayer = (index, menuState, styleInfo) => {
     }
 };
 
+export const openStyleLayerMenu = () => {
+    return {
+        type: OPEN_STYLE_LAYER_MENU
+    }
+};
+
+export const closeStyleLayerMenu = () => {
+    return {
+        type: CLOSE_HIGHLIGHT_MENU
+    }
+};
+
 export const removeStyleLayer = (index) => {
     return {
         type: REMOVE_STYLE_LAYER,
@@ -74,17 +90,23 @@ export const setBasemap = basemapName => {
     }
 };
 
-export const openHighlightMenu = (dataset, fields, values) => {
+export const openHighlightMenu = (dataset, items) => {
     return {
         type: OPEN_HIGHLIGHT_MENU,
         dataset,
-        fields,
-        values,
+        items,
     }
-}
+};
 
 export const closeHighlightMenu = () => {
     return {
         type: CLOSE_HIGHLIGHT_MENU,
     }
-}
+};
+
+export const selectHighlightMenuField = selectedIndex => {
+    return {
+        type: SELECT_HIGHLIGHT_MENU_FIELD,
+        selectedIndex
+    }
+};

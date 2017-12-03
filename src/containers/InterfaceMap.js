@@ -18,6 +18,7 @@ import {connect} from 'react-redux'
 
 
 import {BASEMAPS} from "../utils/mapDefaults";
+import {closeStyleLayerMenu, openStyleLayerMenu} from "../actions/mapActions";
 
 
 const style = {
@@ -56,23 +57,32 @@ class InterfaceMap extends Component {
         handleParcelClick(latlng)
     };
 
-    toggleLayerMenu = () => {
-        this.setState({layerMenuOpen: !this.state.layerMenuOpen})
-    }
 
     render() {
-        const {mapOptions, basemapLayer, availableShapesLayer, selectedLayer, styleLayers} = this.props;
-        const {center, maxZoom} = mapOptions;
+        const {
+            mapOptions,
+            basemapLayer,
+            availableShapesLayer,
+            selectedLayer,
+            styleLayers,
+            styleLayerMenu,
+            toggleStyleLayerMenu
+        } = this.props;
+
+        const {
+            center,
+            maxZoom
+        } = mapOptions;
 
         return (
             <div style={style.base} className="mapContainer">
-                <Button fab color="primary" aria-label="add" onClick={this.toggleLayerMenu}
+                <Button fab color="primary" aria-label="add" onClick={toggleStyleLayerMenu(styleLayerMenu)}
                         style={style.button}>
                     <LayersIcon/>
                 </Button>
 
 
-                <MapLayerMenu open={this.state.layerMenuOpen}/>
+                <MapLayerMenu/>
 
                 <Map style={style.map}
                      center={center}
@@ -103,12 +113,6 @@ class InterfaceMap extends Component {
 
 
                 </Map>
-
-                <MapLayerMenu
-                    updateBasemap={this.updateBasemap}
-                    updateStyleLayers={this.updateStyleLayers}
-                    basemaps={BASEMAPS}
-                />
                 <DataHighlightMenu/>
 
             </div>
@@ -130,7 +134,8 @@ function mapStateToProps(state) {
         availableShapesLayer,
         selectedLayer,
         styleLayers,
-        mapOptions
+        mapOptions,
+        styleLayerMenu
     } = state;
 
     return {
@@ -138,14 +143,23 @@ function mapStateToProps(state) {
         availableShapesLayer,
         selectedLayer,
         styleLayers,
-        mapOptions
+        mapOptions,
+        styleLayerMenu
     }
 }
+
 
 const mapDispatchToProps = dispatch => {
     return {
         handleParcelClick: latLng => {
             dispatch(fetchParcelFromPoint(latLng))
+        },
+        toggleStyleLayerMenu: (styleLayerMenu) => () => {
+            if (styleLayerMenu.isOpen) {
+                dispatch(closeStyleLayerMenu())
+            } else {
+                dispatch(openStyleLayerMenu());
+            }
         }
     }
 };
