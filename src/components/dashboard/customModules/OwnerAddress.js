@@ -42,7 +42,10 @@ const OwnerAddress = props => {
         CHANGENOTICEADDRESS1, CHANGENOTICEADDRESS2, CHANGENOTICEADDRESS3, CHANGENOTICEADDRESS4
     } = assessmentData;
 
-    const addressString = [CHANGENOTICEADDRESS1, CHANGENOTICEADDRESS2, CHANGENOTICEADDRESS3 + CHANGENOTICEADDRESS4].join('\n');
+    // Format the address into several lines.  if a line doesn't exist (filter it out)
+    const addressString = [CHANGENOTICEADDRESS1, CHANGENOTICEADDRESS2, CHANGENOTICEADDRESS3 + CHANGENOTICEADDRESS4]
+        .filter(line => line.replace(/\s+/g, ''))
+        .join('\n');
 
     return (
         <DataCard

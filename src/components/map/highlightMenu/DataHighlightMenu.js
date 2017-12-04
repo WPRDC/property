@@ -17,6 +17,10 @@ import {
     addStyleLayer, closeHighlightMenu, openStyleLayerMenu, selectHighlightMenuField,
     updateStyleLayer
 } from "../../../actions/mapActions";
+
+import ColorPicker from '../../../ColorPicker'
+
+
 import {createCategoryCSS, createStyleSQL} from "../../../utils/mapUtils";
 
 const styles = theme => ({
@@ -28,6 +32,18 @@ const styles = theme => ({
 
 
 class DataHighlightMenu extends Component {
+    constructor(props){
+        super(props)
+
+        this.state = {
+            color: 'blue'
+        }
+    }
+
+    handleChangeColor = color => {
+        this.setState({color})
+    };
+
     handleSubmit = () => {
         const {dataset, items, selectedIndex, styleLayers, handleSubmit} = this.props;
         const {field, values, styleInfo} = items[selectedIndex]
@@ -60,12 +76,13 @@ class DataHighlightMenu extends Component {
 
                     </DialogContent>
                     <DialogActions>
+                        <FormControl>
+                            <ColorPicker onChange={this.handleChangeColor}/>
+                        </FormControl>
                         <Button onClick={closeMenu} color="primary">Cancel</Button>
                         <Button onClick={this.handleSubmit} color="primary">Highlight</Button>
                     </DialogActions>
                 </Dialog>
-
-
                 : null
         )
     }
