@@ -26,6 +26,7 @@ import {green} from 'material-ui/colors';
 
 import {STYLE_MENU_MODES} from "../utils/mapDefaults";
 import {removeStyleLayer} from "../actions/mapActions";
+import {openHighlightMenu} from "../actions";
 
 const style = {
     base: {
@@ -99,14 +100,20 @@ class MapLayerMenu extends Component {
     };
 
     /** Open style menu and let it know the index of the layer to style */
-    handleUpdateLayer = idx => () => {
-        this.setState(
-            {
-                styleMenuOpen: true,
-                styleMenuMode: STYLE_MENU_MODES.UPDATE,
-                targetLayerIndex: idx
-            }
-        )
+    handleUpdateLayer = (idx, type) => () => {
+        if(type === 'HIGHLIGHT_LAYER'){
+            const styleLayer = this.props.styleLayers[idx];
+            const {dataset, items} = styleLayer.menuState;
+            this.props.handleOpenHighlightMenu(dataset, items)
+        } else {
+            this.setState(
+                {
+                    styleMenuOpen: true,
+                    styleMenuMode: STYLE_MENU_MODES.UPDATE,
+                    targetLayerIndex: idx
+                }
+            )
+        }
     };
 
     /**
@@ -168,7 +175,7 @@ class MapLayerMenu extends Component {
                             {styleLayers.map(({layerType, menuState, styleInfo}, i) =>
                                 <LayerListItem key={i.toString()}
                                                layer={menuState}
-                                               handleUpdate={this.handleUpdateLayer(i)}
+                                               handleUpdate={this.handleUpdateLayer(i, layerType)}
                                                handleDelete={handleRemoveStyleLayer(i)}
 
                                 />)
@@ -226,8 +233,10 @@ function mapDispatchToProps(dispatch){
     return {
         handleRemoveStyleLayer: (index) => () => {
             dispatch(removeStyleLayer(index))
+        },
+        handleOpenHighlightMenu: (dataset, items) => {
+            dispatch(openHighlightMenu(dataset, items))
         }
-
     }
 }
 

@@ -46,7 +46,7 @@ class DataHighlightMenu extends Component {
         // Generate final sql and css from range and color
         const {range} = this.state;
         const styleInfo = {sql: makeSql(range), css: makeCss(color)};  // move this to redux state
-        handleSubmit(styleLayers, styleInfo, dataset.name, field);
+        handleSubmit(styleLayers, styleInfo, dataset, field, items);
     };
 
     render() {
@@ -161,21 +161,15 @@ const mapDispatchToProps = dispatch => {
             dispatch(selectHighlightMenuColor(color))
         },
 
-        handleSubmit: (styleLayers, styleInfo, datasetName, fieldName) => {
-            console.log(styleLayers)
-
+        handleSubmit: (styleLayers, styleInfo, dataset, fieldName, items) => {
             const layerIndex = styleLayers.findIndex(layer => layer.layerType === 'HIGHLIGHT_LAYER');
-            console.log('INDEX', layerIndex)
+
             const menuInfo = {
                 currentTab: 'Highlight',
-                dataset: {
-                    name: datasetName,
-                },
-                field: {
-                    name: fieldName
-                }
-            }
-            console.log(styleLayers);
+                dataset,
+                field: {name: fieldName},
+                items,
+            };
 
             if (layerIndex > -1) {
                 dispatch(updateStyleLayer(layerIndex, menuInfo, styleInfo));
