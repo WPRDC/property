@@ -52,7 +52,7 @@ export const styleLayers = (state = [], action) => {
         case UPDATE_STYLE_LAYER:
             return state.map((styleLayer, idx) =>
                 (idx === action.index)
-                    ? Object.assign({}, styleLayer, {layerType, menuState, styleInfo})
+                    ? Object.assign({}, styleLayer, {menuState, styleInfo})
                     : styleLayer
             );
         case REMOVE_STYLE_LAYER:
@@ -62,7 +62,7 @@ export const styleLayers = (state = [], action) => {
     }
 };
 
-export const highlightMenu = (state = {selectedIndex:0, isOpen: false}, action) => {
+export const highlightMenu = (state = {selectedIndex:0, color: '#11f', isOpen: false}, action) => {
     const {dataset, items, selectedIndex, color} = action;
 
     switch (action.type) {

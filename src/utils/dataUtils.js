@@ -199,7 +199,6 @@ export const extractTable = (data, tableProps) => {
 };
 
 export const nl2br = multilineString => {
-    console.log('w00000t');
     return <div>
         {
             multilineString.split('\n').map((item, key) =>

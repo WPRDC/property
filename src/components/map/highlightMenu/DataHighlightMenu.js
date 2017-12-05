@@ -162,8 +162,10 @@ const mapDispatchToProps = dispatch => {
         },
 
         handleSubmit: (styleLayers, styleInfo, datasetName, fieldName) => {
-            const layerIndex = styleLayers.findIndex(layer => layer.layerType === 'HIGHLIGHT_LAYER');
+            console.log(styleLayers)
 
+            const layerIndex = styleLayers.findIndex(layer => layer.layerType === 'HIGHLIGHT_LAYER');
+            console.log('INDEX', layerIndex)
             const menuInfo = {
                 currentTab: 'Highlight',
                 dataset: {
