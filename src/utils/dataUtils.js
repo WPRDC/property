@@ -1,7 +1,7 @@
 /**
  * Created by sds25 on 9/19/17.
  */
-
+import React from 'react';
 import {getParcelIdFromAddress} from './apiUtils'
 
 const PARCEL_ID_PATTERN = /^(\d{4}\D\d{4}[a-zA-Z0-9]{7})$/;
@@ -42,7 +42,7 @@ export function monify(number, decimal) {
     let dec = 0;
     if (number !== 0 && (!number || isNaN(number)))
         return '';
-    if(decimal)
+    if (decimal)
         dec = 2;
 
     // Set decimals and commas
@@ -80,13 +80,130 @@ export const arraysAreDifferent = (a, b) => {
  * @return {Promise}
  */
 export const checkSearchQuery = query => {
-     if (PARCEL_ID_PATTERN.test(query)){
-         return new Promise( (resolve, reject) => {
-             resolve(query.toUpperCase());
-         })
-     }
-     else{
-         return getParcelIdFromAddress(query)
-     }
+    if (PARCEL_ID_PATTERN.test(query)) {
+        return new Promise((resolve, reject) => {
+            resolve(query.toUpperCase());
+        })
+    }
+    else {
+        return getParcelIdFromAddress(query)
+    }
 };
 
+export const extractAddressFromData = data => {
+    return (
+        {
+            "number": data['assessments'][0]['PROPERTYHOUSENUM'],
+            "street": data['assessments'][0]['PROPERTYADDRESS'],
+            "city": data['assessments'][0]['PROPERTYCITY'],
+            "state": data['assessments'][0]['PROPERTYSTATE'],
+            "zip": data['assessments'][0]['PROPERTYZIP'],
+        }
+    )
+}
+
+export const makeAddressLine = addressParts => {
+    const {number, street, city, state, zip} = addressParts;
+    return `${number} ${street} ${city} ${state} ${zip}`
+}
+
+
+/**
+ * Extract single field from source data and format it if necessary.
+ *
+ * @param sourceData
+ * @param fieldMapping
+ * @return {*}
+ */
+export const extractField = (sourceData, fieldMapping) => {
+    let value = sourceData[fieldMapping.resource][0][fieldMapping.id];
+    if (typeof(fieldMapping.formatter) !== 'undefined') {
+        value = fieldMapping.formatter(value);
+    }
+    return value;
+}
+
+/**
+ * Pulls out key-value mapping {title: value} from a source of data
+ * @param data
+ * @param fieldMapping
+ * @return {{}}
+ */
+export const extractKeyValueSubset = (data, fieldMapping) => {
+    let subset = {};
+    for (let field of fieldMapping) {
+        let title = '',
+            value = '';
+
+        // items not dependent on `data`
+        if (exists(field.value, field.title)) {
+            title = field.title;
+            value = field.value;
+
+        }
+        // items pulled from data
+        else if (exists(field.resource, field.field)) {
+            if (exists(field.title))
+                title = field.title;
+            else
+                title = field.field;
+            if (data[field.resource].length && data[field.resource][0].hasOwnProperty(field.field))
+                value = data[field.resource][0][field.field]
+        }
+
+        if (exists(field.formatter))
+            subset[title] = field.formatter(value);
+        else
+            subset[title] = value;
+    }
+
+    return subset;
+}
+
+/**
+ * Pulls a table ( [[]...] ) from  a source of data
+ * @param data
+ * @param tableMapping
+ * @param colLabels
+ * @param rowLabels
+ * @return {Array}
+ */
+export const extractTable = (data, tableProps) => {
+    let table = [];
+
+    // Generate heading row
+    if (tableProps.showHeading) {
+        let heading = [];
+        for (let field of tableProps.heading) {
+            if (field === '__label__')
+                heading.push('');
+            else
+                heading.push(field)
+        }
+        table.push(heading);
+    }
+
+    // Collect Data for rows
+    for (let row of tableProps.rows) {
+        let tempRow = [];
+        for (let field of tableProps.heading) {
+            if (field === '__label__')
+                tempRow.push(row[field]);
+            else
+                tempRow.push(extractField(data, row[field]))
+        }
+        table.push(tempRow);
+    }
+
+    return table;
+};
+
+export const nl2br = multilineString => {
+    console.log('w00000t');
+    return <div>
+        {
+            multilineString.split('\n').map((item, key) =>
+                <span key={key}>{item}<br/></span>)
+        }
+    </div>
+}
