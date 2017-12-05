@@ -19,6 +19,7 @@ import {
 } from "../../../actions/mapActions";
 
 import ColorPicker from '../../../ColorPicker'
+import {selectHighlightMenuColor} from "../../../actions";
 
 const styles = theme => ({
     formControl: {
@@ -29,32 +30,38 @@ const styles = theme => ({
 
 
 class DataHighlightMenu extends Component {
-    constructor(props){
+    constructor(props) {
         super(props)
 
         //todo: move state to redux and remove this crap, make it a functional component
         this.state = {
             range: null,
-            color: 'blue'
         }
     }
 
-    handleChangeColor = color => {
-        this.setState({color})
-    };
-
     handleSubmit = () => {
-        const {dataset, items, selectedIndex, styleLayers, handleSubmit} = this.props;
+        const {dataset, items, selectedIndex, color, styleLayers, handleSubmit} = this.props;
         const {field, values, makeSql, makeCss} = items[selectedIndex];
 
         // Generate final sql and css from range and color
-        const {range, color} = this.state;
-        const styleInfo = {sql: makeSql(range), css: makeCss(color)}  // move this to redux state
-        handleSubmit(styleLayers, styleInfo, dataset.name, field);
-    }
+        const {range} = this.state;
+        const styleInfo = {sql: makeSql(range), css: makeCss(color)};  // move this to redux state
+        handleSubmit(styleLayers, styleInfo, dataset, field, items);
+    };
 
     render() {
-        const {dataset, items, selectedIndex, isOpen, closeMenu, handleSelectField} = this.props;
+        const {
+            dataset,
+            items,
+            selectedIndex,
+            color,
+            isOpen,
+
+            closeMenu,
+            handleSelectField,
+            handleSelectColor
+        } = this.props;
+
         return (
             isOpen
                 ? <Dialog open={isOpen} onRequestClose={closeMenu}>
@@ -77,7 +84,7 @@ class DataHighlightMenu extends Component {
                     </DialogContent>
                     <DialogActions>
                         <FormControl>
-                            <ColorPicker onChange={this.handleChangeColor}/>
+                            <ColorPicker color={color} onChange={handleSelectColor}/>
                         </FormControl>
                         <Button onClick={closeMenu} color="primary">Cancel</Button>
                         <Button onClick={this.handleSubmit} color="primary">Highlight</Button>
@@ -130,12 +137,13 @@ const ValueDisplay = props => {
 };
 
 const mapStateToProps = (state) => {
-    const {dataset, items, selectedIndex, isOpen} = state.highlightMenu;
+    const {dataset, items, selectedIndex, color, isOpen} = state.highlightMenu;
     const styleLayers = state.styleLayers;
     return {
         dataset,
         items,
         selectedIndex,
+        color,
         isOpen,
         styleLayers
     }
@@ -149,19 +157,19 @@ const mapDispatchToProps = dispatch => {
         handleSelectField: index => {
             dispatch(selectHighlightMenuField(index))
         },
-        handleSubmit: (styleLayers, styleInfo, datasetName, fieldName) => {
+        handleSelectColor: color => {
+            dispatch(selectHighlightMenuColor(color))
+        },
+
+        handleSubmit: (styleLayers, styleInfo, dataset, fieldName, items) => {
             const layerIndex = styleLayers.findIndex(layer => layer.layerType === 'HIGHLIGHT_LAYER');
 
             const menuInfo = {
                 currentTab: 'Highlight',
-                dataset: {
-                    name: datasetName,
-                },
-                field: {
-                    name: fieldName
-                }
-            }
-            console.log(styleLayers);
+                dataset,
+                field: {name: fieldName},
+                items,
+            };
 
             if (layerIndex > -1) {
                 dispatch(updateStyleLayer(layerIndex, menuInfo, styleInfo));

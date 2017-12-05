@@ -14,7 +14,7 @@ const loggerMiddleware = createLogger({
         compose(
             applyMiddleware(
                 thunkMiddleware, // lets us dispatch() functions
-                loggerMiddleware // neat middleware that logs actions
+                //loggerMiddleware // neat middleware that logs actions
             ),
             window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
         )

@@ -5,10 +5,10 @@ import Button from 'material-ui/Button';
 class ColorPicker extends Component {
     constructor(props) {
         super(props);
-
+        console.log(props);
         this.state = {
             displayColorPicker: false,
-            color: '#11f'
+            color: props.color || '#11f'
         }
     }
 
@@ -21,7 +21,6 @@ class ColorPicker extends Component {
     };
 
     handleChange = (color) => {
-        console.log(color);
         this.setState({ color: color.hex })
     };
 

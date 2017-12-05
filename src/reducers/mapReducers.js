@@ -6,6 +6,7 @@ import {
     UPDATE_STYLE_LAYER, REMOVE_STYLE_LAYER, OPEN_HIGHLIGHT_MENU, CLOSE_HIGHLIGHT_MENU, SELECT_HIGHLIGHT_MENU_FIELD,
     OPEN_STYLE_LAYER_MENU
 } from "../actions/mapActions";
+import {SELECT_HIGHLIGHT_MENU_COLOR} from "../actions";
 
 export const availableShapesLayer = (state = SELECTION_LAYERS.PARCEL, action) => {
     return state
@@ -51,7 +52,7 @@ export const styleLayers = (state = [], action) => {
         case UPDATE_STYLE_LAYER:
             return state.map((styleLayer, idx) =>
                 (idx === action.index)
-                    ? Object.assign({}, styleLayer, {layerType, menuState, styleInfo})
+                    ? Object.assign({}, styleLayer, {menuState, styleInfo})
                     : styleLayer
             );
         case REMOVE_STYLE_LAYER:
@@ -61,8 +62,8 @@ export const styleLayers = (state = [], action) => {
     }
 };
 
-export const highlightMenu = (state = {selectedIndex:0, isOpen: false}, action) => {
-    const {dataset, items, selectedIndex} = action;
+export const highlightMenu = (state = {selectedIndex:0, color: '#11f', isOpen: false}, action) => {
+    const {dataset, items, selectedIndex, color} = action;
 
     switch (action.type) {
         case OPEN_HIGHLIGHT_MENU:
@@ -76,7 +77,9 @@ export const highlightMenu = (state = {selectedIndex:0, isOpen: false}, action) 
         case CLOSE_HIGHLIGHT_MENU:
             return Object.assign({}, state, {isOpen: false});
         case SELECT_HIGHLIGHT_MENU_FIELD:
-            return Object.assign({}, state, {selectedIndex})
+            return Object.assign({}, state, {selectedIndex});
+        case SELECT_HIGHLIGHT_MENU_COLOR:
+            return Object.assign({}, state, {color});
         default:
             return state
     }
