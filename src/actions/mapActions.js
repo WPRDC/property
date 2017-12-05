@@ -19,7 +19,7 @@ export const SET_BASEMAP = 'SET_BASEMAP';
 export const OPEN_HIGHLIGHT_MENU = "OPEN_HIGHLIGHT_MENU";
 export const CLOSE_HIGHLIGHT_MENU = "CLOSE_HIGHLIGHT_MENU";
 export const SELECT_HIGHLIGHT_MENU_FIELD = 'SELECT_HIGHLIGHT_MENU_FIELD'
-
+export const SELECT_HIGHLIGHT_MENU_COLOR = 'SELECT_HIGHLIGHT_MENU_COLOR';
 
 export const fetchParcelFromPoint = point => {
     return dispatch => {
@@ -110,3 +110,10 @@ export const selectHighlightMenuField = selectedIndex => {
         selectedIndex
     }
 };
+
+export const selectHighlightMenuColor = color => {
+    return {
+        type: SELECT_HIGHLIGHT_MENU_COLOR,
+        color
+    }
+}
