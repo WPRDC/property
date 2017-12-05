@@ -266,7 +266,7 @@ export class DataSource {
             }
         }
         return false
-    }
+    };
 
     getData = () => {
 

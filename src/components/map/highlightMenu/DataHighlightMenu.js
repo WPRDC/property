@@ -20,9 +20,6 @@ import {
 
 import ColorPicker from '../../../ColorPicker'
 
-
-import {createCategoryCSS, createStyleSQL} from "../../../utils/mapUtils";
-
 const styles = theme => ({
     formControl: {
         marginTop: theme.spacing.unit,
@@ -35,7 +32,9 @@ class DataHighlightMenu extends Component {
     constructor(props){
         super(props)
 
+        //todo: move state to redux and remove this crap, make it a functional component
         this.state = {
+            range: null,
             color: 'blue'
         }
     }
@@ -46,11 +45,12 @@ class DataHighlightMenu extends Component {
 
     handleSubmit = () => {
         const {dataset, items, selectedIndex, styleLayers, handleSubmit} = this.props;
-        const {field, values, styleInfo} = items[selectedIndex]
-        console.log(styleInfo);
-        if(typeof(styleInfo) !== undefined){
-            handleSubmit(styleLayers, styleInfo, dataset.name, field);
-        }
+        const {field, values, makeSql, makeCss} = items[selectedIndex];
+
+        // Generate final sql and css from range and color
+        const {range, color} = this.state;
+        const styleInfo = {sql: makeSql(range), css: makeCss(color)}  // move this to redux state
+        handleSubmit(styleLayers, styleInfo, dataset.name, field);
     }
 
     render() {

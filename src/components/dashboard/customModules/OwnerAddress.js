@@ -14,38 +14,35 @@ const style = {
     },
 };
 
-const styleInfo = data => {
-    const {
-        CHANGENOTICEADDRESS1,
-        CHANGENOTICEADDRESS2,
-        CHANGENOTICEADDRESS3,
-        CHANGENOTICEADDRESS4
-    } = data.assessments[0];
-    const address = CHANGENOTICEADDRESS1 + CHANGENOTICEADDRESS2 + CHANGENOTICEADDRESS3 + CHANGENOTICEADDRESS4;
-    return {
-        sql: `SELECT * FROM (
-            SELECT ds.cartodb_id, pb.the_geom, pb.the_geom_webmercator, 
-                (ds.changenoticeaddress1 || ds.changenoticeaddress2 || ds.changenoticeaddress3 || ds.changenoticeaddress4) as owner_address, ds.parid 
-                FROM wprdc.allegheny_county_parcel_boundaries pb 
-                JOIN "wprdc"."assessments" ds ON pb.pin = ds.parid) as subquery
-            WHERE owner_address='${address}'`,
-        css: `#owner{ polygon-opacity: 0.0; line-color: #000; line-opacity: 0; line-width: 1; [ owner_address = "${address}" ]{ polygon-opacity: 1.0; polygon-fill: red;}}`
-    }
-}
+const sqlBase = address => () =>
+    `SELECT * 
+    FROM (
+    SELECT ds.cartodb_id, pb.the_geom, pb.the_geom_webmercator,
+           (ds.changenoticeaddress1 || ds.changenoticeaddress2 || ds.changenoticeaddress3 || ds.changenoticeaddress4
+      ) as owner_address, ds.parid
+    FROM wprdc.allegheny_county_parcel_boundaries pb
+    JOIN "wprdc"."assessments" ds ON pb.pin = ds.parid) as subquery
+    WHERE owner_address='${address}'`;
 
-const dataset = dataSource.getDataset('assessment');
+const cssBase = address => color => `#owner{ polygon-opacity: 0.0; line-color: #000; line-opacity: 0; line-width: 1; [ owner_address = "${address}" ]{ polygon-opacity: 1.0; polygon-fill: ${color};}}`
 
 const OwnerAddress = props => {
     const {data} = props;
+    // Parse full address from data
     const assessmentData = data.assessments[0];
     const {
         CHANGENOTICEADDRESS1, CHANGENOTICEADDRESS2, CHANGENOTICEADDRESS3, CHANGENOTICEADDRESS4
     } = assessmentData;
+    const address = CHANGENOTICEADDRESS1 + CHANGENOTICEADDRESS2 + CHANGENOTICEADDRESS3 + CHANGENOTICEADDRESS4;
 
-    // Format the address into several lines.  if a line doesn't exist (filter it out)
+    // Format the address into several lines.  if a line doesn't exist (filter
     const addressString = [CHANGENOTICEADDRESS1, CHANGENOTICEADDRESS2, CHANGENOTICEADDRESS3 + CHANGENOTICEADDRESS4]
-        .filter(line => line.replace(/\s+/g, ''))
-        .join('\n');
+        .filter(line => line.replace(/\s+/g, '')).join('\n');
+
+    // Prepare data for highlight menu
+    const dataset = dataSource.getDataset('assessment');
+    const makeSql = sqlBase(address);
+    const makeCss = cssBase(address);
 
     return (
         <DataCard
@@ -54,8 +51,7 @@ const OwnerAddress = props => {
             map={{
                 dataset,
                 items: [
-                    {field: 'Owner Address', value: addressString, formatter: nl2br, styleInfo: styleInfo(data)},
-                    {field: 'Owner Address', value: addressString, formatter: e => e}
+                    {field: 'Owner Address', value: addressString, formatter: nl2br, makeSql, makeCss},
                 ]
             }}
         >
