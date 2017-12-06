@@ -7,16 +7,17 @@ const loggerMiddleware = createLogger({
     collapsed: true
 });
 
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
  const configureStore = (preloadedState) => {
     return createStore(
         rootReducer,
         preloadedState,
-        compose(
+        composeEnhancers(
             applyMiddleware(
                 thunkMiddleware, // lets us dispatch() functions
                 //loggerMiddleware // neat middleware that logs actions
             ),
-            window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
         )
     )
 };

@@ -1,2 +1,2 @@
-export * from './searchActions'
+export * from './parcelDataActions'
 export * from './mapActions'

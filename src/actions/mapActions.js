@@ -1,7 +1,7 @@
 import {getParcelFromPoint} from '../utils/mapUtils';
 
 import {PARCEL} from "../utils/mapDefaults";
-import {selectParcel} from "./searchActions";
+import {selectParcel} from "./parcelDataActions";
 
 
 export const SET_SELECTED_PARCEL_SHAPE = 'SET_SELECTED_PARCEL_SHAPE';

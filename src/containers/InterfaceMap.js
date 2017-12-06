@@ -89,6 +89,7 @@ class InterfaceMap extends Component {
                      zoom={15}
                      onClick={this.handleClick}
                      zoomControl={false}
+                     tap={false}
                 >
                     <ZoomControl position='topright'/>
 
