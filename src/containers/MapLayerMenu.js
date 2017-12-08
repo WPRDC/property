@@ -172,7 +172,7 @@ class MapLayerMenu extends Component {
 
                         {/* Layer List */}
                         <List>
-                            {styleLayers.map(({layerType, menuState, styleInfo}, i) =>
+                            {styleLayers.reverse().map(({layerType, menuState, styleInfo}, i) =>
                                 <LayerListItem key={i.toString()}
                                                layer={menuState}
                                                handleUpdate={this.handleUpdateLayer(i, layerType)}
