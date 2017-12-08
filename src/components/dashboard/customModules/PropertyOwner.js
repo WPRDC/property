@@ -30,6 +30,7 @@ const OwnerAddress = props => {
     const {data} = props;
     // Parse full address from data
     const assessmentData = data.assessments[0];
+    const ownerName = data.owner;
     const {
         CHANGENOTICEADDRESS1, CHANGENOTICEADDRESS2, CHANGENOTICEADDRESS3, CHANGENOTICEADDRESS4
     } = assessmentData;
@@ -46,12 +47,12 @@ const OwnerAddress = props => {
 
     return (
         <DataCard
-            title="Owner Address"
+            title="Property Owner"
             datasetId="assessment"
             map={{
                 dataset,
                 items: [
-                    {field: 'Owner Address', value: addressString, formatter: nl2br, makeSql, makeCss},
+                    {field: 'Property Owner', value: addressString, formatter: nl2br, makeSql, makeCss},
                 ]
             }}
         >
@@ -60,6 +61,8 @@ const OwnerAddress = props => {
                 formatter={
                     data => {
                         return (<div style={style.div}>
+                            <Typography type="body2">{ownerName}</Typography>
+                            <br/>
                             <Typography type="body1">{CHANGENOTICEADDRESS1}</Typography>
                             <Typography type="body1">{CHANGENOTICEADDRESS2}</Typography>
                             <Typography

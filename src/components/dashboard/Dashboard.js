@@ -74,9 +74,10 @@ const Dashboard = props => {
 
                     <ParcelCharacteristics data={data}/>
 
+                    <OwnerAddress data={data} parcelId={parcelId}/>
+
                     <DwellingCharacteristics data={data}/>
 
-                    <OwnerAddress data={data} parcelId={parcelId}/>
 
                     <AssessmentTable data={data}/>
 
