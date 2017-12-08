@@ -49,7 +49,7 @@ export const receivePropertyData = (parcelId, data) => {
     return {
         type: RECEIVE_PARCEL_DATA,
         parcelId,
-        data: data.results[0].data,  //TODO Maybe clean this up and have data.results be teh top data
+        data: Object.assign({}, data.results[0].data, {owner: data.results[0].owner}),
         geo: data.results[0].geos,
         receivedAt: Date.now()
     }
