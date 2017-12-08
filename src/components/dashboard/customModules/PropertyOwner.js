@@ -52,7 +52,7 @@ const OwnerAddress = props => {
             map={{
                 dataset,
                 items: [
-                    {field: 'Property Owner', value: addressString, formatter: nl2br, makeSql, makeCss},
+                    {field: 'Owner Address', value: addressString, formatter: nl2br, makeSql, makeCss},
                 ]
             }}
         >
