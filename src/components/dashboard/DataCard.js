@@ -4,7 +4,7 @@ import {withStyles} from 'material-ui/styles';
 import Card, {CardHeader, CardContent, CardActions, CardMedia} from 'material-ui/Card'
 import Button from 'material-ui/Button'
 
-import {addStyleLayer, OPEN_HIGHLIGHT_MENU, openHighlightMenu} from "../../actions/mapActions";
+import {addStyleLayer, openHighlightMenu} from "../../actions/styleMenuActions";
 
 import {dataSource} from "../../utils/mapDefaults";
 
@@ -37,7 +37,15 @@ class DataCard extends Component {
     };
 
     render() {
-        const {title, subtitle, children, datasetId, openHighlightMenu, map} = this.props;
+        const {
+            title,
+            subtitle,
+            children,
+            datasetId,
+            map,
+            nextStyleLayerIndex,
+            openHighlightMenu,
+        } = this.props;
         const dataset = dataSource.getDataset(datasetId);
         const {datasetUrl} = dataset || {datasetUrl: ''};
 
@@ -60,12 +68,11 @@ class DataCard extends Component {
 
                     {map
                         ? <Button dense color="primary"
-                                  onClick={openHighlightMenu(map.dataset, map.items)}>
+                                  onClick={openHighlightMenu(nextStyleLayerIndex, map.dataset, map.items)}
+                        >
                             Highlight Similar
                         </Button>
                         : null
-
-
                     }
 
                 </CardActions>
@@ -75,13 +82,15 @@ class DataCard extends Component {
 }
 
 const mapStateToProps = state => {
-    return {}
-}
+    const {styleLayers} = state;
+    const nextStyleLayerIndex = styleLayers.length;
+    return {nextStyleLayerIndex}
+};
 
 const mapDispatchToProps = dispatch => {
     return {
-        openHighlightMenu: (dataset, items) => () => {
-            dispatch(openHighlightMenu(dataset, items))
+        openHighlightMenu: (nextStyleLayerIndex, dataset, items) => () => {
+            dispatch(openHighlightMenu(nextStyleLayerIndex, dataset, items))
         }
     }
 }

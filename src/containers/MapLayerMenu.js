@@ -25,7 +25,7 @@ import {COLORS} from "../utils/dataUtils";
 import {green} from 'material-ui/colors';
 
 import {STYLE_MENU_MODES} from "../utils/mapDefaults";
-import {removeStyleLayer} from "../actions/mapActions";
+import {removeStyleLayer} from "../actions/styleMenuActions";
 import {openHighlightMenu} from "../actions";
 
 const style = {
@@ -151,11 +151,11 @@ class MapLayerMenu extends Component {
     render() {
         const {
             styleLayers,
-            styleLayerMenu,
+            styleLayerListMenu,
             handleRemoveStyleLayer
         } = this.props;
 
-        const {isOpen} = styleLayerMenu;
+        const {isOpen} = styleLayerListMenu;
 
         return (
             <div style={style.base}>
@@ -219,12 +219,12 @@ class MapLayerMenu extends Component {
 function mapStateToProps(state) {
     const {
         styleLayers,
-        styleLayerMenu,
+        styleLayerListMenu,
     } = state;
 
     return {
         styleLayers,
-        styleLayerMenu
+        styleLayerListMenu
     }
 }
 

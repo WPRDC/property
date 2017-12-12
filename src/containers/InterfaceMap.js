@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types'
 
 import {Map, TileLayer, ZoomControl} from 'react-leaflet';
-import DataHighlightMenu from '../components/map/highlightMenu/DataHighlightMenu'
+import DataHighlightMenu from '../components/map/DataHighlightMenu'
 
 /* Material UI components */
 import Button from 'material-ui/Button'
@@ -18,7 +18,8 @@ import {connect} from 'react-redux'
 
 
 import {BASEMAPS} from "../utils/mapDefaults";
-import {closeStyleLayerMenu, openStyleLayerMenu} from "../actions/mapActions";
+import {toggleStyleLayerListMenu} from "../actions/styleMenuActions";
+
 
 
 const style = {
@@ -76,7 +77,7 @@ class InterfaceMap extends Component {
 
         return (
             <div style={style.base} className="mapContainer">
-                <Button fab color="primary" aria-label="add" onClick={toggleStyleLayerMenu(styleLayerMenu)}
+                <Button fab color="primary" aria-label="add" onClick={toggleStyleLayerMenu}
                         style={style.button}>
                     <LayersIcon/>
                 </Button>
@@ -155,12 +156,8 @@ const mapDispatchToProps = dispatch => {
         handleParcelClick: latLng => {
             dispatch(fetchParcelFromPoint(latLng))
         },
-        toggleStyleLayerMenu: (styleLayerMenu) => () => {
-            if (styleLayerMenu.isOpen) {
-                dispatch(closeStyleLayerMenu())
-            } else {
-                dispatch(openStyleLayerMenu());
-            }
+        toggleStyleLayerMenu: () => {
+            dispatch(toggleStyleLayerListMenu())
         }
     }
 };

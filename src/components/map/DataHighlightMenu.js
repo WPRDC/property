@@ -5,21 +5,20 @@ import {withStyles} from 'material-ui/styles';
 
 import Dialog, {DialogTitle, DialogContent, DialogContentText, DialogActions} from 'material-ui/Dialog';
 import Input, {InputLabel} from 'material-ui/Input';
-import List, {ListItem} from 'material-ui/List';
 import Select from 'material-ui/Select'
 import {FormControl, FormHelperText} from 'material-ui/Form';
-import AppBar from 'material-ui/AppBar'
 import Typography from 'material-ui/Typography';
 
 import Button from 'material-ui/Button';
 
 import {
-    addStyleLayer, closeHighlightMenu, openStyleLayerMenu, selectHighlightMenuField,
+    addStyleLayer, closeHighlightMenu, displayStyleLayerList, selectHighlightMenuField,
     updateStyleLayer
-} from "../../../actions/mapActions";
+} from "../../actions/styleMenuActions";
 
-import ColorPicker from '../../../ColorPicker'
-import {selectHighlightMenuColor} from "../../../actions";
+import ColorPicker from '../../ColorPicker'
+import {selectHighlightMenuColor} from "../../actions/index";
+import {displayStyleLayerListMenu} from "../../actions";
 
 const styles = theme => ({
     formControl: {
@@ -177,7 +176,7 @@ const mapDispatchToProps = dispatch => {
                 dispatch(addStyleLayer('HIGHLIGHT_LAYER', menuInfo, styleInfo))
             }
             dispatch(closeHighlightMenu());
-            dispatch(openStyleLayerMenu());
+            dispatch(displayStyleLayerListMenu());
         }
     }
 }

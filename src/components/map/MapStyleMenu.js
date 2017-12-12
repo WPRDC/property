@@ -28,7 +28,7 @@ import DatasetFieldSelectionGroup from './DatasetFieldSelectionGroup'
 import {dataSource} from "../../utils/mapDefaults";
 import {getFieldValues} from '../../utils/mapUtils';
 import {arraysAreDifferent, COLORS} from "../../utils/dataUtils";
-import {addStyleLayer, updateStyleLayer} from "../../actions/mapActions";
+import {addStyleLayer, updateStyleLayer} from "../../actions/styleMenuActions";
 
 import {STYLE_MENU_MODES} from "../../utils/mapDefaults";
 
