@@ -19,6 +19,7 @@ import {
 import ColorPicker from '../../ColorPicker'
 import {selectHighlightMenuColor} from "../../actions/index";
 import {displayStyleLayerListMenu} from "../../actions";
+import {LayerTypes} from "../../utils/mapDefaults";
 
 const styles = theme => ({
     formControl: {
@@ -161,7 +162,7 @@ const mapDispatchToProps = dispatch => {
         },
 
         handleSubmit: (styleLayers, styleInfo, dataset, fieldName, items) => {
-            const layerIndex = styleLayers.findIndex(layer => layer.layerType === 'HIGHLIGHT_LAYER');
+            const layerIndex = styleLayers.findIndex(layer => layer.layerType === 'HIGHLIGHT');
 
             const menuInfo = {
                 currentTab: 'Highlight',
@@ -173,7 +174,7 @@ const mapDispatchToProps = dispatch => {
             if (layerIndex > -1) {
                 dispatch(updateStyleLayer(layerIndex, menuInfo, styleInfo));
             } else {
-                dispatch(addStyleLayer('HIGHLIGHT_LAYER', menuInfo, styleInfo))
+                dispatch(addStyleLayer(LayerTypes.HIGHLIGHT, menuInfo, styleInfo))
             }
             dispatch(closeHighlightMenu());
             dispatch(displayStyleLayerListMenu());

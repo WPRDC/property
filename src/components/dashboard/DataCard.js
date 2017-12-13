@@ -90,7 +90,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         openHighlightMenu: (nextStyleLayerIndex, dataset, items) => () => {
-            dispatch(openHighlightMenu(nextStyleLayerIndex, dataset, items))
+            dispatch(openHighlightMenu('ADD', nextStyleLayerIndex, dataset, items))
         }
     }
 }

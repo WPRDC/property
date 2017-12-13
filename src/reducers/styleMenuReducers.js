@@ -20,6 +20,13 @@ import {
 } from "../actions/styleMenuActions";
 
 import {arrayMove} from "react-sortable-hoc";
+import {
+    CHANGE_CUSTOM_STYLE_MENU_TAB, SELECT_CUSTOM_STYLE_DATASET, SELECT_CUSTOM_STYLE_FIELD, SELECT_CUSTOM_STYLE_VALUE,
+    UPDATE_CUSTOM_STYLE_AVAILABLE_DATASETS, UPDATE_CUSTOM_STYLE_AVAILABLE_FIELDS, UPDATE_CUSTOM_STYLE_AVAILABLE_VALUES,
+    UPDATE_CUSTOM_STYLE_COLOR_MODE,
+    UPDATE_CUSTOM_STYLE_INFO, UPDATE_CUSTOM_STYLE_LAYER_NAME, UPDATE_CUSTOM_STYLE_SUBMENU
+} from "../actions";
+import {getAvailableDatasets, getAvailableFields, getAvailableValues} from "../utils/mapUtils";
 
 
 const DEFAULT_HIGHLIGHT_STATE = {
@@ -31,7 +38,9 @@ const DEFAULT_HIGHLIGHT_STATE = {
 }
 
 const DEFAULT_CUSTOM_STYLE_STATE = {
-    isOpen: false
+    isOpen: false,
+    currentTab: 'category',
+    styleInfo: {sql: '', css: ''},
 }
 
 
@@ -56,7 +65,21 @@ export const styleLayers = (state = [], action) => {
 };
 
 export const styleMenu = (state = DEFAULT_CUSTOM_STYLE_STATE, action) => {
-    const {mode, layerIndex} = action;
+    const {
+        mode,
+        layerIndex,
+        styleInfo,
+        nextTab,
+        dataset,
+        field,
+        availableValues,
+        value,
+        styleMode,
+        layerName,
+        colorMode,
+        submenuState
+    } = action;
+
     switch (action.type) {
         case OPEN_CUSTOM_STYLE_MENU:
             return Object.assign({}, state,
@@ -70,15 +93,69 @@ export const styleMenu = (state = DEFAULT_CUSTOM_STYLE_STATE, action) => {
             return Object.assign({}, state, {
                 isOpen: false
             });
+        case UPDATE_CUSTOM_STYLE_INFO:
+            return Object.assign({}, state, {
+                styleInfo
+            });
+
+        case CHANGE_CUSTOM_STYLE_MENU_TAB:
+            return Object.assign({}, state, {
+                currentTab: nextTab
+            });
+
+        case SELECT_CUSTOM_STYLE_DATASET:
+            return Object.assign({}, state, {
+                selectedDataset: dataset
+            });
+
+        case SELECT_CUSTOM_STYLE_FIELD:
+            return Object.assign({}, state, {
+                selectedField: field
+            });
+
+        case SELECT_CUSTOM_STYLE_VALUE:
+            return Object.assign({}, state, {
+                selectedValue: value
+            });
+
+        case UPDATE_CUSTOM_STYLE_AVAILABLE_DATASETS:
+            return Object.assign({}, state, {
+                availableDatasets: getAvailableDatasets(styleMode)
+            });
+
+        case UPDATE_CUSTOM_STYLE_AVAILABLE_FIELDS:
+            return Object.assign({}, state, {
+                availableFields: getAvailableFields(styleMode, dataset)
+            });
+
+        case UPDATE_CUSTOM_STYLE_AVAILABLE_VALUES:
+            return Object.assign({}, state, {
+                availableValues
+            });
+
+        case UPDATE_CUSTOM_STYLE_LAYER_NAME:
+            return Object.assign({}, state, {
+                layerName
+            });
+
+
+        case UPDATE_CUSTOM_STYLE_COLOR_MODE:
+            return Object.assign({}, state, {
+                colorMode
+            });
+
+        case UPDATE_CUSTOM_STYLE_SUBMENU:
+            return Object.assign({}, state, {
+                submenuState
+            });
+
         default:
             return state
     }
 };
 
 
-export const highlightMenu = (state = DEFAULT_HIGHLIGHT_STATE,
-                              action) => {
-
+export const highlightMenu = (state = DEFAULT_HIGHLIGHT_STATE, action) => {
     const {dataset, layerIndex, items, selectedIndex, color} = action;
 
     switch (action.type) {

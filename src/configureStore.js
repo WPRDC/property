@@ -16,7 +16,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
         composeEnhancers(
             applyMiddleware(
                 thunkMiddleware, // lets us dispatch() functions
-                //loggerMiddleware // neat middleware that logs actions
+                loggerMiddleware // neat middleware that logs actions
             ),
         )
     )

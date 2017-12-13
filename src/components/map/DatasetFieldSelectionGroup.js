@@ -7,6 +7,8 @@ import {FormControl, FormHelperText} from 'material-ui/Form';
 
 /* Functions & Global Constants */
 import {COLORS} from "../../utils/dataUtils";
+import {updateAvailableDatasetsFieldsValues} from "../../actions";
+import {dataSource} from "../../utils/mapDefaults";
 
 /**
  * Form Group with dataset and field options
@@ -16,6 +18,8 @@ import {COLORS} from "../../utils/dataUtils";
  * @constructor
  */
 function DatasetFieldSelectionGroup(props) {
+    const {availableDatasets,availableFields} = props;
+
     if (props.currentDataset && props.currentField) {
         return (
             <form>
@@ -24,10 +28,10 @@ function DatasetFieldSelectionGroup(props) {
                     <Select
                         native
                         value={props.currentDataset.id}
-                        onChange={props.handleChange('dataset')}
+                        onChange={props.handleChange('dataset', props.currentDataset)}
                         input={<Input id="dataset"/>}
                     >
-                        {props.availableDatasets.map((dataset, i) => {
+                        {availableDatasets.map((dataset, i) => {
                             return <option key={i.toString()}
                                            value={dataset.id}>{dataset.name}</option>
                         })}
@@ -38,10 +42,10 @@ function DatasetFieldSelectionGroup(props) {
                     <Select
                         native
                         value={props.currentField.id}
-                        onChange={props.handleChange('field')}
+                        onChange={props.handleChange('field', props.currentField)}
                         input={<Input id="field"/>}
                     >
-                        {props.availableFields.map((field, i) => {
+                        {availableFields.map((field, i) => {
                             return <option key={i.toString()} value={field.id}>{field.name}</option>
                         })}
                     </Select>
@@ -52,5 +56,18 @@ function DatasetFieldSelectionGroup(props) {
         return <form/>;
     }
 }
+
+const mapStateToProps = state => {
+
+};
+
+
+const mapDispatchToProps = dispatch => {
+    return {
+        initializeMenus: styleMode => {
+            dispatch(updateAvailableDatasetsFieldsValues(styleMode))
+        }
+    }
+};
 
 export default DatasetFieldSelectionGroup

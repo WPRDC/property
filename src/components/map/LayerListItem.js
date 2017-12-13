@@ -11,7 +11,6 @@ import Avatar from 'material-ui/Avatar';
 
 const LayerListItem = props => {
     const {layer, handleUpdate, handleDelete} = props;
-
     const primaryText = layer.layerName || layer.currentTab.charAt(0).toUpperCase() + layer.currentTab.slice(1) + " Layer";
     const secondaryText = `${layer.dataset.name}: ${layer.field.name}`;
 

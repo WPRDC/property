@@ -10,7 +10,6 @@ import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import Slide from 'material-ui/transitions/Slide';
 
-/* Icons */
 import LayersIcon from 'material-ui-icons/Layers';
 
 /* Custom Components */
@@ -24,9 +23,9 @@ import {COLORS} from "../utils/dataUtils";
 
 import {green} from 'material-ui/colors';
 
-import {STYLE_MENU_MODES} from "../utils/mapDefaults";
+import {StyleMenuEditModes, LayerTypes} from "../utils/mapDefaults";
 import {removeStyleLayer} from "../actions/styleMenuActions";
-import {openHighlightMenu} from "../actions";
+import {openCustomStyleMenu, openHighlightMenu} from "../actions";
 
 const style = {
     base: {
@@ -57,13 +56,6 @@ class MapLayerMenu extends Component {
         }
     }
 
-    toggleSlide = open => () => {
-        this.setState({
-            'open': open,
-        });
-    };
-
-
     /**
      * Closes basemap menu. Used as call back for onRequestClose events.
      */
@@ -90,60 +82,7 @@ class MapLayerMenu extends Component {
      * Runs when add new layer button is clicked.
      */
     handleAddLayer = () => {
-        console.log("adding a layer");
-        this.setState(
-            {
-                styleMenuOpen: true,
-                styleMenuMode: STYLE_MENU_MODES.ADD
-            }
-        )
-    };
-
-    /** Open style menu and let it know the index of the layer to style */
-    handleUpdateLayer = (idx, type) => () => {
-        if(type === 'HIGHLIGHT_LAYER'){
-            const styleLayer = this.props.styleLayers[idx];
-            const {dataset, items} = styleLayer.menuState;
-            this.props.handleOpenHighlightMenu(dataset, items)
-        } else {
-            this.setState(
-                {
-                    styleMenuOpen: true,
-                    styleMenuMode: STYLE_MENU_MODES.UPDATE,
-                    targetLayerIndex: idx
-                }
-            )
-        }
-    };
-
-    /**
-     * Updates the style layer at index `targetIdx` with `styleLayerData`.  If `targetIdx` is out of bounds of
-     * `this.state.layers` then this adds a new layer.
-     * @param targetIdx
-     */
-    handleStyleMenuResults = targetIdx => styleLayerData => {
-        let newLayers;
-        // If adding a new layer
-        if (targetIdx >= this.state.layers.length) {
-            newLayers = this.state.layers.concat([styleLayerData]);
-        }
-        // When updating a pre-existing layer
-        else {
-            newLayers = this.state.layers.map((layer, currIdx) => {
-                if (currIdx !== targetIdx)
-                    return layer;
-                else
-                    return styleLayerData
-            })
-        }
-
-        this.setState(
-            {layers: newLayers},
-            // Lift SQL and CSS up to InterfaceMap to render the style
-            () => {
-                this.updateStyleLayers()
-            }
-        );
+        const {openMenu} = this.props;
 
     };
 
@@ -152,7 +91,8 @@ class MapLayerMenu extends Component {
         const {
             styleLayers,
             styleLayerListMenu,
-            handleRemoveStyleLayer
+            removeStyleLayer,
+            openMenu
         } = this.props;
 
         const {isOpen} = styleLayerListMenu;
@@ -175,13 +115,13 @@ class MapLayerMenu extends Component {
                             {styleLayers.reverse().map(({layerType, menuState, styleInfo}, i) =>
                                 <LayerListItem key={i.toString()}
                                                layer={menuState}
-                                               handleUpdate={this.handleUpdateLayer(i, layerType)}
-                                               handleDelete={handleRemoveStyleLayer(i)}
+                                               handleUpdate={openMenu(StyleMenuEditModes.UPDATE, layerType, i)}
+                                               handleDelete={removeStyleLayer(i)}
+                                />
+                            )}
 
-                                />)
-                            }
-
-                            <AddLayerListItem handleOnClick={this.handleAddLayer}/>
+                            <AddLayerListItem
+                                handleOnClick={openMenu(StyleMenuEditModes.ADD, LayerTypes.CUSTOM, styleLayers.length)}/>
 
                             <Divider inset/>
                             <ListItem button={true} onClick={this.toggleBasemapMenu}>
@@ -229,13 +169,23 @@ function mapStateToProps(state) {
 }
 
 
-function mapDispatchToProps(dispatch){
+function mapDispatchToProps(dispatch) {
     return {
-        handleRemoveStyleLayer: (index) => () => {
+        removeStyleLayer: (index) => () => {
             dispatch(removeStyleLayer(index))
         },
-        handleOpenHighlightMenu: (dataset, items) => {
-            dispatch(openHighlightMenu(dataset, items))
+        openMenu: (mode, layerType, layerIndex) => () => {
+            switch (layerType) {
+                case 'CUSTOM':
+                    dispatch(openCustomStyleMenu(mode, layerIndex));
+                    break;
+                case 'HIGHLIGHT':
+                    dispatch(openHighlightMenu(mode, layerIndex));
+                    break;
+                default:
+                    console.log('ERROR - invalid layer type: ' + layerType)
+
+            }
         }
     }
 }

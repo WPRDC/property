@@ -2,8 +2,14 @@
  * Created by sds25 on 9/20/17.
  */
 
-export const STYLE_MENU_MODES = {ADD: 'ADD', UPDATE: 'UPDATE'};
+export const StyleMenuEditModes = Object.freeze({ADD: 'ADD', UPDATE: 'UPDATE'});
 
+export const LayerTypes = Object.freeze(
+    {
+        HIGHLIGHT: "HIGHLIGHT",
+        CUSTOM: "CUSTOM"
+    }
+)
 
 export const PARCEL = {
     idField: 'pin',
@@ -267,12 +273,6 @@ export class DataSource {
         }
         return false
     };
-
-    getData = () => {
-
-    }
-
-
 }
 
 export const dataSource = new DataSource(MAP_DATASETS);
