@@ -61,7 +61,7 @@ class DataHighlightMenu extends Component {
             handleSelectField,
             handleSelectColor
         } = this.props;
-
+        console.log(selectedIndex);
         return (
             isOpen
                 ? <Dialog open={isOpen} onRequestClose={closeMenu}>
@@ -96,6 +96,7 @@ class DataHighlightMenu extends Component {
 };
 
 const FieldValueMenu = props => {
+    console.log(props);
     const {items, index, onChange} = props;
     const {field, value, formatter} = items[index];
     return (
@@ -166,8 +167,8 @@ const mapDispatchToProps = dispatch => {
 
             const menuInfo = {
                 currentTab: 'Highlight',
-                dataset,
-                field: {name: fieldName},
+                selectedDataset: dataset,
+                selectedField: {name: fieldName},
                 items,
             };
 

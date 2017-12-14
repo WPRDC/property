@@ -6,7 +6,7 @@ import Button from 'material-ui/Button'
 
 import {addStyleLayer, openHighlightMenu} from "../../actions/styleMenuActions";
 
-import {dataSource} from "../../utils/mapDefaults";
+import {dataSource, StyleMenuEditModes} from "../../utils/mapDefaults";
 
 const style = {
     card: {
@@ -90,7 +90,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         openHighlightMenu: (nextStyleLayerIndex, dataset, items) => () => {
-            dispatch(openHighlightMenu('ADD', nextStyleLayerIndex, dataset, items))
+            dispatch(openHighlightMenu(StyleMenuEditModes.ADD, nextStyleLayerIndex, dataset, items))
         }
     }
 }

@@ -176,11 +176,11 @@ function mapDispatchToProps(dispatch) {
         },
         openMenu: (mode, layerType, layerIndex) => () => {
             switch (layerType) {
-                case 'CUSTOM':
+                case LayerTypes.CUSTOM:
                     dispatch(openCustomStyleMenu(mode, layerIndex));
                     break;
-                case 'HIGHLIGHT':
-                    dispatch(openHighlightMenu(mode, layerIndex));
+                case LayerTypes.HIGHLIGHT:
+                    dispatch(openHighlightMenu(mode, layerIndex, ));
                     break;
                 default:
                     console.log('ERROR - invalid layer type: ' + layerType)

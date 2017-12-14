@@ -94,7 +94,7 @@ export const openCustomStyleMenu = (mode, layerIndex,) => {
     }
 }
 
-export const closeCustomStyleMenu = (mode, layerIndex,) => {
+export const closeCustomStyleMenu = () => {
     return {
         type: CLOSE_CUSTOM_STYLE_MENU,
     }

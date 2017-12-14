@@ -159,7 +159,7 @@ class MapStyleMenu extends Component {
                     <Button color="accent" onClick={handleRequestClose}>
                         Cancel
                     </Button>
-                    <Button color="primary" onClick={handleSubmit(mode, layerIndex, styleInfo)}>
+                    <Button color="primary" onClick={handleSubmit(mode, layerIndex, this.props, styleInfo)}>
                         Put Some Style on It!
                     </Button>
                 </DialogActions>
@@ -208,9 +208,10 @@ const mapDispatchToProps = dispatch => {
         handleRequestClose: () => {
             dispatch(closeCustomStyleMenu());
         },
-        handleSubmit: (mode, layerIndex, styleInfo) => () => {
+        handleSubmit: (mode, layerIndex, currentState, styleInfo) => () => {
             // Make a copy of the menu state
-            let savedState = Object.assign({},);
+            // todo: currently pulling in the props for this which feels kinda hacky - possible other method?
+            let savedState = Object.assign({}, currentState);
             delete savedState.styleInfo;
 
             // We currently pass the entire state of this menu into the store.
@@ -218,6 +219,7 @@ const mapDispatchToProps = dispatch => {
             // We can also display some of the metadata on the menu.
             switch (mode) {
                 case StyleMenuEditModes.ADD:
+                    console.log(savedState, styleInfo)
                     dispatch(addStyleLayer(LayerTypes.CUSTOM, savedState, styleInfo));
                     break;
                 case StyleMenuEditModes.UPDATE:
@@ -226,6 +228,7 @@ const mapDispatchToProps = dispatch => {
                 default:
                     throw RangeError(`${mode} is not a valid mode for updating styles`)
             }
+            dispatch(closeCustomStyleMenu())
         },
         updateStyleInfo: (sql, css) => {
             dispatch(updateCustomStyleInfo({sql, css}))

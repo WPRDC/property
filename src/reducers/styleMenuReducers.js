@@ -160,10 +160,11 @@ export const highlightMenu = (state = DEFAULT_HIGHLIGHT_STATE, action) => {
 
     switch (action.type) {
         case OPEN_HIGHLIGHT_MENU:
+            console.log(items);
             return Object.assign({}, state,
                 {
-                    dataset,
                     layerIndex,
+                    dataset,
                     items,
                     isOpen: true
                 }
