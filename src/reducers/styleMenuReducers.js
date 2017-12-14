@@ -109,6 +109,7 @@ export const styleMenu = (state = DEFAULT_CUSTOM_STYLE_STATE, action) => {
             });
 
         case SELECT_CUSTOM_STYLE_FIELD:
+            console.log('newfield', field);
             return Object.assign({}, state, {
                 selectedField: field
             });
@@ -160,7 +161,6 @@ export const highlightMenu = (state = DEFAULT_HIGHLIGHT_STATE, action) => {
 
     switch (action.type) {
         case OPEN_HIGHLIGHT_MENU:
-            console.log(items);
             return Object.assign({}, state,
                 {
                     layerIndex,

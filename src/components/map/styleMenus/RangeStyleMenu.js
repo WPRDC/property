@@ -11,7 +11,13 @@ import 'rc-slider/assets/index.css';
 import Slider from 'rc-slider';
 
 /* Defaults & Helper Functions */
-import {createStyleSQL, createRangeCSS, findMinMaxValues, QUANTIFICATION_METHODS, COLORS,} from '../../../utils/mapUtils';
+import {
+    createStyleSQL,
+    createRangeCSS,
+    findMinMaxValues,
+    QUANTIFICATION_METHODS,
+    COLORS,
+} from '../../../utils/mapUtils';
 
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 
@@ -120,8 +126,8 @@ class RangeStyleMenu extends Component {
                 this.setState({styleMode: event.target.value}, this._handleStyleInfoChange);
                 break;
             }
-
         }
+        this._handleStyleInfoChange();
     };
 
 
@@ -134,19 +140,7 @@ class RangeStyleMenu extends Component {
     };
 
 
-    /**
-     * Runs when new props are provided. Initializes the range based on props in `nextProps`
-     *
-     * @param {obj} nextProps - set of new props
-     */
-    componentWillReceiveProps = (nextProps) => {
-        this._initRange(nextProps.dataset, nextProps.field)
-    };
-
-
-    componentWillMount = () => {
-
-    }
+    /*
 
     /**
      * Runs when component is mounted.  Initializes the range.
@@ -166,7 +160,6 @@ class RangeStyleMenu extends Component {
      * Runs when component is updated.  Updates the style data.
      */
     componentDidUpdate = () => {
-        this._handleStyleInfoChange();
     };
 
 

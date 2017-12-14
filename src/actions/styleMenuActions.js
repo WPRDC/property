@@ -11,6 +11,7 @@ export const UPDATE_STYLE_LAYER = 'UPDATE_STYLE_LAYER';
 export const REMOVE_STYLE_LAYER = 'REMOVE_STYLE_LAYER';
 export const REORDER_STYLE_LAYER = 'REORDER_STYLE_LAYER';
 
+// Style Menu as a whole
 export const CHANGE_CUSTOM_STYLE_MENU_TAB = "CHANGE_CUSTOM_STYLE_MENU_TAB";
 export const SELECT_CUSTOM_STYLE_DATASET = "SELECT_CUSTOM_STYLE_DATASET";
 export const SELECT_CUSTOM_STYLE_FIELD = "SELECT_CUSTOM_STYLE_FIELD";
@@ -19,6 +20,10 @@ export const UPDATE_CUSTOM_STYLE_AVAILABLE_FIELDS = "UPDATE_CUSTOM_STYLE_AVAILAB
 export const UPDATE_CUSTOM_STYLE_LAYER_NAME = "UPDATE_CUSTOM_STYLE_LAYER_NAME";
 export const UPDATE_CUSTOM_STYLE_COLOR_MODE = "UPDATE_CUSTOM_STYLE_COLOR_MODE";
 export const UPDATE_CUSTOM_STYLE_SUBMENU = "UPDATE_CUSTOM_STYLE_SUBMENU";
+
+// Category style submenu
+export const UPDATE_CUSTOM_STYLE_AVAILABLE_VALUES = "UPDATE_CUSTOM_STYLE_AVAILABLE_VALUES";
+export const SELECT_CUSTOM_STYLE_VALUE = "SELECT_CUSTOM_STYLE_VALUE";
 
 export const OPEN_CUSTOM_STYLE_MENU = "OPEN_CUSTOM_STYLE_MENU";
 export const CLOSE_CUSTOM_STYLE_MENU = "CLOSE_CUSTOM_STYLE_MENU";
@@ -146,8 +151,7 @@ export const updateCustomStyleAvailableFields = (styleMode, dataset) => {
 };
 
 
-export const UPDATE_CUSTOM_STYLE_AVAILABLE_VALUES = "UPDATE_CUSTOM_STYLE_AVAILABLE_VALUES";
-export const SELECT_CUSTOM_STYLE_VALUE = "SELECT_CUSTOM_STYLE_VALUE";
+
 
 export const updateCustomStyleAvailableValues = (availableValues) => {
     return {
@@ -156,14 +160,15 @@ export const updateCustomStyleAvailableValues = (availableValues) => {
     }
 };
 
-export const fetchCustomStyleAvailableValues = (dataset, field) => {
+export const fetchCustomStyleAvailableValues = () => {
     return (dispatch, getState) => {
-        return getFieldValues(dataset, field)
+        const {selectedDataset, selectedField} = getState().styleMenu;
+        return getFieldValues(selectedDataset, selectedField)
             .then(
                 (newValues) => {
                     newValues.sort();
                     dispatch(updateCustomStyleAvailableValues(newValues));
-                    const firstValue = getState.styleMenu.availableValues[0];
+                    const firstValue = getState().styleMenu.availableValues[0];
                     dispatch(selectCustomStyleValue(firstValue))
                 },
                 (err) => {
@@ -180,25 +185,25 @@ export const selectCustomStyleValue = value => {
     }
 };
 
-export const updateAvailableDatasetsFieldsValues = styleMode => {
+export const updateAvailableDatasetsAndFields = (styleMode)=>{
     return (dispatch, getState) => {
-        // Get datasets
         dispatch(updateCustomStyleAvailableDatasets(styleMode));
-        // ... and select first one
-        const firstDataset = getState().styleMenu.availableDatasets[0];
-        dispatch(selectCustomStyleDataset(firstDataset));
+        const dataset = getState().styleMenu.availableDatasets[0];
+        dispatch(selectCustomStyleDataset(dataset));
 
+        dispatch(updateAvailableFields(styleMode, dataset))
+    }
+}
+
+export const updateAvailableFields = (styleMode, dataset) => {
+    return (dispatch, getState) => {
         // Get Fields
-        dispatch(updateCustomStyleAvailableFields(styleMode, firstDataset));
+        dispatch(updateCustomStyleAvailableFields(styleMode, dataset));
         // ... and select first one
         const firstField = getState().styleMenu.availableFields[0];
         dispatch(selectCustomStyleField(firstField));
-
-        // Get values
-        dispatch(fetchCustomStyleAvailableValues(firstDataset, firstField));
     }
-};
-
+}
 
 export const updateCustomStyleLayerName = layerName => {
     return {

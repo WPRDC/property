@@ -19,8 +19,8 @@ import {dataSource} from "../../utils/mapDefaults";
  */
 function DatasetFieldSelectionGroup(props) {
     const {availableDatasets,availableFields} = props;
-
     if (props.currentDataset && props.currentField) {
+
         return (
             <form>
                 <FormControl>
@@ -28,7 +28,7 @@ function DatasetFieldSelectionGroup(props) {
                     <Select
                         native
                         value={props.currentDataset.id}
-                        onChange={props.handleChange('dataset', props.currentDataset)}
+                        onChange={props.handleChange('dataset')}
                         input={<Input id="dataset"/>}
                     >
                         {availableDatasets.map((dataset, i) => {
@@ -42,7 +42,7 @@ function DatasetFieldSelectionGroup(props) {
                     <Select
                         native
                         value={props.currentField.id}
-                        onChange={props.handleChange('field', props.currentField)}
+                        onChange={props.handleChange('field')}
                         input={<Input id="field"/>}
                     >
                         {availableFields.map((field, i) => {
@@ -57,17 +57,5 @@ function DatasetFieldSelectionGroup(props) {
     }
 }
 
-const mapStateToProps = state => {
-
-};
-
-
-const mapDispatchToProps = dispatch => {
-    return {
-        initializeMenus: styleMode => {
-            dispatch(updateAvailableDatasetsFieldsValues(styleMode))
-        }
-    }
-};
 
 export default DatasetFieldSelectionGroup

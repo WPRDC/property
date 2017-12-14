@@ -20,7 +20,7 @@ import {GithubPicker} from 'react-color';
 
 
 /* Defaults & Helper Functions */
-import {createCategoryCSS, createStyleSQL, COLORS} from '../../../utils/mapUtils';
+import {createCategoryCSS, createStyleSQL, COLORS, getFieldValues} from '../../../utils/mapUtils';
 
 const DEFAULT_COLOR = 'red';
 
@@ -33,6 +33,7 @@ class CategoryStyleMenu extends Component {
         super(props);
 
         this.state = {
+            fieldValues: [],
             menuItems: [],         // List of menu items {'category': '', 'color': ''}
             styleMode: 'fill'
         };
@@ -56,11 +57,19 @@ class CategoryStyleMenu extends Component {
      * @param {array} fieldValues - possible values for field being styled
      * @private
      */
-    _initMenuItems = (fieldValues) => {
-        this.setState(
-            {menuItems: [{category: fieldValues[0], color: DEFAULT_COLOR}]},
-            this._handleStyleInfoChange
-        )
+    _initMenuItems = () => {
+        const {dataset, field} = this.props;
+        console.log("FIELD++++++", field);
+        getFieldValues(dataset,field)
+            .then( fieldValues => {
+                this.setState(
+                    {
+                        fieldValues,
+                        menuItems: [{category: fieldValues[0], color: DEFAULT_COLOR}]
+                    },
+                    this._handleStyleInfoChange
+                )
+            })
     };
 
     /**
@@ -146,14 +155,8 @@ class CategoryStyleMenu extends Component {
         // First check to make sure that the dataset or field has changed
         // (apparently this could run even when we don't explicitly change props)
         // https://reactjs.org/docs/react-component.html#componentwillreceiveprops
-        if (nextProps.dataset !== this.props.dataset ||
-            nextProps.field !== this.props.field ||
-            nextProps.fieldValues.length !== this.props.fieldValues.length ||
-            !(nextProps.fieldValues.every((fieldValue, i) => {
-                return fieldValue === this.props.fieldValues[i]
-            }))
-        ) {
-            this._initMenuItems(nextProps.fieldValues)
+        if (nextProps.dataset !== this.props.dataset || nextProps.field !== this.props.field) {
+            this._initMenuItems()
         }
     };
 
@@ -166,7 +169,8 @@ class CategoryStyleMenu extends Component {
                 this.render()
             })
         } else {
-            this._initMenuItems(this.props.fieldValues);
+            this._initMenuItems()
+
         }
     };
 
@@ -176,13 +180,7 @@ class CategoryStyleMenu extends Component {
      */
     componentDidUpdate = (prevProps) => {
         // First check if anything pertaining to updating the style has changed.
-        if (prevProps.dataset !== this.props.dataset ||
-            prevProps.field !== this.props.field ||
-            prevProps.fieldValues.length !== this.props.fieldValues.length ||
-            !(prevProps.fieldValues.every((fieldValue, i) => {  // check every value in `fieldValues`
-                return fieldValue === this.props.fieldValues[i]
-            }))
-        ) {
+        if (prevProps.dataset !== this.props.dataset || prevProps.field !== this.props.field) {
             this._handleStyleInfoChange();
         }
     };
@@ -201,7 +199,7 @@ class CategoryStyleMenu extends Component {
                                 <CategorySelectionLine
                                     itemIdx={idx}
                                     menuItem={menuItem}
-                                    categoryOptions={this.props.fieldValues}
+                                    categoryOptions={this.state.fieldValues}
                                     handleChangeSelect={this.handleChangeMenuItem}
                                     handleChangeColor={this.handleChangeColor}
                                 />
@@ -275,7 +273,6 @@ const CategorySelectionLine = props => {
         </div>
     );
 };
-
 
 
 export default CategoryStyleMenu;

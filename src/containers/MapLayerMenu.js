@@ -16,7 +16,7 @@ import LayersIcon from 'material-ui-icons/Layers';
 import LayerListItem from '../components/map/LayerListItem'
 import AddLayerListItem from '../components/map/AddLayerListItem'
 import BaseMapMenu from '../components/map/BaseMapMenu'
-import MapStyleMenu from '../components/map/MapStyleMenu'
+import MapStyleMenu from './MapStyleMenu'
 
 /* Functions & Constants */
 import {COLORS} from "../utils/dataUtils";

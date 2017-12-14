@@ -17,25 +17,29 @@ import Slide from 'material-ui/transitions/Slide'
 import {default as MapIcon} from 'material-ui-icons/Map';
 
 /* Style Menus */
-import CategoryStyleMenu from './styleMenus/CategoryStyleMenu';
-import ChoroplethStyleMenu from './styleMenus/ChoroplethStyleMenu';
-import RangeStyleMenu from './styleMenus/RangeStyleMenu';
+import CategoryStyleMenu from '../components/map/styleMenus/CategoryStyleMenu';
+import ChoroplethStyleMenu from '../components/map/styleMenus/ChoroplethStyleMenu';
+import RangeStyleMenu from '../components/map/styleMenus/RangeStyleMenu';
 
 /* Custom Components */
-import DatasetFieldSelectionGroup from './DatasetFieldSelectionGroup'
+import DatasetFieldSelectionGroup from '../components/map/DatasetFieldSelectionGroup'
 
 /* Functions */
-import {dataSource, LayerTypes} from "../../utils/mapDefaults";
-import {arraysAreDifferent, COLORS} from "../../utils/dataUtils";
-import {addStyleLayer, updateStyleLayer} from "../../actions/styleMenuActions";
+import {DataSource, dataSource, LayerTypes} from "../utils/mapDefaults";
+import {arraysAreDifferent, COLORS} from "../utils/dataUtils";
+import {addStyleLayer, updateStyleLayer} from "../actions/styleMenuActions";
 
-import {StyleMenuEditModes} from "../../utils/mapDefaults";
+import {StyleMenuEditModes} from "../utils/mapDefaults";
 import {
     changeCustomStyleMenuTab,
-    closeCustomStyleMenu, selectCustomStyleDataset, selectCustomStyleField, updateAvailableDatasetsFieldsValues,
+    closeCustomStyleMenu, selectCustomStyleDataset, selectCustomStyleField,
     updateCustomStyleInfo,
     updateCustomStyleLayerName, updateCustomStyleSubmenu
-} from "../../actions";
+} from "../actions/index";
+import {
+    fetchCustomStyleAvailableValues, updateAvailableDatasetsAndFields, updateAvailableFields,
+    updateCustomStyleAvailableValues
+} from "../actions";
 
 const style = {
     dialog: {},
@@ -48,7 +52,7 @@ const style = {
 class MapStyleMenu extends Component {
 
     componentWillUpdate = nextProps => {
-        const {currentTab: oldCurrentTab} = this.props;
+        const oldCurrentTab = this.props.currentTab;
         const {availableDatasets, currentTab, initializeMenus} = nextProps;
         if (!availableDatasets || oldCurrentTab !== currentTab) {
             initializeMenus(currentTab);
@@ -65,10 +69,8 @@ class MapStyleMenu extends Component {
             currentTab,
             selectedDataset,
             selectedField,
-            selectedValue,
             availableDatasets,
             availableFields,
-            availableValues,
             layerName,
             colorMode,
             submenuState,
@@ -85,11 +87,10 @@ class MapStyleMenu extends Component {
         if (!selectedDataset) {
             return null;
         }
-
-
         // get dataset and field objects todo: use IDs until necessary
         const dataset = selectedDataset;
         const field = selectedField;
+        console.log(dataset, field);
 
         return (
             <Dialog
@@ -114,7 +115,7 @@ class MapStyleMenu extends Component {
 
                 <DialogContent style={style.content}>
                     <DatasetFieldSelectionGroup currentDataset={dataset} currentField={field}
-                                                handleChange={handleDataSourceMenuChange}
+                                                handleChange={handleDataSourceMenuChange(currentTab, selectedDataset)}
                                                 availableDatasets={availableDatasets}
                                                 availableFields={availableFields}
                     />
@@ -122,11 +123,13 @@ class MapStyleMenu extends Component {
                     {currentTab === 'category' &&
                     < CategoryStyleMenu dataset={dataset}
                                         field={field}
-                                        fieldValues={availableValues}
                                         handleStyleInfoChange={updateStyleInfo}
                                         updateSavedState={updateSubmenuSavedState}
                                         savedState={submenuState}
                     />}
+
+
+
                     {currentTab === 'choropleth' &&
                     <ChoroplethStyleMenu
                         dataset={dataset}
@@ -219,7 +222,6 @@ const mapDispatchToProps = dispatch => {
             // We can also display some of the metadata on the menu.
             switch (mode) {
                 case StyleMenuEditModes.ADD:
-                    console.log(savedState, styleInfo)
                     dispatch(addStyleLayer(LayerTypes.CUSTOM, savedState, styleInfo));
                     break;
                 case StyleMenuEditModes.UPDATE:
@@ -237,18 +239,19 @@ const mapDispatchToProps = dispatch => {
             dispatch(updateCustomStyleLayerName(layerName))
         },
         initializeMenus: styleMode => {
-            dispatch(updateAvailableDatasetsFieldsValues(styleMode))
+            dispatch(updateAvailableDatasetsAndFields(styleMode))
         },
-        handleTabChange: nextTab => {
-            dispatch(changeCustomStyleMenuTab(nextTab));
+        handleTabChange: (e, value) => {
+            dispatch(changeCustomStyleMenuTab(value));
         },
-        handleDataSourceMenuChange: (type, object) => {
+        handleDataSourceMenuChange: (styleMode, dataset, field) => type => event => {
             switch (type) {
                 case 'dataset':
-                    dispatch(selectCustomStyleDataset(object));
+                    dispatch(selectCustomStyleDataset(event.target.value));
+                    dispatch(updateAvailableFields(styleMode, dataset));
                     break;
                 case 'field':
-                    dispatch(selectCustomStyleField(object));
+                    dispatch(selectCustomStyleField(event.target.value));
             }
         },
         updateSubmenuSavedState: submenuState => {
