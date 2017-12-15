@@ -73,7 +73,7 @@ class MapStyleMenu extends Component {
             availableFields,
             layerName,
             colorMode,
-            submenuState,
+            submenu,
             // dispatch
             handleRequestClose,
             handleSubmit,
@@ -90,8 +90,6 @@ class MapStyleMenu extends Component {
         // get dataset and field objects todo: use IDs until necessary
         const dataset = selectedDataset;
         const field = selectedField;
-        console.log(dataset, field);
-
         return (
             <Dialog
                 transition={Slide}
@@ -124,8 +122,8 @@ class MapStyleMenu extends Component {
                     < CategoryStyleMenu dataset={dataset}
                                         field={field}
                                         handleStyleInfoChange={updateStyleInfo}
-                                        updateSavedState={updateSubmenuSavedState}
-                                        savedState={submenuState}
+                                        updateSavedState={updateSubmenuSavedState('category')}
+                                        savedState={submenu ? submenu.category : {}}
                     />}
 
 
@@ -135,8 +133,8 @@ class MapStyleMenu extends Component {
                         dataset={dataset}
                         field={field}
                         handleStyleInfoChange={updateStyleInfo}
-                        updateSavedState={updateSubmenuSavedState}
-                        savedState={submenuState}
+                        updateSavedState={updateSubmenuSavedState('choropleth')}
+                        savedState={submenu ? submenu.choropleth : {}}
                     />
                     }
                     {currentTab === 'range' &&
@@ -144,8 +142,8 @@ class MapStyleMenu extends Component {
                         dataset={dataset}
                         field={field}
                         handleStyleInfoChange={updateStyleInfo}
-                        updateSavedState={updateSubmenuSavedState}
-                        savedState={submenuState}
+                        updateSavedState={updateSubmenuSavedState('range')}
+                        savedState={submenu ? submenu.range : {}}
                     />
                     }
                 </DialogContent>
@@ -186,7 +184,7 @@ const mapStateToProps = state => {
         availableValues,
         layerName,
         colorMode,
-        submenuState,
+        submenu,
     } = state.styleMenu;
     return {
         isOpen,
@@ -202,7 +200,7 @@ const mapStateToProps = state => {
         availableValues,
         layerName,
         colorMode,
-        submenuState,
+        submenu,
     }
 };
 
@@ -251,11 +249,12 @@ const mapDispatchToProps = dispatch => {
                     dispatch(updateAvailableFields(styleMode, dataset));
                     break;
                 case 'field':
+                    console.log('FIELD');
                     dispatch(selectCustomStyleField(event.target.value));
             }
         },
-        updateSubmenuSavedState: submenuState => {
-            dispatch(updateCustomStyleSubmenu(submenuState))
+        updateSubmenuSavedState: submenu => submenuState => {
+            dispatch(updateCustomStyleSubmenu(submenu,submenuState))
         }
     }
 };

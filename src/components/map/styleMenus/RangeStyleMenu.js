@@ -15,7 +15,6 @@ import {
     createStyleSQL,
     createRangeCSS,
     findMinMaxValues,
-    QUANTIFICATION_METHODS,
     COLORS,
 } from '../../../utils/mapUtils';
 
@@ -62,7 +61,7 @@ class RangeStyleMenu extends Component {
      */
     _initRange = (dataset, field) => {
         let range = field.range;
-
+        console.log(range);
         // If there the field has a fully predfined range, we don't need to make an API call
         if (range && range[0] !== null && range[1] !== null) {
             let q2 = range[0] + ((range[1] - range[0]) / 4);

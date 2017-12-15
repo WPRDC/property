@@ -59,9 +59,9 @@ class CategoryStyleMenu extends Component {
      */
     _initMenuItems = () => {
         const {dataset, field} = this.props;
-        console.log("FIELD++++++", field);
         getFieldValues(dataset,field)
             .then( fieldValues => {
+                console.log(fieldValues);
                 this.setState(
                     {
                         fieldValues,
@@ -105,7 +105,7 @@ class CategoryStyleMenu extends Component {
      * Runs when 'add' button is clicked.  Adds a menu item to the menu item list.
      */
     handleAddMenuItem = () => {
-        let newMenuItems = this.state.menuItems.concat([{category: this.props.fieldValues[0], color: DEFAULT_COLOR}]);
+        let newMenuItems = this.state.menuItems.concat([{category: this.state.fieldValues[0], color: DEFAULT_COLOR}]);
 
         this.setState({
             menuItems: newMenuItems
@@ -155,6 +155,7 @@ class CategoryStyleMenu extends Component {
         // First check to make sure that the dataset or field has changed
         // (apparently this could run even when we don't explicitly change props)
         // https://reactjs.org/docs/react-component.html#componentwillreceiveprops
+        console.log(nextProps);
         if (nextProps.dataset !== this.props.dataset || nextProps.field !== this.props.field) {
             this._initMenuItems()
         }
@@ -164,13 +165,11 @@ class CategoryStyleMenu extends Component {
      * Runs when component mounts.  Initializes the menu.
      */
     componentDidMount = () => {
-        if (this.props.savedState) {
-            this.setState(this.props.savedState, () => {
-                this.render()
-            })
+        const {savedState} = this.props
+        if (Object.keys(savedState).length !== 0) {
+            this.setState(savedState)
         } else {
             this._initMenuItems()
-
         }
     };
 

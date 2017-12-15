@@ -26,7 +26,7 @@ import {
     UPDATE_CUSTOM_STYLE_COLOR_MODE,
     UPDATE_CUSTOM_STYLE_INFO, UPDATE_CUSTOM_STYLE_LAYER_NAME, UPDATE_CUSTOM_STYLE_SUBMENU
 } from "../actions";
-import {getAvailableDatasets, getAvailableFields, getAvailableValues} from "../utils/mapUtils";
+import {getAvailableDatasets, getAvailableFields} from "../utils/mapUtils";
 
 
 const DEFAULT_HIGHLIGHT_STATE = {
@@ -77,6 +77,7 @@ export const styleMenu = (state = DEFAULT_CUSTOM_STYLE_STATE, action) => {
         styleMode,
         layerName,
         colorMode,
+        submenu,
         submenuState
     } = action;
 
@@ -109,7 +110,6 @@ export const styleMenu = (state = DEFAULT_CUSTOM_STYLE_STATE, action) => {
             });
 
         case SELECT_CUSTOM_STYLE_FIELD:
-            console.log('newfield', field);
             return Object.assign({}, state, {
                 selectedField: field
             });
@@ -147,7 +147,7 @@ export const styleMenu = (state = DEFAULT_CUSTOM_STYLE_STATE, action) => {
 
         case UPDATE_CUSTOM_STYLE_SUBMENU:
             return Object.assign({}, state, {
-                submenuState
+                submenu: {[submenu]: submenuState}
             });
 
         default:

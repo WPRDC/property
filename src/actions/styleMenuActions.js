@@ -151,8 +151,6 @@ export const updateCustomStyleAvailableFields = (styleMode, dataset) => {
 };
 
 
-
-
 export const updateCustomStyleAvailableValues = (availableValues) => {
     return {
         type: UPDATE_CUSTOM_STYLE_AVAILABLE_VALUES,
@@ -219,9 +217,10 @@ export const updateCustomStyleColorMode = colorMode => {
     }
 };
 
-export const updateCustomStyleSubmenu = submenuState => {
+export const updateCustomStyleSubmenu = (submenu, submenuState) => {
     return {
         type: UPDATE_CUSTOM_STYLE_SUBMENU,
+        submenu,
         submenuState
     }
 };
