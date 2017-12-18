@@ -61,7 +61,7 @@ class RangeStyleMenu extends Component {
      */
     _initRange = (dataset, field) => {
         let range = field.range;
-        console.log(range);
+        console.log('RANGE', range);
         // If there the field has a fully predfined range, we don't need to make an API call
         if (range && range[0] !== null && range[1] !== null) {
             let q2 = range[0] + ((range[1] - range[0]) / 4);
@@ -146,7 +146,6 @@ class RangeStyleMenu extends Component {
      */
     componentDidMount = () => {
         if (this.props.savedState) {
-            console.log(this.props.savedState);
             this.setState(this.props.savedState, () => {
                 this.render()
             })
@@ -158,8 +157,11 @@ class RangeStyleMenu extends Component {
     /**
      * Runs when component is updated.  Updates the style data.
      */
-    componentDidUpdate = () => {
-    };
+    componentDidUpdate = (prevProps) => {
+        if (prevProps.dataset.id !== this.props.dataset.id || prevProps.field.id !== this.props.field.id) {
+            this._initRange(this.props.dataset, this.props.field);
+        }
+    }
 
 
     render() {

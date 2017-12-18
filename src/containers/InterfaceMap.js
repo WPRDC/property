@@ -18,7 +18,7 @@ import {connect} from 'react-redux'
 
 
 import {BASEMAPS} from "../utils/mapDefaults";
-import {toggleStyleLayerListMenu} from "../actions/styleMenuActions";
+import {toggleStyleLayerListMenu} from "../actions/layerEditorActions";
 import {toggleMapLayerMenu} from "../actions/mapLayerActions";
 
 
@@ -99,7 +99,7 @@ class InterfaceMap extends Component {
                                attribute={basemap.attribution}/>
 
                     {mapLayerList.map(layerId => {
-                            const currLayer = mapLayersById;
+                            const currLayer = mapLayersById[layerId];
                             return (
                                 <CartoMapLayer key={layerId}
                                                sql={currLayer.styleInfo.sql}

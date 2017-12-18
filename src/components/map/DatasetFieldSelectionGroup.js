@@ -7,8 +7,6 @@ import {FormControl, FormHelperText} from 'material-ui/Form';
 
 /* Functions & Global Constants */
 import {COLORS} from "../../utils/dataUtils";
-import {updateAvailableDatasetsFieldsValues} from "../../actions";
-import {dataSource} from "../../utils/mapDefaults";
 
 /**
  * Form Group with dataset and field options
@@ -17,28 +15,19 @@ import {dataSource} from "../../utils/mapDefaults";
  * @return {XML}
  * @constructor
  */
-const DatasetFieldSelectionGroup = props => {
-    const {
-        availableDatasets,
-        availableFields,
-        currentDataset,
-        currentField,
-
-        handleChange,
-    } = props;
-
-    if (currentDataset && currentField) {
+function DatasetFieldSelectionGroup(props) {
+    if (props.currentDataset && props.currentField) {
         return (
             <form>
                 <FormControl>
                     <InputLabel htmlFor="dataset">Dataset</InputLabel>
                     <Select
                         native
-                        value={currentDataset.id}
-                        onChange={handleChange('dataset')}
+                        value={props.currentDataset.id}
+                        onChange={props.handleChange('dataset')}
                         input={<Input id="dataset"/>}
                     >
-                        {availableDatasets.map((dataset, i) => {
+                        {props.availableDatasets.map((dataset, i) => {
                             return <option key={i.toString()}
                                            value={dataset.id}>{dataset.name}</option>
                         })}
@@ -48,11 +37,11 @@ const DatasetFieldSelectionGroup = props => {
                     <InputLabel htmlFor="field">Field</InputLabel>
                     <Select
                         native
-                        value={currentField.id}
-                        onChange={handleChange('field', currentDataset)}
+                        value={props.currentField.id}
+                        onChange={props.handleChange('field')}
                         input={<Input id="field"/>}
                     >
-                        {availableFields.map((field, i) => {
+                        {props.availableFields.map((field, i) => {
                             return <option key={i.toString()} value={field.id}>{field.name}</option>
                         })}
                     </Select>
@@ -61,9 +50,7 @@ const DatasetFieldSelectionGroup = props => {
         );
     } else {
         return <form/>;
-
     }
 }
-
 
 export default DatasetFieldSelectionGroup

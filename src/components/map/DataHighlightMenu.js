@@ -11,10 +11,7 @@ import Typography from 'material-ui/Typography';
 
 import Button from 'material-ui/Button';
 
-import {
-    addStyleLayer, closeHighlightMenu, displayStyleLayerList, selectHighlightMenuField,
-    updateStyleLayer
-} from "../../actions/styleMenuActions";
+import {closeHighlightStyleMenu} from "../../actions/layerEditorActions";
 
 import ColorPicker from '../../ColorPicker'
 import {selectHighlightMenuColor} from "../../actions/index";
@@ -153,32 +150,23 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => {
     return {
         closeMenu: () => {
-            dispatch(closeHighlightMenu())
+            dispatch(closeHighlightStyleMenu())
         },
         handleSelectField: index => {
-            dispatch(selectHighlightMenuField(index))
         },
         handleSelectColor: color => {
-            dispatch(selectHighlightMenuColor(color))
         },
 
         handleSubmit: (styleLayers, styleInfo, dataset, fieldName, items) => {
             const layerIndex = styleLayers.findIndex(layer => layer.layerType === 'HIGHLIGHT');
 
             const menuInfo = {
-                currentTab: 'Highlight',
+                styleMode: 'Highlight',
                 selectedDataset: dataset,
                 selectedField: {name: fieldName},
                 items,
             };
 
-            if (layerIndex > -1) {
-                dispatch(updateStyleLayer(layerIndex, menuInfo, styleInfo));
-            } else {
-                dispatch(addStyleLayer(LayerTypes.HIGHLIGHT, menuInfo, styleInfo))
-            }
-            dispatch(closeHighlightMenu());
-            dispatch(displayStyleLayerListMenu());
         }
     }
 }

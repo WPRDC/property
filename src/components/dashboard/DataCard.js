@@ -4,7 +4,7 @@ import {withStyles} from 'material-ui/styles';
 import Card, {CardHeader, CardContent, CardActions, CardMedia} from 'material-ui/Card'
 import Button from 'material-ui/Button'
 
-import {addStyleLayer, openHighlightMenu} from "../../actions/styleMenuActions";
+import {openHighlightStyleMenu} from "../../actions/layerEditorActions";
 
 import {dataSource, StyleMenuEditModes} from "../../utils/mapDefaults";
 
@@ -63,16 +63,13 @@ class DataCard extends Component {
     }
 }
 
-const mapStateToProps = state => {
-
-};
 
 const mapDispatchToProps = dispatch => {
     return {
         openHighlightMenu: (nextStyleLayerIndex, dataset, items) => () => {
-            dispatch(openHighlightMenu(StyleMenuEditModes.ADD, nextStyleLayerIndex, dataset, items))
+            dispatch(openHighlightStyleMenu(StyleMenuEditModes.ADD, nextStyleLayerIndex, dataset, items))
         }
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DataCard)
+export default connect(null, mapDispatchToProps)(DataCard)

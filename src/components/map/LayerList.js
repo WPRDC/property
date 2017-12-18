@@ -18,7 +18,7 @@ const LayerList = props => {
 
     return (
         <List>
-            <AddLayerListItem onClick={handleOpenEditMenu(StyleMenuEditModes.ADD, LayerTypes.CUSTOM)}/>
+            <AddLayerListItem onClick={handleAddLayer}/>
 
             {mapLayerList.slice().reverse().map(layerId => {
                 const {layerType, layerName} = mapLayersById[layerId];
@@ -28,7 +28,7 @@ const LayerList = props => {
                         key={layerId}
                         layerType={layerType}
                         layerName={layerName}
-                        handleOpenEditMenu={handleOpenEditMenu}
+                        handleOpenEditMenu={handleOpenEditMenu(mapLayersById,layerId)}
                         handleDelete={handleDeleteLayer(layerId)}
                     />
                 )

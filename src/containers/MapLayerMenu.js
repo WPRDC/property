@@ -11,13 +11,9 @@ import Slide from 'material-ui/transitions/Slide';
 /* Custom Components */
 import MapLayerList from './MapLayerList'
 import MapStyleMenu from './MapStyleMenu'
+import {closeCustomStyleMenu} from "../actions/layerEditorActions";
 
 /* Functions & Constants */
-
-import {StyleMenuEditModes, LayerTypes} from "../utils/mapDefaults";
-import {removeStyleLayer} from "../actions/styleMenuActions";
-import {openCustomStyleMenu, openHighlightMenu} from "../actions";
-
 const style = {
     base: {
         position: 'absolute',
@@ -49,13 +45,14 @@ class MapLayerMenu extends Component {
 
     render() {
         const {
-            isOpen
+            isOpen,
+            styleMenuIsOpen
         } = this.props;
+        console.log(styleMenuIsOpen);
         return (
             <div style={style.base}>
                 <Slide in={isOpen} direction="right">
                     <Paper>
-                        {/* Heading */}
                         <AppBar position="static" color="primary">
                             <Toolbar>
                                 <Typography type="title" color="inherit">
@@ -65,12 +62,7 @@ class MapLayerMenu extends Component {
                         </AppBar>
 
                         <MapLayerList/>
-
-
-                        {/*Map Style Menu*/}
                         <MapStyleMenu/>
-
-
                     </Paper>
                 </Slide>
             </div>
@@ -84,31 +76,19 @@ function mapStateToProps(state) {
         isOpen
     } = state.mapLayerMenu;
 
+    const styleMenuIsOpen = state.customStyleMenu.isOpen
+
     return {
-        isOpen
+        isOpen,
+        styleMenuIsOpen
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        closeMenu: () => dispatch(closeCustomStyleMenu())
     }
 }
 
 
-function mapDispatchToProps(dispatch) {
-    return {
-        removeStyleLayer: (index) => () => {
-            dispatch(removeStyleLayer(index))
-        },
-        openMenu: (mode, layerType, layerIndex) => () => {
-            switch (layerType) {
-                case LayerTypes.CUSTOM:
-                    dispatch(openCustomStyleMenu(mode, layerIndex));
-                    break;
-                case LayerTypes.HIGHLIGHT:
-                    dispatch(openHighlightMenu(mode, layerIndex,));
-                    break;
-                default:
-                    console.log('ERROR - invalid layer type: ' + layerType)
-            }
-        }
-    }
-}
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(MapLayerMenu)
+export default connect(mapStateToProps)(MapLayerMenu)

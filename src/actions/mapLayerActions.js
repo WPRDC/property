@@ -26,11 +26,11 @@ export const toggleMapLayerMenu = () => {
 }
 
 
-export const addMapLayer = (layerId, layerType) => {
+export const addMapLayer = (layerId, layerData) => {
     return {
         type: ADD_MAP_LAYER,
         layerId,
-        layerType
+        layerData,
     }
 };
 

@@ -28,7 +28,7 @@ export const mapLayersById = (state = {}, action) => {
         case ADD_MAP_LAYER:
             return Object.assign({}, state,
                 {
-                    [action.layerId]: Object.assign(DEFAULT_LAYER, {layerType: action.layerType})
+                    [action.layerId]: action.layerData
                 }
             );
         case REMOVE_MAP_LAYER:
