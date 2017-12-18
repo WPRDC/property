@@ -19,7 +19,7 @@ import {connect} from 'react-redux'
 
 import {BASEMAPS} from "../utils/mapDefaults";
 import {toggleStyleLayerListMenu} from "../actions/styleMenuActions";
-
+import {toggleMapLayerMenu} from "../actions/mapLayerActions";
 
 
 const style = {
@@ -62,10 +62,11 @@ class InterfaceMap extends Component {
     render() {
         const {
             mapOptions,
-            basemapLayer,
+            basemap,
             availableShapesLayer,
             selectedLayer,
-            styleLayers,
+            mapLayerList,
+            mapLayersById,
             styleLayerMenu,
             toggleStyleLayerMenu
         } = this.props;
@@ -74,7 +75,7 @@ class InterfaceMap extends Component {
             center,
             maxZoom
         } = mapOptions;
-
+        console.log(basemap)
         return (
             <div style={style.base} className="mapContainer">
                 <Button fab color="primary" aria-label="add" onClick={toggleStyleLayerMenu}
@@ -94,13 +95,18 @@ class InterfaceMap extends Component {
                 >
                     <ZoomControl position='topright'/>
 
-                    <TileLayer className="the-thing-basemap" url={basemapLayer.url}
-                               attribute={basemapLayer.attribution}/>
+                    <TileLayer url={basemap.url}
+                               attribute={basemap.attribution}/>
 
-                    {styleLayers.map((styleLayer, idx) =>
-                        <CartoMapLayer key={idx.toString()} sql={styleLayer.styleInfo.sql}
-                                       css={styleLayer.styleInfo.css}
-                        />
+                    {mapLayerList.map(layerId => {
+                            const currLayer = mapLayersById;
+                            return (
+                                <CartoMapLayer key={layerId}
+                                               sql={currLayer.styleInfo.sql}
+                                               css={currLayer.styleInfo.css}
+                                />
+                            )
+                        }
                     )}
 
                     {availableShapesLayer
@@ -123,28 +129,30 @@ class InterfaceMap extends Component {
 }
 
 InterfaceMap.propTypes = {
-    basemapLayer: PropTypes.object,
+    basemap: PropTypes.object,
     selectionLayer: PropTypes.object,
     availableRegionsLayer: PropTypes.object,
-    styleLayers: PropTypes.arrayOf(PropTypes.object),
+    mapLayerList: PropTypes.arrayOf(PropTypes.object),
 };
 
 
 function mapStateToProps(state) {
     const {
-        basemapLayer,
+        basemap,
         availableShapesLayer,
         selectedLayer,
-        styleLayers,
+        mapLayerList,
+        mapLayersById,
         mapOptions,
         styleLayerMenu
     } = state;
 
     return {
-        basemapLayer,
+        basemap: basemap.selectedBasemap,
         availableShapesLayer,
         selectedLayer,
-        styleLayers,
+        mapLayerList,
+        mapLayersById,
         mapOptions,
         styleLayerMenu
     }
@@ -157,7 +165,7 @@ const mapDispatchToProps = dispatch => {
             dispatch(fetchParcelFromPoint(latLng))
         },
         toggleStyleLayerMenu: () => {
-            dispatch(toggleStyleLayerListMenu())
+            dispatch(toggleMapLayerMenu())
         }
     }
 };

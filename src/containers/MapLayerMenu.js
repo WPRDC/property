@@ -3,25 +3,16 @@ import {connect} from 'react-redux';
 /* Material UI Components 0*/
 import Paper from 'material-ui/Paper';
 import AppBar from 'material-ui/AppBar';
-import List, {ListItem, ListItemIcon, ListItemText, ListItemAvatar, ListItemSecondaryAction} from 'material-ui/List';
-import Avatar from 'material-ui/Avatar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
-import Divider from 'material-ui/Divider';
 import Slide from 'material-ui/transitions/Slide';
 
-import LayersIcon from 'material-ui-icons/Layers';
 
 /* Custom Components */
-import LayerListItem from '../components/map/LayerListItem'
-import AddLayerListItem from '../components/map/AddLayerListItem'
-import BaseMapMenu from '../components/map/BaseMapMenu'
+import MapLayerList from './MapLayerList'
 import MapStyleMenu from './MapStyleMenu'
 
 /* Functions & Constants */
-import {COLORS} from "../utils/dataUtils";
-
-import {green} from 'material-ui/colors';
 
 import {StyleMenuEditModes, LayerTypes} from "../utils/mapDefaults";
 import {removeStyleLayer} from "../actions/styleMenuActions";
@@ -56,47 +47,10 @@ class MapLayerMenu extends Component {
         }
     }
 
-    /**
-     * Closes basemap menu. Used as call back for onRequestClose events.
-     */
-    handleRequestClose = name => () => {
-        this.setState({[name]: false});
-    };
-
-
-    /**
-     * Opens or closes the basemap menu.
-     * @param {event} event - click event that triggered this as a callback
-     */
-    toggleBasemapMenu = event => {
-        this.setState(
-            {
-                basemapMenuOpen: !this.state.basemapMenuOpen,
-                basemapMenuAnchorEl: event.currentTarget    // menu DOM element that was clicked
-            }
-        );
-    };
-
-    /**
-     * Brings up new layer dialog.
-     * Runs when add new layer button is clicked.
-     */
-    handleAddLayer = () => {
-        const {openMenu} = this.props;
-
-    };
-
-
     render() {
         const {
-            styleLayers,
-            styleLayerListMenu,
-            removeStyleLayer,
-            openMenu
+            isOpen
         } = this.props;
-
-        const {isOpen} = styleLayerListMenu;
-
         return (
             <div style={style.base}>
                 <Slide in={isOpen} direction="right">
@@ -110,42 +64,11 @@ class MapLayerMenu extends Component {
                             </Toolbar>
                         </AppBar>
 
-                        {/* Layer List */}
-                        <List>
-                            {styleLayers.reverse().map(({layerType, menuState, styleInfo}, i) =>
-                                <LayerListItem key={i.toString()}
-                                               layer={menuState}
-                                               handleUpdate={openMenu(StyleMenuEditModes.UPDATE, layerType, i)}
-                                               handleDelete={removeStyleLayer(i)}
-                                />
-                            )}
+                        <MapLayerList/>
 
-                            <AddLayerListItem
-                                handleOnClick={openMenu(StyleMenuEditModes.ADD, LayerTypes.CUSTOM, styleLayers.length)}/>
-
-                            <Divider inset/>
-                            <ListItem button={true} onClick={this.toggleBasemapMenu}>
-                                <ListItemAvatar>
-                                    <Avatar>
-                                        <LayersIcon/>
-                                    </Avatar>
-                                </ListItemAvatar>
-                                <ListItemText primary={"Basemap Layer"} secondary={this.state.basemapName}/>
-
-                                <BaseMapMenu open={this.state.basemapMenuOpen}
-                                             anchorEl={this.state.basemapMenuAnchorEl}
-                                             handleRequestClose={this.handleRequestClose('basemapMenuOpen')}
-                                />
-                            </ListItem>
-                        </List>
 
                         {/*Map Style Menu*/}
-                        <MapStyleMenu open={this.state.styleMenuOpen}
-                                      savedState={this.state.layers[this.state.targetLayerIdx]}
-                                      layerIndex={this.state.targetLayerIndex}
-                                      mode={this.state.styleMenuMode}
-                                      handleRequestClose={this.handleRequestClose('styleMenuOpen')}
-                        />
+                        <MapStyleMenu/>
 
 
                     </Paper>
@@ -158,13 +81,11 @@ class MapLayerMenu extends Component {
 
 function mapStateToProps(state) {
     const {
-        styleLayers,
-        styleLayerListMenu,
-    } = state;
+        isOpen
+    } = state.mapLayerMenu;
 
     return {
-        styleLayers,
-        styleLayerListMenu
+        isOpen
     }
 }
 
@@ -180,11 +101,10 @@ function mapDispatchToProps(dispatch) {
                     dispatch(openCustomStyleMenu(mode, layerIndex));
                     break;
                 case LayerTypes.HIGHLIGHT:
-                    dispatch(openHighlightMenu(mode, layerIndex, ));
+                    dispatch(openHighlightMenu(mode, layerIndex,));
                     break;
                 default:
                     console.log('ERROR - invalid layer type: ' + layerType)
-
             }
         }
     }

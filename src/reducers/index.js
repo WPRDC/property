@@ -2,9 +2,10 @@ import {combineReducers} from 'redux';
 
 import * as mapReducers from './mapReducers'
 import * as parcelDataReducers from './parcelDataReducers'
-import * as styleMenuReducers from './styleMenuReducers'
+import * as layerEditorReducers from './layerEditorReducers'
+import * as mapLayerReducers from './mapLayerReducers'
 
-const allReducers = Object.assign({}, mapReducers, parcelDataReducers, styleMenuReducers);
+const allReducers = Object.assign({}, mapReducers, parcelDataReducers, layerEditorReducers, mapLayerReducers);
 const rootReducer = combineReducers(allReducers);
 
 export default rootReducer

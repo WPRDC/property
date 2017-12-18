@@ -4,41 +4,25 @@ import {connect} from 'react-redux';
 /* Material UI Components*/
 import Menu, {MenuItem} from 'material-ui/Menu';
 
-import {setBasemap} from "../../actions/mapActions";
-
-import {BASEMAPS} from "../../utils/mapDefaults";
-
 
 class BaseMapMenu extends Component {
-    /**
-     * Menu for selecting basemap
-     * @param {obj} props - react props
-     */
     constructor(props) {
         super(props);
         this.state = {
-            open: false,
-            selectedIdx: 0,
+            selectedIndex: 0,
         };
-        this.handleBasemapSelect = this.handleBasemapSelect.bind(this);
     }
 
-    /**
-     * Runs when specific basemap menu item is clicked on menu
-     * @param {event} event - mouse event when basemap menu item is clicked
-     * @param index
-     */
     handleBasemapSelect = (basemapName, index) => event => {
-        const {dispatch} = this.props;
-        dispatch(setBasemap(basemapName));
+        const {basemaps, handleSelectBasemap} = this.props;
+        handleSelectBasemap(basemaps[basemapName])
         this.setState(
             {selectedIndex: index},
         );
     };
 
-
     render() {
-        const basemaps = BASEMAPS;
+        const {basemaps} = this.props;
         return (
             <Menu open={this.props.open}
                   onRequestClose={this.props.handleRequestClose}
@@ -47,7 +31,6 @@ class BaseMapMenu extends Component {
                 {Object.keys(basemaps).map((k, i) => {
                         return (
                             <MenuItem value={k}
-                                      className={"LOOKATME"}
                                       key={k}
                                       selected={i === this.state.selectedIndex}
                                       onClick={this.handleBasemapSelect(k, i)}>
@@ -61,4 +44,4 @@ class BaseMapMenu extends Component {
     }
 }
 
-export default connect()(BaseMapMenu)
+export default BaseMapMenu

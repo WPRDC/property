@@ -17,18 +17,25 @@ import {dataSource} from "../../utils/mapDefaults";
  * @return {XML}
  * @constructor
  */
-function DatasetFieldSelectionGroup(props) {
-    const {availableDatasets,availableFields} = props;
-    if (props.currentDataset && props.currentField) {
+const DatasetFieldSelectionGroup = props => {
+    const {
+        availableDatasets,
+        availableFields,
+        currentDataset,
+        currentField,
 
+        handleChange,
+    } = props;
+
+    if (currentDataset && currentField) {
         return (
             <form>
                 <FormControl>
                     <InputLabel htmlFor="dataset">Dataset</InputLabel>
                     <Select
                         native
-                        value={props.currentDataset.id}
-                        onChange={props.handleChange('dataset')}
+                        value={currentDataset.id}
+                        onChange={handleChange('dataset')}
                         input={<Input id="dataset"/>}
                     >
                         {availableDatasets.map((dataset, i) => {
@@ -41,8 +48,8 @@ function DatasetFieldSelectionGroup(props) {
                     <InputLabel htmlFor="field">Field</InputLabel>
                     <Select
                         native
-                        value={props.currentField.id}
-                        onChange={props.handleChange('field')}
+                        value={currentField.id}
+                        onChange={handleChange('field', currentDataset)}
                         input={<Input id="field"/>}
                     >
                         {availableFields.map((field, i) => {
@@ -54,6 +61,7 @@ function DatasetFieldSelectionGroup(props) {
         );
     } else {
         return <form/>;
+
     }
 }
 

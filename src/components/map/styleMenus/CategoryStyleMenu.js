@@ -59,9 +59,10 @@ class CategoryStyleMenu extends Component {
      */
     _initMenuItems = () => {
         const {dataset, field} = this.props;
-        getFieldValues(dataset,field)
-            .then( fieldValues => {
-                console.log(fieldValues);
+        console.log(dataset, field);
+        getFieldValues(dataset, field)
+            .then(fieldValues => {
+                console.log('FIELDVALUES:', fieldValues);
                 this.setState(
                     {
                         fieldValues,
@@ -148,25 +149,11 @@ class CategoryStyleMenu extends Component {
     };
 
     /**
-     * When receiving new dataset and field props, reset the category dropdowns.
-     * @param nextProps - new set of props that were given to component
-     */
-    componentWillReceiveProps = (nextProps) => {
-        // First check to make sure that the dataset or field has changed
-        // (apparently this could run even when we don't explicitly change props)
-        // https://reactjs.org/docs/react-component.html#componentwillreceiveprops
-        console.log(nextProps);
-        if (nextProps.dataset !== this.props.dataset || nextProps.field !== this.props.field) {
-            this._initMenuItems()
-        }
-    };
-
-    /**
      * Runs when component mounts.  Initializes the menu.
      */
     componentDidMount = () => {
-        const {savedState} = this.props
-        if (Object.keys(savedState).length !== 0) {
+        const {savedState} = this.props;
+        if (savedState && Object.keys(savedState).length !== 0) {
             this.setState(savedState)
         } else {
             this._initMenuItems()
@@ -175,11 +162,14 @@ class CategoryStyleMenu extends Component {
 
     /**
      * Runs when component updates.  Updates style information.
-     * @param prevProps
      */
-    componentDidUpdate = (prevProps) => {
+    componentDidUpdate = (prevProps, prevState) => {
         // First check if anything pertaining to updating the style has changed.
-        if (prevProps.dataset !== this.props.dataset || prevProps.field !== this.props.field) {
+        if (prevProps.dataset !== this.props.dataset ||
+            prevProps.field !== this.props.field
+        ) {
+            this._initMenuItems();
+        } else if (prevState.menuItems.length !== this.state.menuItems.length) {
             this._handleStyleInfoChange();
         }
     };

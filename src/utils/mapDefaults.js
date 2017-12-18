@@ -225,7 +225,7 @@ export class DataSource {
      */
     getDataset = datasetId => {
         return this.datasets.filter((dataset) => dataset.id === datasetId)[0]
-    }
+    };
 
     /**
      * Get field identified by `fieldId` from dataset identified by `datasetId`
@@ -235,7 +235,7 @@ export class DataSource {
      */
     getField = (datasetId, fieldId) => {
         return this.getDataset(datasetId).fields.filter((field) => field.id === fieldId)[0]
-    }
+    };
 
     /**
      * Returns all datasets
@@ -243,7 +243,7 @@ export class DataSource {
      */
     getDatasets = () => {
         return this.datasets;
-    }
+    };
 
     /**
      * Returns all fields in dataset, if type is provided, this will return all fields filtered by that type
@@ -256,7 +256,7 @@ export class DataSource {
             return this.getDatasets(datasetId).fields.filter((field) => field.type === type)
         }
         return this.getDataset(datasetId).fields;
-    }
+    };
 
     /**
      * Checks whether dataset identified by `datasetId` accommodates a style type labeled `type`

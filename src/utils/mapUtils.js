@@ -351,6 +351,14 @@ export const singleShapeLayer = (id, shapeClass = PARCEL) => {
 
     return {sql, css}
 
+};
+
+export const getDataset = (datasetId) => {
+    return dataSource.getDataset(datasetId);
+}
+
+export const getField = (datasetId, fieldId) => {
+    return dataSource.getField(datasetId, fieldId);
 }
 
 

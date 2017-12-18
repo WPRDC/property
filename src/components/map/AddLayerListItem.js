@@ -13,10 +13,10 @@ const style = {
 };
 
 const AddLayerListItem = props => {
-    const {handleOnClick} = props;
+    const {onClick} = props;
 
     return (
-        <ListItem button onClick={handleOnClick}>
+        <ListItem button onClick={onClick}>
             <ListItemAvatar>
                 <Avatar style={style}>
                     <AddIcon/>
@@ -28,7 +28,7 @@ const AddLayerListItem = props => {
 };
 
 AddLayerListItem.propTypes = {
-    handleOnClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired
 };
 
 export default AddLayerListItem

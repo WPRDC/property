@@ -10,19 +10,17 @@ import Avatar from 'material-ui/Avatar';
 
 
 const LayerListItem = props => {
-    const {layer, handleUpdate, handleDelete} = props;
-    const primaryText = layer.layerName || layer.currentTab.charAt(0).toUpperCase() + layer.currentTab.slice(1) + " Layer";
-    const secondaryText = `${layer.selectedDataset.name}: ${layer.selectedField.name}`;
+    const {layerType, layerName, handleOpenEditMenu, handleDelete} = props;
 
     return (
-        <ListItem button onClick={handleUpdate}>
+        <ListItem button onClick={handleOpenEditMenu}>
             <ListItemAvatar>
                 <Avatar>
                     <LayersIcon/>
                 </Avatar>
             </ListItemAvatar>
 
-            <ListItemText primary={primaryText} secondary={secondaryText}/>
+            <ListItemText primary={layerType} secondary={layerName}/>
 
             <ListItemSecondaryAction>
                 <IconButton aria-label="Delete" onClick={handleDelete}>
@@ -33,10 +31,5 @@ const LayerListItem = props => {
     );
 };
 
-LayerListItem.propTypes = {
-    layer: PropTypes.object.isRequired,
-    handleUpdate: PropTypes.func.isRequired,
-    handleDelete: PropTypes.func.isRequired
-};
 
 export default LayerListItem

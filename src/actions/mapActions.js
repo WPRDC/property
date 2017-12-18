@@ -6,7 +6,10 @@ import {selectParcel} from "./parcelDataActions";
 
 export const SET_SELECTED_PARCEL_SHAPE = 'SET_SELECTED_PARCEL_SHAPE';
 export const CENTER_MAP_ON_POINT = 'CENTER_MAP_ON_POINT';
-export const SET_BASEMAP = 'SET_BASEMAP';
+
+export const OPEN_BASEMAP_MENU = 'OPEN_BASEMAP_MENU';
+export const CLOSE_BASEMAP_MENU = 'CLOSE_BASEMAP_MENU';
+export const SELECT_BASEMAP = 'SELECT_BASEMAP';
 
 
 export const fetchParcelFromPoint = point => {
@@ -34,11 +37,34 @@ export const centerMapOnPoint = point => {
     }
 };
 
-export const setBasemap = basemapName => {
+
+export const openBasemapMenu = () => {
     return {
-        type: SET_BASEMAP,
-        basemapName
+        type: OPEN_BASEMAP_MENU,
     }
 };
 
+export const closeBasemapMenu = () => {
+    return {
+        type: CLOSE_BASEMAP_MENU
+    }
+};
+
+export const toggleBasemapMenu = () => {
+    return (dispatch, getState) => {
+        if(getState().basemap.menuIsOpen) {
+            dispatch(closeBasemapMenu());
+        } else {
+            dispatch(openBasemapMenu());
+        }
+    }
+};
+
+
+export const selectBasemap = basemap => {
+    return {
+        type: SELECT_BASEMAP,
+        basemap
+    }
+};
 

@@ -41,27 +41,6 @@ const DEFAULT_CUSTOM_STYLE_STATE = {
     isOpen: false,
     currentTab: 'category',
     styleInfo: {sql: '', css: ''},
-}
-
-
-export const styleLayers = (state = [], action) => {
-    const {layerType, menuState, styleInfo} = action;
-    switch (action.type) {
-        case ADD_STYLE_LAYER:
-            return [...state, {layerType, menuState, styleInfo}];
-        case UPDATE_STYLE_LAYER:
-            return state.map((styleLayer, idx) =>
-                (idx === action.index)
-                    ? Object.assign({}, styleLayer, {menuState, styleInfo})
-                    : styleLayer
-            );
-        case REMOVE_STYLE_LAYER:
-            return state.filter((styleLayer, currIndex) => currIndex !== action.index);
-        case REORDER_STYLE_LAYER:
-            return arrayMove(state, action.oldIndex, action.newIndex);
-        default:
-            return state
-    }
 };
 
 export const styleMenu = (state = DEFAULT_CUSTOM_STYLE_STATE, action) => {

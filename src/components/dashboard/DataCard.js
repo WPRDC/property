@@ -18,24 +18,6 @@ class DataCard extends Component {
     constructor(props) {
         super(props);
     }
-
-    _makeMapDescription = mapInfo => () => {
-        const {dispatch} = this.props;
-        const {sql, css, dataset, field, valuesByField} = mapInfo;
-        if (sql && css)
-            dispatch(addStyleLayer(
-                {
-                    currentTab: 'Data Highlight',
-                    dataset,
-                    field,
-                    styleInfo: {sql, css}
-                }
-                )
-            )
-            ;
-
-    };
-
     render() {
         const {
             title,
@@ -82,9 +64,7 @@ class DataCard extends Component {
 }
 
 const mapStateToProps = state => {
-    const {styleLayers} = state;
-    const nextStyleLayerIndex = styleLayers.length;
-    return {nextStyleLayerIndex}
+
 };
 
 const mapDispatchToProps = dispatch => {

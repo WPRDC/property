@@ -1,22 +1,16 @@
 import {singleShapeLayer} from "../utils/mapUtils";
 import {arrayMove} from 'react-sortable-hoc';
 
-import {BASEMAPS, SELECTION_LAYERS} from "../utils/mapDefaults";
 import {
-    SET_BASEMAP, SET_SELECTED_PARCEL_SHAPE, CENTER_MAP_ON_POINT
+    SELECT_BASEMAP, SET_SELECTED_PARCEL_SHAPE, CENTER_MAP_ON_POINT, OPEN_BASEMAP_MENU, CLOSE_BASEMAP_MENU
 } from "../actions/mapActions";
+
+import {BASEMAPS, SELECTION_LAYERS} from "../utils/mapDefaults";
+const DEFAULT_BASEMAP = BASEMAPS.voyager
+
 
 export const availableShapesLayer = (state = SELECTION_LAYERS.PARCEL, action) => {
     return state
-};
-
-export const basemapLayer = (state = BASEMAPS.voyager, action) => {
-    switch (action.type) {
-        case SET_BASEMAP:
-            return BASEMAPS[(action.basemapName)]
-        default:
-            return state
-    }
 };
 
 export const selectedLayer = (state = {}, action) => {
@@ -42,3 +36,15 @@ export const mapOptions = (state = {center: [40.438340, -79.961884], zoom: 16}, 
     }
 };
 
+export const basemap = (state = {menuIsOpen: false, selectedBasemap: DEFAULT_BASEMAP}, action) => {
+    switch(action.type){
+        case OPEN_BASEMAP_MENU:
+            return Object.assign({}, state, {menuIsOpen: true, anchorEl: action.anchorEl});
+        case CLOSE_BASEMAP_MENU:
+            return Object.assign({}, state, {menuIsOpen: false, anchorEl: null});
+        case SELECT_BASEMAP:
+            return Object.assign({}, state, {selectedBasemap: action.basemap})
+        default:
+            return state;
+    }
+};

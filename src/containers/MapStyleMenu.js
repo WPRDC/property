@@ -2,19 +2,13 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux'
 
 /* Material UI Components */
-import Button from 'material-ui/Button'
-import TextField from 'material-ui/TextField'
-import Dialog, {DialogTitle, DialogContent, DialogActions} from 'material-ui/Dialog';
-import Input, {InputLabel} from 'material-ui/Input';
-import Select from 'material-ui/Select';
-import {FormControl, FormHelperText} from 'material-ui/Form';
-import AppBar from 'material-ui/AppBar';
-import Tabs, {Tab} from 'material-ui/Tabs';
-import Divider from 'material-ui/Divider';
-import Slide from 'material-ui/transitions/Slide'
 
-/* Material UI Icons */
-import {default as MapIcon} from 'material-ui-icons/Map';
+import Dialog, {DialogTitle, DialogContent, DialogActions} from 'material-ui/Dialog';
+import TextField from 'material-ui/TextField'
+import Button from 'material-ui/Button'
+
+
+import Slide from 'material-ui/transitions/Slide'
 
 /* Style Menus */
 import CategoryStyleMenu from '../components/map/styleMenus/CategoryStyleMenu';
@@ -32,14 +26,13 @@ import {addStyleLayer, updateStyleLayer} from "../actions/styleMenuActions";
 import {StyleMenuEditModes} from "../utils/mapDefaults";
 import {
     changeCustomStyleMenuTab,
-    closeCustomStyleMenu, selectCustomStyleDataset, selectCustomStyleField,
-    updateCustomStyleInfo,
-    updateCustomStyleLayerName, updateCustomStyleSubmenu
-} from "../actions/index";
-import {
-    fetchCustomStyleAvailableValues, updateAvailableDatasetsAndFields, updateAvailableFields,
-    updateCustomStyleAvailableValues
-} from "../actions";
+    closeCustomStyleMenu, selectCustomStyleDataset, selectCustomStyleDatasetAndUpdateFields, selectCustomStyleField,
+    updateCustomStyleAvailableDataSource, updateCustomStyleLayerName,
+    updateCustomStyleStyleInfo,
+    updateCustomStyleSubmenuState
+} from "../actions/layerEditorActions";
+
+import StyleMenuHeader from "../components/map/StyleMenuHeader";
 
 const style = {
     dialog: {},
@@ -48,15 +41,15 @@ const style = {
     }
 };
 
-
 class MapStyleMenu extends Component {
+    constructor(props) {
+        super(props);
+    }
 
-    componentWillUpdate = nextProps => {
-        const oldCurrentTab = this.props.currentTab;
-        const {availableDatasets, currentTab, initializeMenus} = nextProps;
-        if (!availableDatasets || oldCurrentTab !== currentTab) {
-            initializeMenus(currentTab);
-        }
+    componentDidMount = () => {
+        const {updateDataSource, currentTab} = this.props;
+        updateDataSource(currentTab)
+
     }
 
     render() {
@@ -64,32 +57,23 @@ class MapStyleMenu extends Component {
             // state
             isOpen,
             mode,
-            layerIndex,
-            styleInfo,
             currentTab,
             selectedDataset,
             selectedField,
             availableDatasets,
             availableFields,
+            submenuStates,
             layerName,
-            colorMode,
-            submenu,
-            // dispatch
+
             handleRequestClose,
-            handleSubmit,
-            updateStyleInfo,
-            updateLayerName,
             handleTabChange,
-            handleDataSourceMenuChange,
-            updateSubmenuSavedState
+            handleDatasourceChange,
+            handleUpdateStyleInfo,
+            updateSubmenuState,
+            updateLayerName,
+            handleSubmit
         } = this.props;
 
-        if (!selectedDataset) {
-            return null;
-        }
-        // get dataset and field objects todo: use IDs until necessary
-        const dataset = selectedDataset;
-        const field = selectedField;
         return (
             <Dialog
                 transition={Slide}
@@ -97,55 +81,46 @@ class MapStyleMenu extends Component {
                 open={isOpen}
                 onRequestClose={handleRequestClose}>
 
-                <AppBar position="static" color="default">
+                <StyleMenuHeader currentTab={currentTab} onChange={handleTabChange}>
                     <DialogTitle>Add Style to the Map</DialogTitle>
-                    <Tabs fullWidth
-                          value={currentTab}
-                          onChange={handleTabChange}
-                          indicatorColor="primary" textColor="primary"
-                    >
-                        <Tab value="category" label="Category"/>
-                        <Tab value="choropleth" label="Choropleth"/>
-                        <Tab value="range" label="Range"/>
-                    </Tabs>
-                </AppBar>
+                </StyleMenuHeader>
 
 
                 <DialogContent style={style.content}>
-                    <DatasetFieldSelectionGroup currentDataset={dataset} currentField={field}
-                                                handleChange={handleDataSourceMenuChange(currentTab, selectedDataset)}
+                    <DatasetFieldSelectionGroup currentDataset={selectedDataset} currentField={selectedField}
+                                                handleChange={handleDatasourceChange}
                                                 availableDatasets={availableDatasets}
                                                 availableFields={availableFields}
                     />
                     <br/>
+
                     {currentTab === 'category' &&
-                    < CategoryStyleMenu dataset={dataset}
-                                        field={field}
-                                        handleStyleInfoChange={updateStyleInfo}
-                                        updateSavedState={updateSubmenuSavedState('category')}
-                                        savedState={submenu ? submenu.category : {}}
+                    < CategoryStyleMenu dataset={selectedDataset}
+                                        field={selectedField}
+                                        handleStyleInfoChange={handleUpdateStyleInfo}
+                                        updateSavedState={updateSubmenuState('category')}
+                                        savedState={submenuStates.category}
                     />}
 
 
-
-                    {currentTab === 'choropleth' &&
-                    <ChoroplethStyleMenu
-                        dataset={dataset}
-                        field={field}
-                        handleStyleInfoChange={updateStyleInfo}
-                        updateSavedState={updateSubmenuSavedState('choropleth')}
-                        savedState={submenu ? submenu.choropleth : {}}
-                    />
-                    }
-                    {currentTab === 'range' &&
-                    <RangeStyleMenu
-                        dataset={dataset}
-                        field={field}
-                        handleStyleInfoChange={updateStyleInfo}
-                        updateSavedState={updateSubmenuSavedState('range')}
-                        savedState={submenu ? submenu.range : {}}
-                    />
-                    }
+                    {/*{currentTab === 'choropleth' &&*/}
+                    {/*<ChoroplethStyleMenu*/}
+                    {/*dataset={dataset}*/}
+                    {/*field={field}*/}
+                    {/*handleStyleInfoChange={updateStyleInfo}*/}
+                    {/*updateSavedState={updateSubmenuSavedState('choropleth')}*/}
+                    {/*savedState={submenu ? submenu.choropleth : {}}*/}
+                    {/*/>*/}
+                    {/*}*/}
+                    {/*{currentTab === 'range' &&*/}
+                    {/*<RangeStyleMenu*/}
+                    {/*dataset={dataset}*/}
+                    {/*field={field}*/}
+                    {/*handleStyleInfoChange={updateStyleInfo}*/}
+                    {/*updateSavedState={updateSubmenuSavedState('range')}*/}
+                    {/*savedState={submenu ? submenu.range : {}}*/}
+                    {/*/>*/}
+                    {/*}*/}
                 </DialogContent>
 
                 <DialogActions>
@@ -154,107 +129,82 @@ class MapStyleMenu extends Component {
                         label="Layer Name (optional)"
                         value={layerName}
                         placeholder="My Style Name"
-                        onChange={updateLayerName(layerName)}
+                        onChange={updateLayerName}
                         margin="dense"
                     />
                     <Button color="accent" onClick={handleRequestClose}>
                         Cancel
                     </Button>
-                    <Button color="primary" onClick={handleSubmit(mode, layerIndex, this.props, styleInfo)}>
+                    <Button color="primary" onClick={handleSubmit()}>
                         Put Some Style on It!
                     </Button>
                 </DialogActions>
             </Dialog>
-        );
+        )
     }
 }
 
 const mapStateToProps = state => {
     const {
         isOpen,
-        mode,
-        layerIndex,
-        styleInfo,
         currentTab,
         selectedDataset,
         selectedField,
-        selectedValue,
         availableDatasets,
         availableFields,
-        availableValues,
+        submenuStates,
         layerName,
-        colorMode,
-        submenu,
-    } = state.styleMenu;
+    } = state.customStyleMenu;
+
     return {
         isOpen,
-        mode,
-        layerIndex,
-        styleInfo,
         currentTab,
         selectedDataset,
         selectedField,
-        selectedValue,
         availableDatasets,
         availableFields,
-        availableValues,
-        layerName,
-        colorMode,
-        submenu,
+        submenuStates,
+        layerName
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         handleRequestClose: () => {
-            dispatch(closeCustomStyleMenu());
-        },
-        handleSubmit: (mode, layerIndex, currentState, styleInfo) => () => {
-            // Make a copy of the menu state
-            // todo: currently pulling in the props for this which feels kinda hacky - possible other method?
-            let savedState = Object.assign({}, currentState);
-            delete savedState.styleInfo;
-
-            // We currently pass the entire state of this menu into the store.
-            // This way we can repopulate this menu when modifying a previously-made layer.
-            // We can also display some of the metadata on the menu.
-            switch (mode) {
-                case StyleMenuEditModes.ADD:
-                    dispatch(addStyleLayer(LayerTypes.CUSTOM, savedState, styleInfo));
-                    break;
-                case StyleMenuEditModes.UPDATE:
-                    dispatch(updateStyleLayer(layerIndex, savedState, styleInfo));
-                    break;
-                default:
-                    throw RangeError(`${mode} is not a valid mode for updating styles`)
-            }
             dispatch(closeCustomStyleMenu())
+
         },
-        updateStyleInfo: (sql, css) => {
-            dispatch(updateCustomStyleInfo({sql, css}))
+        handleTabChange: (event, value) => {
+            const nextTab = value;
+            dispatch(changeCustomStyleMenuTab(nextTab))
+            dispatch(updateCustomStyleAvailableDataSource(nextTab))
         },
-        updateLayerName: layerName => () => {
-            dispatch(updateCustomStyleLayerName(layerName))
-        },
-        initializeMenus: styleMode => {
-            dispatch(updateAvailableDatasetsAndFields(styleMode))
-        },
-        handleTabChange: (e, value) => {
-            dispatch(changeCustomStyleMenuTab(value));
-        },
-        handleDataSourceMenuChange: (styleMode, dataset, field) => type => event => {
-            switch (type) {
+        handleDatasourceChange: (changedItem, selectedDataset) => (event) => {
+            const value = event.target.value;
+            switch (changedItem) {
                 case 'dataset':
-                    dispatch(selectCustomStyleDataset(event.target.value));
-                    dispatch(updateAvailableFields(styleMode, dataset));
+                    dispatch(selectCustomStyleDatasetAndUpdateFields(value));
                     break;
                 case 'field':
-                    console.log('FIELD');
-                    dispatch(selectCustomStyleField(event.target.value));
+                    dispatch(selectCustomStyleField(selectedDataset.id, value));
+                    break;
+
             }
         },
-        updateSubmenuSavedState: submenu => submenuState => {
-            dispatch(updateCustomStyleSubmenu(submenu,submenuState))
+        handleUpdateStyleInfo: styleInfo => {
+            dispatch(updateCustomStyleStyleInfo(styleInfo));
+        },
+        updateSubmenuState: (submenu) => (state) => {
+            dispatch(updateCustomStyleSubmenuState(submenu, state))
+        },
+        updateDataSource: (styleMode) => {
+            dispatch(updateCustomStyleAvailableDataSource(styleMode));
+        },
+        updateLayerName: event => {
+            dispatch(updateCustomStyleLayerName(event.target.value))
+        },
+        handleSubmit: () => {
+            // load current menu state into
         }
     }
 };
