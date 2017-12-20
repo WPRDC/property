@@ -25,13 +25,14 @@ import RangeStyleMenu from '../components/map/styleMenus/RangeStyleMenu';
 import DatasetFieldSelectionGroup from '../components/map/DatasetFieldSelectionGroup'
 
 /* Functions */
-import {dataSource, LayerTypes} from "../utils/mapDefaults";
-import {getFieldValues} from '../utils/mapUtils';
+import {dataSource, GeoTypes, LayerTypes} from "../utils/mapDefaults";
+import {generateLegendInfo, getFieldValues} from '../utils/mapUtils';
 import {arraysAreDifferent, COLORS, guid} from "../utils/dataUtils";
 
 import {StyleMenuEditModes} from "../utils/mapDefaults";
 import {addMapLayer, updateMapLayer} from "../actions/mapLayerActions";
 import {closeCustomStyleMenu} from "../actions/layerEditorActions";
+import DelayedMountDialog from "../components/DelayedMountDialog";
 
 const style = {
     dialog: {},
@@ -268,7 +269,6 @@ class MapStyleMenu extends Component {
         if (isOpen && !wasOpen) {
             // Check if a saved state was provided (for updating a previously-made layer)
             if (layerData) {
-                console.log("loadin up the old stuff")
                 this.setState(Object.assign({}, layerData.menuState, {styleInfo: layerData.styleInfo}));
             } else {
                 this.setState({submenuStates: {category: null, choropleth: null, range: null}})
@@ -305,8 +305,6 @@ class MapStyleMenu extends Component {
             submenuStates,
             layerName
         } = this.state;
-
-        console.log(submenuStates)
 
 
         return (
@@ -375,8 +373,9 @@ class MapStyleMenu extends Component {
                         margin="dense"
                     />
                     <Button color="accent" onClick={closeMenu}>Cancel</Button>
-                    <Button color="primary" onClick={this.handleSubmit(editMode, this.state)}>Put Some Style on
-                        It!</Button>
+                    <Button color="primary" onClick={this.handleSubmit(editMode, this.state)}>
+                        Put Some Style on It!
+                    </Button>
                 </DialogActions>
             </Dialog>
         );
@@ -396,8 +395,11 @@ const mapDispatchToProps = dispatch => {
                 layerType: LayerTypes.CUSTOM,
                 layerName: menuState.layerName || (`${menuState.dataset.name} - ${menuState.field.name}`),
                 styleInfo: menuState.styleInfo,
-                menuState
+                legendInfo: generateLegendInfo(GeoTypes.POLYGON, LayerTypes.CUSTOM, menuState),
+                menuState,
             };
+
+            console.log(layerData);
 
             // If ADD, create new layer and load state into it
             switch (editMode) {

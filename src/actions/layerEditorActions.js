@@ -9,10 +9,6 @@ export const OPEN_HIGHLIGHT_STYLE_MENU = 'OPEN_HIGHLIGHT_STYLE_MENU';
 export const CLOSE_HIGHLIGHT_STYLE_MENU = 'CLOSE_HIGHLIGHT_STYLE_MENU';
 
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//++++++++++++++++++++++++++++++++++ LAYER LIST ++++++++++++++++++++++++++++++++++++++++++++++
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //+++++++++++++++++++++++++++++++ CUSTOM STYLE MENU ++++++++++++++++++++++++++++++++++++++++++
@@ -38,15 +34,18 @@ export const closeCustomStyleMenu = () => {
 //++++++++++++++++++++++++++++++++ HIGHLIGHT MENU ++++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-export const openHighlightStyleMenu = () => {
+export const openHighlightStyleMenu = (editMode, layerId, layerData) => {
     return {
-        type: OPEN_HIGHLIGHT_STYLE_MENU
+        type: OPEN_HIGHLIGHT_STYLE_MENU,
+        editMode,
+        layerId,
+        layerData
     }
 }
 
 export const closeHighlightStyleMenu = () => {
     return {
-        type: CLOSE_CUSTOM_STYLE_MENU
+        type: CLOSE_HIGHLIGHT_STYLE_MENU
     }
 }
 

@@ -38,7 +38,7 @@ class ChoroplethStyleMenu extends PureComponent {
     }
 
     /**
-     * Updates the SQL and cartoCSS that define style on a Carto InterfaceMap.
+     * Updates the SQL and cartoCSS that define style on a Carto StyledMap.
      * @private
      */
     _handleStyleInfoChange = () => {

@@ -6,7 +6,7 @@ import cartodb from 'cartodb'
 
 import CartoMapLayer from '../components/map/CartoMapLayer'
 
-import {dataSource, PARCEL} from "./mapDefaults";
+import {dataSource, LayerTypes, PARCEL} from "./mapDefaults";
 
 
 const cartoSQL = cartodb.SQL({user: 'wprdc'});
@@ -288,11 +288,11 @@ export function createRangeCSS(dataset, field, min, max, color, mode) {
         line-opacity: 1;
     }
      
-    ${dataset.cartoCssId}[ ${field.id} <= ${max}] { ${targetType}-opacity: 1;} 
+    #${cartoCssId}[ ${field.id} <= ${max}] { ${targetType}-opacity: 1;} 
     
-    ${dataset.cartoCssId}[ ${field.id} < ${min}] { ${targetType}-opacity: 0;}
+    #${cartoCssId}[ ${field.id} < ${min}] { ${targetType}-opacity: 0;}
       
-    ${dataset.cartoCssId}[ ${field.id} > ${max}] { ${targetType}-opacity: 0;}`
+    #${cartoCssId}[ ${field.id} > ${max}] { ${targetType}-opacity: 0;}`
 }
 
 /**
@@ -410,3 +410,35 @@ export const getAvailableValues = (dataset, field) => {
                 console.log(err)
             })
 };
+
+export const generateLegendInfo = (geoType, layerType, layerState) => {
+    let colorMapping = null,
+        styleType = null;
+
+    if (layerType === LayerTypes.CUSTOM) {
+        const submenu = layerState.submenuStates[layerState.styleMode];
+        styleType = layerState.styleMode;
+        switch (layerState.styleMode) {
+            case 'category':
+                colorMapping = submenu.menuItems.map(item => ({
+                    value: item.category,
+                    color: item.color
+                }));
+                break;
+            case 'range':
+                colorMapping = {
+                    range: submenu.values,
+                    color: submenu.color
+                };
+                break;
+            case 'choropleth':
+                colorMapping = {colors: CHOROPLETHS[submenu.colorName], min: 0, max: 1}
+                break;
+        }
+    }
+    return {
+        geoType,
+        styleType,
+        colorMapping
+    }
+}

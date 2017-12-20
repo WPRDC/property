@@ -18,6 +18,7 @@ class DataCard extends Component {
     constructor(props) {
         super(props);
     }
+
     render() {
         const {
             title,
@@ -30,7 +31,6 @@ class DataCard extends Component {
         } = this.props;
         const dataset = dataSource.getDataset(datasetId);
         const {datasetUrl} = dataset || {datasetUrl: ''};
-
 
         return (
             <Card raised style={style.card}>
@@ -50,7 +50,10 @@ class DataCard extends Component {
 
                     {map
                         ? <Button dense color="primary"
-                                  onClick={openHighlightMenu(nextStyleLayerIndex, map.dataset, map.items)}
+                                  onClick={openHighlightMenu(StyleMenuEditModes.ADD,
+                                      map.dataset,
+                                      map.items
+                                  )}
                         >
                             Highlight Similar
                         </Button>
@@ -67,7 +70,7 @@ class DataCard extends Component {
 const mapDispatchToProps = dispatch => {
     return {
         openHighlightMenu: (nextStyleLayerIndex, dataset, items) => () => {
-            dispatch(openHighlightStyleMenu(StyleMenuEditModes.ADD, nextStyleLayerIndex, dataset, items))
+            dispatch(openHighlightStyleMenu(StyleMenuEditModes.ADD, null, {menuState: {dataset, items}}))
         }
     }
 }

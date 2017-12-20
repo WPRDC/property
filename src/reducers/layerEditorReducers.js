@@ -7,10 +7,16 @@ import {
 } from "../actions/layerEditorActions";
 
 
-export const highlightMenu = (state = {}, action) => {
+export const highlightMenu = (state = {isOpen: false, layerData: {}}, action) => {
     switch (action.type) {
         case OPEN_HIGHLIGHT_STYLE_MENU:
-            return (Object.assign({}, state, {isOpen: true}));
+            return (Object.assign({}, state,
+                {
+                    isOpen: true,
+                    editMode: action.editMode,
+                    layerId: action.layerId,
+                    layerData: action.layerData
+                }));
         case CLOSE_HIGHLIGHT_STYLE_MENU:
             return (Object.assign({}, state, {isOpen: false}));
         default:

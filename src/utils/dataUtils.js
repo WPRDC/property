@@ -213,3 +213,13 @@ export const guid = () => {
     };
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
+
+export const sentenceCase = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toUpperCase();
+}
+
+
+export const limitString = (string, len) => {
+    if (string.length - len > 3) return (string.slice(0, len) + '...')
+    else return string
+}

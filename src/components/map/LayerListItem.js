@@ -8,12 +8,14 @@ import DeleteIcon from 'material-ui-icons/Delete'
 
 import Avatar from 'material-ui/Avatar';
 
+import {SortableElement} from 'react-sortable-hoc';
+
 
 const LayerListItem = props => {
     const {layerType, layerName, handleOpenEditMenu, handleDelete} = props;
 
     return (
-        <ListItem button onClick={handleOpenEditMenu}>
+        <ListItem button onClick={handleOpenEditMenu} className='sortableElement'>
             <ListItemAvatar>
                 <Avatar>
                     <LayersIcon/>
@@ -32,4 +34,4 @@ const LayerListItem = props => {
 };
 
 
-export default LayerListItem
+export default SortableElement(LayerListItem)

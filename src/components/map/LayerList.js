@@ -2,10 +2,11 @@ import React from 'react';
 
 import List from 'material-ui/List'
 import LayerListItem from './LayerListItem'
-import AddLayerListItem from './AddLayerListItem'
-import BasemapListItem from "./BasemapListItem";
 import Divider from 'material-ui/Divider';
 import {LayerTypes, StyleMenuEditModes} from "../../utils/mapDefaults";
+import {SortableContainer} from 'react-sortable-hoc';
+import {limitString, sentenceCase} from "../../utils/dataUtils";
+
 
 const LayerList = props => {
     const {
@@ -13,34 +14,29 @@ const LayerList = props => {
         mapLayersById,
         handleAddLayer,
         handleOpenEditMenu,
-        handleDeleteLayer
+        handleDeleteLayer,
+        onSortEnd
     } = props;
 
     return (
         <List>
-            <AddLayerListItem onClick={handleAddLayer}/>
-
-            {mapLayerList.slice().reverse().map(layerId => {
-                const {layerType, layerName} = mapLayersById[layerId];
-
+            {mapLayerList.slice().reverse().map((layerId, idx) => {
+                const {legendInfo, layerName} = mapLayersById[layerId];
+                //const displayedLayerType = (layerType === 'HIGHLIGHT' ? 'Highlight' : )
                 return (
                     <LayerListItem
                         key={layerId}
-                        layerType={layerType}
-                        layerName={layerName}
-                        handleOpenEditMenu={handleOpenEditMenu(mapLayersById,layerId)}
+                        index={idx}
+                        layerType={sentenceCase(legendInfo.styleType) + ' Layer'}
+                        layerName={limitString(layerName, 28)}
+                        handleOpenEditMenu={handleOpenEditMenu(mapLayersById, layerId)}
                         handleDelete={handleDeleteLayer(layerId)}
                     />
                 )
             })}
-
-
-            <Divider/>
-            <BasemapListItem/>
-
         </List>
     )
 };
 
 
-export default LayerList;
+export default SortableContainer(LayerList)

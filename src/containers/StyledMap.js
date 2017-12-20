@@ -38,7 +38,7 @@ const style = {
     },
 };
 
-class InterfaceMap extends Component {
+class StyledMap extends Component {
     constructor(props) {
         super(props);
 
@@ -75,7 +75,6 @@ class InterfaceMap extends Component {
             center,
             maxZoom
         } = mapOptions;
-        console.log(basemap)
         return (
             <div style={style.base} className="mapContainer">
                 <Button fab color="primary" aria-label="add" onClick={toggleStyleLayerMenu}
@@ -98,12 +97,13 @@ class InterfaceMap extends Component {
                     <TileLayer url={basemap.url}
                                attribute={basemap.attribution}/>
 
-                    {mapLayerList.map(layerId => {
+                    {mapLayerList.map((layerId, layerIndex) => {
                             const currLayer = mapLayersById[layerId];
                             return (
                                 <CartoMapLayer key={layerId}
                                                sql={currLayer.styleInfo.sql}
                                                css={currLayer.styleInfo.css}
+                                               zIndex={100 + layerIndex}
                                 />
                             )
                         }
@@ -111,11 +111,12 @@ class InterfaceMap extends Component {
 
                     {availableShapesLayer
                         ? <CartoMapLayer sql={availableShapesLayer.sql}
-                                         css={availableShapesLayer.css}/>
+                                         css={availableShapesLayer.css}
+                                         zIndex={999}/>
                         : null
                     }
                     {selectedLayer
-                        ? <CartoMapLayer sql={selectedLayer.sql} css={selectedLayer.css}/>
+                        ? <CartoMapLayer sql={selectedLayer.sql} css={selectedLayer.css} zIndex={1000}/>
                         : null
                     }
 
@@ -128,11 +129,11 @@ class InterfaceMap extends Component {
     }
 }
 
-InterfaceMap.propTypes = {
+StyledMap.propTypes = {
     basemap: PropTypes.object,
     selectionLayer: PropTypes.object,
     availableRegionsLayer: PropTypes.object,
-    mapLayerList: PropTypes.arrayOf(PropTypes.object),
+    mapLayerList: PropTypes.arrayOf(PropTypes.string),
 };
 
 
@@ -170,4 +171,4 @@ const mapDispatchToProps = dispatch => {
     }
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(InterfaceMap)
+export default connect(mapStateToProps, mapDispatchToProps)(StyledMap)

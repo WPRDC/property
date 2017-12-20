@@ -11,12 +11,13 @@ import Typography from 'material-ui/Typography';
 
 import Button from 'material-ui/Button';
 
-import {closeHighlightStyleMenu} from "../../actions/layerEditorActions";
+import {closeCustomStyleMenu, closeHighlightStyleMenu} from "../../actions/layerEditorActions";
 
 import ColorPicker from '../../ColorPicker'
-import {selectHighlightMenuColor} from "../../actions/index";
-import {displayStyleLayerListMenu} from "../../actions";
-import {LayerTypes} from "../../utils/mapDefaults";
+import {GeoTypes, LayerTypes, StyleMenuEditModes} from "../../utils/mapDefaults";
+import {addMapLayer, updateMapLayer} from "../../actions/mapLayerActions";
+import {guid} from "../../utils/dataUtils";
+import DelayedMountDialog from "../DelayedMountDialog";
 
 const styles = theme => ({
     formControl: {
@@ -33,67 +34,77 @@ class DataHighlightMenu extends Component {
         //todo: move state to redux and remove this crap, make it a functional component
         this.state = {
             range: null,
+            color: 'blue',
+            selectedIndex: 0,
         }
     }
 
-    handleSubmit = () => {
-        const {dataset, items, selectedIndex, color, styleLayers, handleSubmit} = this.props;
-        const {field, values, makeSql, makeCss} = items[selectedIndex];
+    _makeStyleInfo = (range, color, makeSql, makeCss) => {
+        return {sql: makeSql(range), css: makeCss(color)}
+    }
 
-        // Generate final sql and css from range and color
-        const {range} = this.state;
-        const styleInfo = {sql: makeSql(range), css: makeCss(color)};  // move this to redux state
-        handleSubmit(styleLayers, styleInfo, dataset, field, items);
+    handleSelectColor = color => {
+        this.setState({color})
+    };
+
+    handleSubmit = () => {
+        const {editMode, layerId, layerData, submitMenu, closeMenu} =this.props;
+        const {range, color, selectedIndex} = this.state;
+        const {items} = layerData.menuState;
+        const {makeSql, makeCss} = items[selectedIndex];
+
+        const styleInfo = this._makeStyleInfo(range, color, makeSql, makeCss);
+
+        // Update menu state to include these things
+        const savedState = Object.assign({}, layerData.menuState, {range, color, selectedIndex, styleInfo});
+
+        // Combine props and state into current state of menu for reloading
+        submitMenu(editMode, savedState, layerId);
+        closeMenu();
     };
 
     render() {
         const {
-            dataset,
-            items,
-            selectedIndex,
-            color,
-            isOpen,
-
-            closeMenu,
-            handleSelectField,
-            handleSelectColor
+            isOpen, layerData,
+            closeMenu, handleSelectField
         } = this.props;
-        console.log(selectedIndex);
+
+        const {color, selectedIndex} = this.state;
+        const {dataset, items} = layerData.menuState || {dataset: null, items: null}
+
         return (
-            isOpen
-                ? <Dialog open={isOpen} onRequestClose={closeMenu}>
-                    <DialogTitle>
-                        {dataset
-                            ? dataset.name
-                            : "Highlight Similar Items"
-                        }
-                    </DialogTitle>
+            <Dialog open={isOpen} onRequestClose={closeMenu}>
+                <DialogTitle>
+                    {dataset
+                        ? dataset.name
+                        : "Highlight Similar Items"
+                    }
+                </DialogTitle>
 
-                    <DialogContent>
-                        <DialogContentText>
-                            {`Highlight parcels with similar data.`}
-                        </DialogContentText>
+                <DialogContent>
+                    <DialogContentText>
+                        {`Highlight parcels with similar data.`}
+                    </DialogContentText>
 
-                        <FieldValueMenu items={items} index={selectedIndex} onChange={handleSelectField}>
+                    <FieldValueMenu items={items} index={selectedIndex} onChange={handleSelectField}>
 
-                        </FieldValueMenu>
+                    </FieldValueMenu>
 
-                    </DialogContent>
-                    <DialogActions>
-                        <FormControl>
-                            <ColorPicker color={color} onChange={handleSelectColor}/>
-                        </FormControl>
-                        <Button onClick={closeMenu} color="primary">Cancel</Button>
-                        <Button onClick={this.handleSubmit} color="primary">Highlight</Button>
-                    </DialogActions>
-                </Dialog>
-                : null
+                </DialogContent>
+                <DialogActions>
+                    <FormControl>
+                        <ColorPicker color={color} onChange={this.handleSelectColor}/>
+                    </FormControl>
+                    <Button onClick={closeMenu} color="primary">Cancel</Button>
+                    <Button onClick={this.handleSubmit} color="primary">Highlight</Button>
+                </DialogActions>
+            </Dialog>
+
         )
     }
 };
 
 const FieldValueMenu = props => {
-    console.log(props);
     const {items, index, onChange} = props;
     const {field, value, formatter} = items[index];
     return (
@@ -135,40 +146,42 @@ const ValueDisplay = props => {
 };
 
 const mapStateToProps = (state) => {
-    const {dataset, items, selectedIndex, color, isOpen} = state.highlightMenu;
-    const styleLayers = state.styleLayers;
-    return {
-        dataset,
-        items,
-        selectedIndex,
-        color,
-        isOpen,
-        styleLayers
-    }
+    const {isOpen, editMode, layerId, layerData} = state.highlightMenu;
+    return {isOpen, editMode, layerId, layerData}
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+        submitMenu: (editMode, menuState, layerId) => {
+            // Map menu state to layerData object
+            const selectedField = menuState.items[menuState.selectedIndex].field;
+            const selectedValue = menuState.items[menuState.selectedIndex].value;
+            const layerData = {
+                layerType: LayerTypes.HIGHLIGHT,
+                layerName: menuState.layerName || (`${menuState.dataset.name} - ${selectedField}`),
+                styleInfo: menuState.styleInfo,
+                legendInfo: {
+                    geoType: GeoTypes.POLYGON,
+                    styleType: 'HIGHLIGHT',
+                    colorMapping: [{value: selectedValue, color: menuState.color}]
+                },
+                menuState,
+          };
+
+            switch (editMode) {
+                case StyleMenuEditModes.ADD:
+                    layerId = guid();
+                    dispatch(addMapLayer(layerId, layerData));
+                    break;
+                case StyleMenuEditModes.UPDATE:
+                    dispatch(updateMapLayer(layerId, layerData));
+                    break;
+            }
+        },
         closeMenu: () => {
             dispatch(closeHighlightStyleMenu())
-        },
-        handleSelectField: index => {
-        },
-        handleSelectColor: color => {
-        },
-
-        handleSubmit: (styleLayers, styleInfo, dataset, fieldName, items) => {
-            const layerIndex = styleLayers.findIndex(layer => layer.layerType === 'HIGHLIGHT');
-
-            const menuInfo = {
-                styleMode: 'Highlight',
-                selectedDataset: dataset,
-                selectedField: {name: fieldName},
-                items,
-            };
-
         }
     }
-}
+};
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(DataHighlightMenu))

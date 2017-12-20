@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 
 import './App.css';
-import { connect } from 'react-redux'
+import {connect} from 'react-redux'
 import ParcelDashboard from './containers/ParcelDashboard'
-import InterfaceMap from "./containers/InterfaceMap";
+import StyledMap from "./containers/StyledMap";
 
 import Footer from './components/Footer'
 import Header from './components/Header'
@@ -36,16 +36,15 @@ class App extends Component {
 
 
     render() {
-        const { currentParcelId } = this.props;
+        const {currentParcelId} = this.props;
         return (
             <div className="App flex-container">
                 <Header className="flex-item"/>
 
                 <div className="flex-item">
-                    <InterfaceMap
-                    />
+                    <StyledMap/>
 
-                    <ParcelDashboard />
+                    <ParcelDashboard/>
                 </div>
 
                 <Footer className="flex-item">

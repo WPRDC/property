@@ -3,8 +3,9 @@ import LayerList from '../components/map/LayerList'
 import {addMapLayer, removeMapLayer, updateMapLayer} from "../actions/mapLayerActions";
 import {guid} from "../utils/dataUtils";
 import {LayerTypes, StyleMenuEditModes} from "../utils/mapDefaults";
-import {openCustomStyleMenu} from "../actions/layerEditorActions";
+import {openCustomStyleMenu, openHighlightStyleMenu} from "../actions/layerEditorActions";
 
+import {arrayMove} from "react-sortable-hoc"
 
 const mapStateToProps = state => {
     const {
@@ -20,12 +21,16 @@ const mapDispatchToProps = dispatch => {
         handleDeleteLayer: (layerId) => () => {
             dispatch(removeMapLayer(layerId))
         },
-        handleOpenEditMenu:(mapLayersById, layerId) => () => {
+        handleOpenEditMenu: (mapLayersById, layerId) => () => {
             const currentLayer = mapLayersById[layerId];
 
-            switch(currentLayer.layerType){
+            switch (currentLayer.layerType) {
                 case LayerTypes.CUSTOM:
                     dispatch(openCustomStyleMenu(StyleMenuEditModes.UPDATE, layerId, currentLayer));
+                    break;
+                case LayerTypes.HIGHLIGHT:
+                    dispatch(openHighlightStyleMenu(StyleMenuEditModes.UPDATE, layerId, currentLayer));
+                    break;
             }
         },
         handleAddLayer: () => {

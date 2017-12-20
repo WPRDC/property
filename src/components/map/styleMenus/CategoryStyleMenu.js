@@ -40,7 +40,7 @@ class CategoryStyleMenu extends Component {
     }
 
     /**
-     * Updates the SQL and cartoCSS that define style on a Carto InterfaceMap.
+     * Updates the SQL and cartoCSS that define style on a Carto StyledMap.
      * @private
      */
     _handleStyleInfoChange = () => {
@@ -59,10 +59,8 @@ class CategoryStyleMenu extends Component {
      */
     _initMenuItems = () => {
         const {dataset, field} = this.props;
-        console.log(dataset, field);
         getFieldValues(dataset, field)
             .then(fieldValues => {
-                console.log('FIELDVALUES:', fieldValues);
                 this.setState(
                     {
                         fieldValues,

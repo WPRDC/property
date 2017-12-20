@@ -3,7 +3,7 @@ import {
     OPEN_MAP_LAYER_MENU,
     CLOSE_MAP_LAYER_MENU,
     REMOVE_MAP_LAYER,
-    UPDATE_MAP_LAYER
+    UPDATE_MAP_LAYER, REORDER_MAP_LAYERS
 } from "../actions/mapLayerActions";
 
 const DEFAULT_LAYER = {
@@ -50,6 +50,8 @@ export const mapLayerList = (state = [], action) => {
             return [...state, action.layerId];
         case REMOVE_MAP_LAYER:
             return state.filter(layerId => layerId !== action.layerId)
+        case REORDER_MAP_LAYERS:
+            return action.reorderedList;
         default:
             return state;
     }

@@ -11,6 +11,13 @@ export const LayerTypes = Object.freeze(
     }
 )
 
+export const GeoTypes = Object.freeze(
+    {
+        POINT: "POINT",
+        POLYGON: "POLYGON"
+    }
+)
+
 export const PARCEL = {
     idField: 'pin',
     tableId: 'allegheny_county_parcel_boundaries',

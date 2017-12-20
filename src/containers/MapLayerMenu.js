@@ -6,12 +6,18 @@ import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import Slide from 'material-ui/transitions/Slide';
-
+import Button from 'material-ui/Button'
+import AddIcon from 'material-ui-icons/Add'
+import {green} from 'material-ui/colors'
+import Divider from 'material-ui/Divider';
+import BasemapListItem from "../components/map/BasemapListItem";
 
 /* Custom Components */
 import MapLayerList from './MapLayerList'
 import MapStyleMenu from './MapStyleMenu'
-import {closeCustomStyleMenu} from "../actions/layerEditorActions";
+import {closeCustomStyleMenu, openCustomStyleMenu} from "../actions/layerEditorActions";
+import {StyleMenuEditModes} from "../utils/mapDefaults";
+import {reorderMapLayers} from "../actions/mapLayerActions";
 
 /* Functions & Constants */
 const style = {
@@ -20,7 +26,14 @@ const style = {
         top: '12px',
         left: '12px',
         zIndex: '2',
-        width: "280px",
+        width: "340px",
+    },
+    addButton: {
+        position: 'absolute',
+        top: '34px',
+        right: '16px',
+        backgroundColor: green[400],
+        zIndex: '200'
     }
 };
 
@@ -31,9 +44,6 @@ class MapLayerMenu extends Component {
 
         this.state = {
             // UI states
-            open: false,
-            basemapMenuOpen: false,
-            styleMenuOpen: false,
             basemapMenuAnchorEl: null,
 
             // Menu Controls
@@ -46,9 +56,11 @@ class MapLayerMenu extends Component {
     render() {
         const {
             isOpen,
-            styleMenuIsOpen
+            layerCount,
+            handleAddLayer,
+            handleSortEnd
         } = this.props;
-        console.log(styleMenuIsOpen);
+
         return (
             <div style={style.base}>
                 <Slide in={isOpen} direction="right">
@@ -61,8 +73,24 @@ class MapLayerMenu extends Component {
                             </Toolbar>
                         </AppBar>
 
-                        <MapLayerList/>
+
+                        <Button fab color="primary" aria-label="add" style={style.addButton} onClick={handleAddLayer}>
+                            <AddIcon/>
+                        </Button>
+
+                        <MapLayerList
+                            distance={4} l
+                            ockAxis={'y'}
+                            lockToContainerEdges={true}
+                            onSortEnd={handleSortEnd}
+                            helperClass='sortableHelper'/>
+
+                        {layerCount ? <Divider/> : null}
+
+                        <BasemapListItem/>
+
                         <MapStyleMenu/>
+
                     </Paper>
                 </Slide>
             </div>
@@ -75,20 +103,21 @@ function mapStateToProps(state) {
     const {
         isOpen
     } = state.mapLayerMenu;
-
-    const styleMenuIsOpen = state.customStyleMenu.isOpen
+    const layerCount = state.mapLayerList.length
 
     return {
         isOpen,
-        styleMenuIsOpen
+        layerCount
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        closeMenu: () => dispatch(closeCustomStyleMenu())
+        closeMenu: () => dispatch(closeCustomStyleMenu()),
+        handleAddLayer: () => dispatch(openCustomStyleMenu(StyleMenuEditModes.ADD)),
+        handleSortEnd: ({oldIndex, newIndex}) => dispatch(reorderMapLayers(oldIndex, newIndex))
     }
 }
 
 
-export default connect(mapStateToProps)(MapLayerMenu)
+export default connect(mapStateToProps, mapDispatchToProps)(MapLayerMenu)

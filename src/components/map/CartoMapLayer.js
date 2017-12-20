@@ -37,12 +37,13 @@ class CartoMapLayer extends Component {
 
 
     render() {
+        const {zIndex} = this.props;
         const {tiles} = this.state;
 
         if (tiles === null)
             return null;
 
-        return <TileLayer url={tiles}/>
+        return <TileLayer url={tiles} zIndex={zIndex}/>
 
     }
 }

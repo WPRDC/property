@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 
 /* Material UI Components */
 import Paper from 'material-ui/Paper';
+import Card from 'material-ui/Card'
 import {LinearProgress} from 'material-ui/Progress';
 
 /* Material UI extras */
@@ -34,12 +35,14 @@ import ParcelSearch from '../../containers/ParcelSearch'
 const blue500 = blue[500];
 
 const style = {
-    position: 'relative',
-    float: 'left',
-    width: '480px',
-    overflowY: 'scroll',
-    overflowX: 'hidden',
-    margin: 0,
+    base: {
+        position: 'relative',
+        float: 'left',
+        width: '480px',
+        overflowY: 'scroll',
+        overflowX: 'hidden',
+        margin: 0,
+    },
     template: {
         img: {
             height: '229px',
@@ -66,7 +69,7 @@ const Dashboard = props => {
         const address = extractAddressFromData(data); //todo: have address generated earlier in the stream (maybe at api server level?)
 
         return (
-            <Paper style={style}>
+            <Card style={style.base}>
                 <DataSection>
                     <ParcelSearch style={style.search}/>
                     <DashboardHeader handlePanToRequest={props.panMapToTarget} imageUrl={imageUrl} address={address}
@@ -88,7 +91,7 @@ const Dashboard = props => {
 
                     <TaxLiens data={data}/>
                 </DataSection>
-            </Paper>
+            </Card>
         );
     }
     else {
