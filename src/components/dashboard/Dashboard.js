@@ -69,7 +69,7 @@ const Dashboard = props => {
         const address = extractAddressFromData(data); //todo: have address generated earlier in the stream (maybe at api server level?)
 
         return (
-            <Card style={style.base}>
+            <Paper style={style.base}>
                 <DataSection>
                     <ParcelSearch style={style.search}/>
                     <DashboardHeader handlePanToRequest={props.panMapToTarget} imageUrl={imageUrl} address={address}
@@ -91,12 +91,12 @@ const Dashboard = props => {
 
                     <TaxLiens data={data}/>
                 </DataSection>
-            </Card>
+            </Paper>
         );
     }
     else {
         return (
-            <div style={style}>
+            <div style={style.base}>
                 <DataSection>
                     <div style={style.template.img}/>
                     <LinearProgress mode="query"/>
