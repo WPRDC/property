@@ -206,3 +206,20 @@ export const nl2br = multilineString => {
         }
     </div>
 }
+
+export const guid = () => {
+    const S4 = () => {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    };
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
+
+export const sentenceCase = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+
+
+export const limitString = (string, len) => {
+    if (string.length - len > 3) return (string.slice(0, len) + '...')
+    else return string
+}

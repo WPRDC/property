@@ -11,7 +11,12 @@ import 'rc-slider/assets/index.css';
 import Slider from 'rc-slider';
 
 /* Defaults & Helper Functions */
-import {createStyleSQL, createRangeCSS, findMinMaxValues, QUANTIFICATION_METHODS, COLORS,} from '../../../utils/mapUtils';
+import {
+    createStyleSQL,
+    createRangeCSS,
+    findMinMaxValues,
+    COLORS,
+} from '../../../utils/mapUtils';
 
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 
@@ -36,7 +41,7 @@ class RangeStyleMenu extends Component {
     }
 
     /**
-     * Updates the SQL and cartoCSS that define style on a Carto InterfaceMap.
+     * Updates the SQL and cartoCSS that define style on a Carto StyledMap.
      * @private
      */
     _handleStyleInfoChange = () => {
@@ -56,7 +61,6 @@ class RangeStyleMenu extends Component {
      */
     _initRange = (dataset, field) => {
         let range = field.range;
-
         // If there the field has a fully predfined range, we don't need to make an API call
         if (range && range[0] !== null && range[1] !== null) {
             let q2 = range[0] + ((range[1] - range[0]) / 4);
@@ -91,7 +95,7 @@ class RangeStyleMenu extends Component {
                                     max: max,
                                     values: [q2, q3]
                                 },
-                                this._handleStyleInfoChange()
+                                this._handleStyleInfoChange
                             )
                         }
                     },
@@ -106,6 +110,7 @@ class RangeStyleMenu extends Component {
      * @param  {string} name - name of state property to be updated
      */
     handleChange = (name) => (event) => {
+        console.log(name);
         switch (name) {
             case 'color':
                 this.setState({color: event.target.value}, this._handleStyleInfoChange);
@@ -120,8 +125,8 @@ class RangeStyleMenu extends Component {
                 this.setState({styleMode: event.target.value}, this._handleStyleInfoChange);
                 break;
             }
-
         }
+        this._handleStyleInfoChange();
     };
 
 
@@ -130,30 +135,17 @@ class RangeStyleMenu extends Component {
      * @param {array} values - array of two values [lower, upper] ends of range.
      */
     onRangeSliderChange = (values) => {
-        this.setState({values,})
+        this.setState({values,}, this._handleStyleInfoChange())
     };
 
 
-    /**
-     * Runs when new props are provided. Initializes the range based on props in `nextProps`
-     *
-     * @param {obj} nextProps - set of new props
-     */
-    componentWillReceiveProps = (nextProps) => {
-        this._initRange(nextProps.dataset, nextProps.field)
-    };
-
-
-    componentWillMount = () => {
-
-    }
+    /*
 
     /**
      * Runs when component is mounted.  Initializes the range.
      */
     componentDidMount = () => {
         if (this.props.savedState) {
-            console.log(this.props.savedState);
             this.setState(this.props.savedState, () => {
                 this.render()
             })
@@ -165,9 +157,11 @@ class RangeStyleMenu extends Component {
     /**
      * Runs when component is updated.  Updates the style data.
      */
-    componentDidUpdate = () => {
-        this._handleStyleInfoChange();
-    };
+    componentDidUpdate = (prevProps) => {
+        if (prevProps.dataset.id !== this.props.dataset.id || prevProps.field.id !== this.props.field.id) {
+            this._initRange(this.props.dataset, this.props.field);
+        }
+    }
 
 
     render() {

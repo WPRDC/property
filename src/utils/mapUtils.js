@@ -6,7 +6,7 @@ import cartodb from 'cartodb'
 
 import CartoMapLayer from '../components/map/CartoMapLayer'
 
-import {PARCEL} from "./mapDefaults";
+import {dataSource, LayerTypes, PARCEL} from "./mapDefaults";
 
 
 const cartoSQL = cartodb.SQL({user: 'wprdc'});
@@ -18,9 +18,6 @@ export const QUANTIFICATION_METHODS = {
     equal: {title: 'Equal Intervals'},
     headtails: {title: 'Head/Tails'}
 };
-
-
-
 
 
 export const COLORS = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'teal', 'black', 'white', 'gray'];
@@ -291,11 +288,11 @@ export function createRangeCSS(dataset, field, min, max, color, mode) {
         line-opacity: 1;
     }
      
-    ${dataset.cartoCssId}[ ${field.id} <= ${max}] { ${targetType}-opacity: 1;} 
+    #${cartoCssId}[ ${field.id} <= ${max}] { ${targetType}-opacity: 1;} 
     
-    ${dataset.cartoCssId}[ ${field.id} < ${min}] { ${targetType}-opacity: 0;}
+    #${cartoCssId}[ ${field.id} < ${min}] { ${targetType}-opacity: 0;}
       
-    ${dataset.cartoCssId}[ ${field.id} > ${max}] { ${targetType}-opacity: 0;}`
+    #${cartoCssId}[ ${field.id} > ${max}] { ${targetType}-opacity: 0;}`
 }
 
 /**
@@ -354,4 +351,94 @@ export const singleShapeLayer = (id, shapeClass = PARCEL) => {
 
     return {sql, css}
 
+};
+
+export const getDataset = (datasetId) => {
+    return dataSource.getDataset(datasetId);
+}
+
+export const getField = (datasetId, fieldId) => {
+    return dataSource.getField(datasetId, fieldId);
+}
+
+
+export const getAvailableDatasets = (styleMode) => {
+    let availableDatasets = dataSource.getDatasets();
+
+    // Filter out datasets that have no fields that accommodate the style type
+    switch (styleMode) {
+        case 'category':
+            availableDatasets = availableDatasets.filter((dataset) =>
+                dataSource.accommodatesType(dataset.id, 'category'));
+            break;
+        case 'choropleth':
+        case 'range':
+            availableDatasets = availableDatasets.filter((dataset) =>
+                dataSource.accommodatesType(dataset.id, 'numeric'));
+            break;
+    }
+    return availableDatasets.sort();
+};
+
+export const getAvailableFields = (styleMode, dataset) => {
+    let fields = [];
+
+    // Filter fields based on style method
+    switch (styleMode) {
+        case 'category':
+            fields = dataset.fields.filter((field) => field.type === 'category');
+            break;
+        case 'choropleth':
+        case 'range':
+            fields = dataset.fields.filter((field) => field.type === 'numeric');
+            break;
+        default:
+            fields = dataset.fields;
+    }
+
+    return fields.sort();
+};
+
+
+export const getAvailableValues = (dataset, field) => {
+    getFieldValues(dataset, field)
+        .then((newOptions) => {
+                newOptions.sort();
+                this.setState({fieldValues: newOptions})
+            },
+            (err) => {
+                console.log(err)
+            })
+};
+
+export const generateLegendInfo = (geoType, layerType, layerState) => {
+    let colorMapping = null,
+        styleType = null;
+
+    if (layerType === LayerTypes.CUSTOM) {
+        const submenu = layerState.submenuStates[layerState.styleMode];
+        styleType = layerState.styleMode;
+        switch (layerState.styleMode) {
+            case 'category':
+                colorMapping = submenu.menuItems.map(item => ({
+                    value: item.category,
+                    color: item.color
+                }));
+                break;
+            case 'range':
+                colorMapping = {
+                    range: submenu.values,
+                    color: submenu.color
+                };
+                break;
+            case 'choropleth':
+                colorMapping = {colors: CHOROPLETHS[submenu.colorName], min: 0, max: 1}
+                break;
+        }
+    }
+    return {
+        geoType,
+        styleType,
+        colorMapping
+    }
 }

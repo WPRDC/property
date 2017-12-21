@@ -17,20 +17,22 @@ import Slide from 'material-ui/transitions/Slide'
 import {default as MapIcon} from 'material-ui-icons/Map';
 
 /* Style Menus */
-import CategoryStyleMenu from './styleMenus/CategoryStyleMenu';
-import ChoroplethStyleMenu from './styleMenus/ChoroplethStyleMenu';
-import RangeStyleMenu from './styleMenus/RangeStyleMenu';
+import CategoryStyleMenu from '../components/map/styleMenus/CategoryStyleMenu';
+import ChoroplethStyleMenu from '../components/map/styleMenus/ChoroplethStyleMenu';
+import RangeStyleMenu from '../components/map/styleMenus/RangeStyleMenu';
 
 /* Custom Components */
-import DatasetFieldSelectionGroup from './DatasetFieldSelectionGroup'
+import DatasetFieldSelectionGroup from '../components/map/DatasetFieldSelectionGroup'
 
 /* Functions */
-import {dataSource} from "../../utils/mapDefaults";
-import {getFieldValues} from '../../utils/mapUtils';
-import {arraysAreDifferent, COLORS} from "../../utils/dataUtils";
-import {addStyleLayer, updateStyleLayer} from "../../actions/mapActions";
+import {dataSource, GeoTypes, LayerTypes} from "../utils/mapDefaults";
+import {generateLegendInfo, getFieldValues} from '../utils/mapUtils';
+import {arraysAreDifferent, COLORS, guid} from "../utils/dataUtils";
 
-import {STYLE_MENU_MODES} from "../../utils/mapDefaults";
+import {StyleMenuEditModes} from "../utils/mapDefaults";
+import {addMapLayer, updateMapLayer} from "../actions/mapLayerActions";
+import {closeCustomStyleMenu} from "../actions/layerEditorActions";
+import DelayedMountDialog from "../components/DelayedMountDialog";
 
 const style = {
     dialog: {},
@@ -39,6 +41,23 @@ const style = {
     }
 };
 
+
+const DEFAULT_STATE = {
+    styleMode: 'category',
+    geometry: 'parcel_boundary',    // currently not used
+
+    dataset: null,                  // Carto dataset
+    field: null,                    // field in carto dataset
+    fieldValues: null,              // possible values of field in carto dataset
+
+    availableDatasets: [],          // for menus
+    availableFields: [],            // available fields for state.dataset, for menus
+
+    styleInfo: {sql: '', css: ''},  // SQL and CSS that define a carto style - is lifted up to map on submit
+    layerName: '',
+    colorMode: 'fill',
+    submenuStates: {category: null, choropleth: null, range: null}
+}
 
 class MapStyleMenu extends Component {
     /**
@@ -51,22 +70,7 @@ class MapStyleMenu extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            currentTab: 'category',
-            geometry: 'parcel_boundary',    // currently not used
-
-            dataset: null,                  // Carto dataset
-            field: null,                    // field in carto dataset
-            fieldValues: null,              // possible values of field in carto dataset
-
-            availableDatasets: [],          // for menus
-            availableFields: [],            // available fields for state.dataset, for menus
-
-            styleInfo: {sql: '', css: ''},  // SQL and CSS that define a carto style - is lifted up to map on submit
-            layerName: '',
-            colorMode: 'fill',
-            submenuState: null,
-        };
+        this.state = DEFAULT_STATE
 
     }
 
@@ -76,7 +80,7 @@ class MapStyleMenu extends Component {
      * @private
      */
     _getAvailableDatasets = () => {
-        const styleType = this.state.currentTab;
+        const styleType = this.state.styleMode;
         let availableDatasets = dataSource.getDatasets();
 
         // Filter out datasets that have no fields that accommodate the style type
@@ -109,7 +113,7 @@ class MapStyleMenu extends Component {
      * @private
      */
     _getAvailableFields = dataset => {
-        const styleType = this.state.currentTab;
+        const styleType = this.state.styleMode;
         let fields = [],
             currentField = null;
 
@@ -148,7 +152,7 @@ class MapStyleMenu extends Component {
      * @private
      */
     _getFieldValues = (dataset, field) => {
-        getFieldValues(dataset, field, this.state.currentTab)
+        getFieldValues(dataset, field, this.state.styleMode)
             .then((newOptions) => {
                     newOptions.sort();
                     this.setState({fieldValues: newOptions})
@@ -163,8 +167,13 @@ class MapStyleMenu extends Component {
      * Updates the saved state of submenu.
      * @param submenuState - current state of submenu
      */
-    updateSubmenuSavedState = submenuState => {
-        this.setState({submenuState: submenuState})
+    updateSubmenuSavedState = submenu => submenuState => {
+        this.setState({
+            submenuStates: Object.assign({}, this.state.submenuStates,
+                {
+                    [submenu]: submenuState
+                })
+        })
     };
 
 
@@ -175,7 +184,7 @@ class MapStyleMenu extends Component {
      */
     handleTabChange = (e, value) => {
         this.setState(
-            {currentTab: value},
+            {styleMode: value},
 
             // Since some fields are only applicable for certain style methods
             // (e.g. strings only for 'category'; impractical to use numbers for 'category')
@@ -237,69 +246,15 @@ class MapStyleMenu extends Component {
      * @param css
      */
     handleStyleInfoChange = (sql, css) => {
+
         this.setState({styleInfo: {sql: sql, css: css}})
     };
 
-
-    /**
-     * Runs when submit button is clicked. Lifts the entire state of this layer to the layer menu to
-     * be processed and further lifted to the InterfaceMap for rendering.
-     */
-    handleSubmit = () => {
-        const {ADD, UPDATE} = STYLE_MENU_MODES;
-        const {addStyleLayer, updateStyleLayer, mode, layerIndex} = this.props;
-        const {styleInfo} = this.state;
-
-        // Send state up to menu
-        let savedState = Object.assign({}, this.state);
-        delete savedState.styleInfo;
-
-        // We currently pass the entire state of this menu into the store.  This way we can repopulate this menu when
-        // modifying a previously-made layer. We can also display some of the metadata on the menu.
-        switch (mode) {
-            case ADD:
-                console.log(savedState, styleInfo)
-                addStyleLayer('STYLE_LAYER', savedState, styleInfo);
-                break;
-            case UPDATE:
-                updateStyleLayer(layerIndex, savedState, styleInfo);
-                break;
-            default:
-                throw RangeError(`${mode} is not a valid mode for updating styles`)
-        }
-        this.props.handleRequestClose();
-    };
-
-
-    /**
-     *  Runs when props or state change.  Decides if ...update or render methods should run
-     *
-     * @param nextProps - next set of props
-     * @param nextState - next state
-     * @return {boolean} True if there's been a change, false if not
-     */
-    shouldComponentUpdate = (nextProps, nextState) => {
-        // This is the only prop that matters for now.  The methods passed as props don't change
-        if (this.props.open !== nextProps.open) {
-            return true
-        }
-        if (this.state.layerName !== nextState.layerName) {
-            return true;
-        }
-
-        if (this.state.colorMode !== nextState.colorMode) {
-            return true;
-        }
-
-
-        else if (this.state.dataset !== nextState.dataset || this.state.field !== nextState.field ||
-            arraysAreDifferent(this.state.fieldValues, nextState.fieldValues)) {
-            return true
-        } else if (this.state.currentTab !== nextState.currentTab) {
-            return true;
-        }
-        return false
-    };
+    handleSubmit = (editMode) => () => {
+        const {layerId, submitMenu, closeMenu} = this.props;
+        submitMenu(editMode, this.state, layerId);
+        closeMenu();
+    }
 
 
     /**
@@ -307,9 +262,18 @@ class MapStyleMenu extends Component {
      * @param nextProps
      */
     componentWillReceiveProps = nextProps => {
-        // Check if a saved state was provided (for updating a previously-made layer)
-        if (nextProps.savedState) {
-            this.setState(Object.assign({}, nextProps.savedState, {styleInfo: nextProps.styleInfo}));
+        const {layerData, isOpen} = nextProps;
+        const wasOpen = this.props.isOpen;
+
+        // Freshly opened so re-init.  This is in place eof did mount, since this only mounts once as of now
+        if (isOpen && !wasOpen) {
+            // Check if a saved state was provided (for updating a previously-made layer)
+            if (layerData) {
+                this.setState(Object.assign({}, layerData.menuState, {styleInfo: layerData.styleInfo}));
+            } else {
+                this.setState({submenuStates: {category: null, choropleth: null, range: null}})
+                this._getAvailableDatasets();
+            }
         }
     };
 
@@ -324,31 +288,36 @@ class MapStyleMenu extends Component {
 
     render() {
         const {
-            open,
-            handleRequestClose
+            isOpen,
+            editMode,
+            layerId,
+            layerData,
+            closeMenu
         } = this.props;
+
         const {
-            currentTab,
+            styleMode,
             dataset,
             field,
             availableDatasets,
             availableFields,
             fieldValues,
-            submenuState,
+            submenuStates,
             layerName
         } = this.state;
+
 
         return (
             <Dialog
                 transition={Slide}
                 style={style.dialog}
-                open={open}
-                onRequestClose={handleRequestClose}>
+                open={isOpen}
+                onRequestClose={closeMenu}>
 
                 <AppBar position="static" color="default">
                     <DialogTitle>Add Style to the Map</DialogTitle>
                     <Tabs fullWidth
-                          value={currentTab}
+                          value={styleMode}
                           onChange={this.handleTabChange}
                           indicatorColor="primary" textColor="primary"
                     >
@@ -366,30 +335,30 @@ class MapStyleMenu extends Component {
                                                 availableFields={availableFields}
                     />
                     <br/>
-                    {currentTab === 'category' &&
+                    {styleMode === 'category' &&
                     < CategoryStyleMenu dataset={dataset}
                                         field={field}
                                         fieldValues={fieldValues}
                                         handleStyleInfoChange={this.handleStyleInfoChange}
-                                        updateSavedState={this.updateSubmenuSavedState}
-                                        savedState={submenuState}
+                                        updateSavedState={this.updateSubmenuSavedState('category')}
+                                        savedState={submenuStates.category}
                     />}
-                    {currentTab === 'choropleth' &&
+                    {styleMode === 'choropleth' &&
                     <ChoroplethStyleMenu
                         dataset={dataset}
                         field={field}
                         handleStyleInfoChange={this.handleStyleInfoChange}
-                        updateSavedState={this.updateSubmenuSavedState}
-                        savedState={submenuState}
+                        updateSavedState={this.updateSubmenuSavedState('choropleth')}
+                        savedState={submenuStates.choropleth}
                     />
                     }
-                    {currentTab === 'range' &&
+                    {styleMode === 'range' &&
                     <RangeStyleMenu
                         dataset={dataset}
                         field={field}
                         handleStyleInfoChange={this.handleStyleInfoChange}
-                        updateSavedState={this.updateSubmenuSavedState}
-                        savedState={submenuState}
+                        updateSavedState={this.updateSubmenuSavedState('range')}
+                        savedState={submenuStates.range}
                     />
                     }
                 </DialogContent>
@@ -403,25 +372,48 @@ class MapStyleMenu extends Component {
                         onChange={this.handleChange('layerName')}
                         margin="dense"
                     />
-                    <Button color="accent" onClick={handleRequestClose}>Cancel</Button>
-                    <Button color="primary" onClick={this.handleSubmit}>Put Some Style on It!</Button>
+                    <Button color="accent" onClick={closeMenu}>Cancel</Button>
+                    <Button color="primary" onClick={this.handleSubmit(editMode, this.state)}>
+                        Put Some Style on It!
+                    </Button>
                 </DialogActions>
             </Dialog>
         );
     }
 }
 
-const mapStateToProps = () => {
-    return {}
+const mapStateToProps = state => {
+    const {isOpen, editMode, layerId, layerData} = state.customStyleMenu;
+    return {isOpen, editMode, layerId, layerData}
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        addStyleLayer: (layerType, menuState, styleInfo) => {
-            dispatch(addStyleLayer(layerType, menuState, styleInfo))
+        submitMenu: (editMode, menuState, layerId) => {
+            // Map menu state to layerData object
+            const layerData = {
+                layerType: LayerTypes.CUSTOM,
+                layerName: menuState.layerName || (`${menuState.dataset.name} - ${menuState.field.name}`),
+                styleInfo: menuState.styleInfo,
+                legendInfo: generateLegendInfo(GeoTypes.POLYGON, LayerTypes.CUSTOM, menuState),
+                menuState,
+            };
+
+            console.log(layerData);
+
+            // If ADD, create new layer and load state into it
+            switch (editMode) {
+                case StyleMenuEditModes.ADD:
+                    layerId = guid();
+                    dispatch(addMapLayer(layerId, layerData));
+                    break;
+                case StyleMenuEditModes.UPDATE:
+                    dispatch(updateMapLayer(layerId, layerData));
+                    break;
+            }
         },
-        updateStyleLayer: (index, menuState, styleInfo) => {
-            dispatch(updateStyleLayer(index, menuState, styleInfo))
+        closeMenu: () => {
+            dispatch(closeCustomStyleMenu())
         }
     }
 };

@@ -1,24 +1,16 @@
 import {singleShapeLayer} from "../utils/mapUtils";
-import {BASEMAPS, SELECTION_LAYERS} from "../utils/mapDefaults";
+import {arrayMove} from 'react-sortable-hoc';
 
 import {
-    SET_BASEMAP, SET_SELECTED_PARCEL_SHAPE, CENTER_MAP_ON_POINT, ADD_STYLE_LAYER,
-    UPDATE_STYLE_LAYER, REMOVE_STYLE_LAYER, OPEN_HIGHLIGHT_MENU, CLOSE_HIGHLIGHT_MENU, SELECT_HIGHLIGHT_MENU_FIELD,
-    OPEN_STYLE_LAYER_MENU
+    SELECT_BASEMAP, SET_SELECTED_PARCEL_SHAPE, CENTER_MAP_ON_POINT, OPEN_BASEMAP_MENU, CLOSE_BASEMAP_MENU
 } from "../actions/mapActions";
-import {SELECT_HIGHLIGHT_MENU_COLOR} from "../actions";
+
+import {BASEMAPS, SELECTION_LAYERS} from "../utils/mapDefaults";
+const DEFAULT_BASEMAP = BASEMAPS.voyager
+
 
 export const availableShapesLayer = (state = SELECTION_LAYERS.PARCEL, action) => {
     return state
-};
-
-export const basemapLayer = (state = BASEMAPS.voyager, action) => {
-    switch (action.type) {
-        case SET_BASEMAP:
-            return BASEMAPS[(action.basemapName)]
-        default:
-            return state
-    }
 };
 
 export const selectedLayer = (state = {}, action) => {
@@ -44,56 +36,15 @@ export const mapOptions = (state = {center: [40.438340, -79.961884], zoom: 16}, 
     }
 };
 
-export const styleLayers = (state = [], action) => {
-    const {layerType, menuState, styleInfo} = action;
-    switch (action.type) {
-        case ADD_STYLE_LAYER:
-            return [...state, {layerType, menuState, styleInfo}];
-        case UPDATE_STYLE_LAYER:
-            return state.map((styleLayer, idx) =>
-                (idx === action.index)
-                    ? Object.assign({}, styleLayer, {menuState, styleInfo})
-                    : styleLayer
-            );
-        case REMOVE_STYLE_LAYER:
-            return state.filter((styleLayer, currIndex) => currIndex !== action.index);
-        default:
-            return state
-    }
-};
-
-export const highlightMenu = (state = {selectedIndex:0, color: '#11f', isOpen: false}, action) => {
-    const {dataset, items, selectedIndex, color} = action;
-
-    switch (action.type) {
-        case OPEN_HIGHLIGHT_MENU:
-            return Object.assign({}, state,
-                {
-                    dataset,
-                    items,
-                    isOpen: true
-                }
-            );
-        case CLOSE_HIGHLIGHT_MENU:
-            return Object.assign({}, state, {isOpen: false});
-        case SELECT_HIGHLIGHT_MENU_FIELD:
-            return Object.assign({}, state, {selectedIndex});
-        case SELECT_HIGHLIGHT_MENU_COLOR:
-            return Object.assign({}, state, {color});
-        default:
-            return state
-    }
-};
-
-export const styleLayerMenu = (state = {isOpen: false}, action) => {
-
+export const basemap = (state = {menuIsOpen: false, selectedBasemap: DEFAULT_BASEMAP}, action) => {
     switch(action.type){
-        case OPEN_STYLE_LAYER_MENU:
-            return Object.assign({}, state, {isOpen: true});
-        case CLOSE_HIGHLIGHT_MENU:
-            return Object.assign({}, state, {isOpen: false});
+        case OPEN_BASEMAP_MENU:
+            return Object.assign({}, state, {menuIsOpen: true, anchorEl: action.anchorEl});
+        case CLOSE_BASEMAP_MENU:
+            return Object.assign({}, state, {menuIsOpen: false, anchorEl: null});
+        case SELECT_BASEMAP:
+            return Object.assign({}, state, {selectedBasemap: action.basemap})
         default:
-            return state
+            return state;
     }
 };
-

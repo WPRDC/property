@@ -38,7 +38,7 @@ class ChoroplethStyleMenu extends PureComponent {
     }
 
     /**
-     * Updates the SQL and cartoCSS that define style on a Carto InterfaceMap.
+     * Updates the SQL and cartoCSS that define style on a Carto StyledMap.
      * @private
      */
     _handleStyleInfoChange = () => {
@@ -68,7 +68,6 @@ class ChoroplethStyleMenu extends PureComponent {
      */
     componentDidMount = () => {
         if (this.props.savedState) {
-            console.log(this.props.savedState);
             this.setState(this.props.savedState, () => {
                 this.render()
             })
@@ -80,8 +79,10 @@ class ChoroplethStyleMenu extends PureComponent {
     /**
      * Runs after component mounts.  Updates style info.
      */
-    componentDidUpdate = () => {
-        this._handleStyleInfoChange();
+    componentDidUpdate = prevProps => {
+        if (prevProps.dataset !== this.props.dataset || prevProps.field !== this.props.field) {
+            this._handleStyleInfoChange();
+        }
     };
 
     render() {
