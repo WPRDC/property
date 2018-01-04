@@ -93,9 +93,8 @@ class StyledMap extends Component {
                      tap={false}
                 >
                     <ZoomControl position='topright'/>
-
                     <TileLayer url={basemap.url}
-                               attribute={basemap.attribution}/>
+                               attribution={basemap.attribution}/>
 
                     {mapLayerList.map((layerId, layerIndex) => {
                             const currLayer = mapLayersById[layerId];
