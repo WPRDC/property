@@ -15,7 +15,7 @@ import {closeCustomStyleMenu, closeHighlightStyleMenu} from "../../actions/layer
 
 import ColorPicker from '../ColorPicker'
 import {GeoTypes, LayerTypes, StyleMenuEditModes} from "../../utils/mapDefaults";
-import {addMapLayer, updateMapLayer} from "../../actions/mapLayerActions";
+import {addMapLayer, openMapLayerMenu, updateMapLayer} from "../../actions/mapLayerActions";
 import {guid} from "../../utils/dataUtils";
 import DelayedMountDialog from "../DelayedMountDialog";
 
@@ -41,7 +41,7 @@ class DataHighlightMenu extends Component {
 
     _makeStyleInfo = (range, color, makeSql, makeCss) => {
         return {sql: makeSql(range), css: makeCss(color)}
-    }
+    };
 
     handleSelectColor = color => {
         this.setState({color})
@@ -172,6 +172,7 @@ const mapDispatchToProps = dispatch => {
                 case StyleMenuEditModes.ADD:
                     layerId = guid();
                     dispatch(addMapLayer(layerId, layerData));
+                    dispatch(openMapLayerMenu());
                     break;
                 case StyleMenuEditModes.UPDATE:
                     dispatch(updateMapLayer(layerId, layerData));
