@@ -14,7 +14,7 @@ import LayersIcon from 'material-ui-icons/Layers';
 import {FormControl, FormHelperText} from 'material-ui/Form';
 import Divider from 'material-ui/Divider';
 
-import ColorPicker from '../../../ColorPicker'
+import ColorPicker from '../../ColorPicker'
 
 import {GithubPicker} from 'react-color';
 
@@ -22,7 +22,7 @@ import {GithubPicker} from 'react-color';
 /* Defaults & Helper Functions */
 import {createCategoryCSS, createStyleSQL, COLORS, getFieldValues} from '../../../utils/mapUtils';
 
-const DEFAULT_COLOR = 'red';
+const DEFAULT_COLOR = '#11f';
 
 class CategoryStyleMenu extends Component {
     /**
@@ -239,23 +239,26 @@ class CategoryStyleMenu extends Component {
  * @constructor
  */
 const CategorySelectionLine = props => {
-    // TODO: fix default value
+    const {
+        menuItem, categoryOptions, itemIdx,
+        handleChangeSelect, handleChangeColor
+    } = props;
     return (
         <div>
             <FormControl>
-                <Select native value={props.menuItem.category}
-                        onChange={props.handleChangeSelect('category', props.itemIdx)}
-                        input={<Input id={'category-value-' + props.itemIdx}/>}
+                <Select native value={menuItem.category}
+                        onChange={handleChangeSelect('category', itemIdx)}
+                        input={<Input id={'category-value-' + itemIdx}/>}
                 >
-                    {props.categoryOptions.map((opt, optionIdx) => (
+                    {categoryOptions.map((opt, optionIdx) => (
                         <option key={optionIdx.toString()}
-                                value={props.categoryOptions[optionIdx]}>{props.categoryOptions[optionIdx]}
+                                value={categoryOptions[optionIdx]}>{categoryOptions[optionIdx]}
                         </option>
                     ))}
                 </Select>
             </FormControl>
             <FormControl>
-                <ColorPicker onChange={props.handleChangeColor(props.itemIdx)}/>
+                <ColorPicker color={menuItem.color} onChange={handleChangeColor(itemIdx)}/>
             </FormControl>
         </div>
     );

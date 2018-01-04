@@ -13,7 +13,7 @@ import Button from 'material-ui/Button';
 
 import {closeCustomStyleMenu, closeHighlightStyleMenu} from "../../actions/layerEditorActions";
 
-import ColorPicker from '../../ColorPicker'
+import ColorPicker from '../ColorPicker'
 import {GeoTypes, LayerTypes, StyleMenuEditModes} from "../../utils/mapDefaults";
 import {addMapLayer, updateMapLayer} from "../../actions/mapLayerActions";
 import {guid} from "../../utils/dataUtils";
