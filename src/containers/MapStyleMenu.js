@@ -399,7 +399,6 @@ const mapDispatchToProps = dispatch => {
                 menuState,
             };
 
-            console.log(layerData);
 
             // If ADD, create new layer and load state into it
             switch (editMode) {

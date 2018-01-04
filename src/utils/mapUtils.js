@@ -54,6 +54,16 @@ export const CHOROPLETHS = {
     }
 };
 
+
+export const makeChoropleth = (color, bins, reverse) => {
+    const colors = CHOROPLETHS[color][bins]
+    if (reverse) {
+        return colors.reverse()
+    } else {
+        return colors
+    }
+}
+
 /**
  * Gets carto tiles based on a sql query and cartoCSS to define style.
  *
@@ -344,8 +354,14 @@ export const singleShapeLayer = (id, shapeClass = PARCEL) => {
 
     const css =
         `#layer {
-            line-color: #00F; 
-            polygon-fill: #00F; 
+            line-color: #0e66f7; 
+            [zoom < 16] {
+                line-width: 2;
+            }
+            [zoom >= 16 ] {
+                line-width: 4;
+            }
+            polygon-fill: #0e66f7; 
             polygon-opacity: 0.4
         }`;
 

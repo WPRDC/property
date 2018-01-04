@@ -17,6 +17,7 @@ import {
     findMinMaxValues,
     COLORS,
 } from '../../../utils/mapUtils';
+import ColorPicker from "../../ColorPicker";
 
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 
@@ -35,7 +36,7 @@ class RangeStyleMenu extends Component {
             min: 0,         // minimum possible value
             max: 100,       // maximum possible value
             values: [0, 1], // actual values selected by range slider
-            color: 'red',
+            color: '#11f',
             styleMode: 'fill'      // fill or line
         }
     }
@@ -110,10 +111,9 @@ class RangeStyleMenu extends Component {
      * @param  {string} name - name of state property to be updated
      */
     handleChange = (name) => (event) => {
-        console.log(name);
         switch (name) {
             case 'color':
-                this.setState({color: event.target.value}, this._handleStyleInfoChange);
+                this.setState({color: event}, this._handleStyleInfoChange);
                 break;
             case 'lower':
                 this.setState({values: [event.target.value, this.state.values[1]]});
@@ -138,17 +138,13 @@ class RangeStyleMenu extends Component {
         this.setState({values,}, this._handleStyleInfoChange())
     };
 
-
-    /*
-
     /**
      * Runs when component is mounted.  Initializes the range.
      */
     componentDidMount = () => {
-        if (this.props.savedState) {
-            this.setState(this.props.savedState, () => {
-                this.render()
-            })
+        const {savedState} = this.props;
+        if (savedState && Object.keys(savedState).length !== 0) {
+            this.setState(savedState);
         } else {
             this._initRange(this.props.dataset, this.props.field)
         }
@@ -171,29 +167,20 @@ class RangeStyleMenu extends Component {
                        value={this.state.values}
                        onChange={this.onRangeSliderChange} allowCross={false}/>
                 <br/>
-                <FormControl>
-                    <InputLabel htmlFor="lower-val">Lower Bound</InputLabel>
-                    <Input id="lower-val" onChange={this.handleChange('lower')} value={this.state.values[0]}/>
-                </FormControl>
+                <div>
+                    <FormControl>
+                        <InputLabel htmlFor="lower-val">Lower Bound</InputLabel>
+                        <Input id="lower-val" onChange={this.handleChange('lower')} value={this.state.values[0]}/>
+                    </FormControl>
+                    <FormControl>
+                        <ColorPicker color={this.state.color} onChange={this.handleChange('color')}/>
+                    </FormControl>
+                    <FormControl>
+                        <InputLabel htmlFor="upper-val">Upper Bound</InputLabel>
+                        <Input id="lower-val" onChange={this.handleChange('upper')} value={this.state.values[1]}/>
+                    </FormControl>
+                </div>
 
-                <FormControl>
-                    <InputLabel htmlFor="upper-val">Upper Bound</InputLabel>
-                    <Input id="lower-val" onChange={this.handleChange('upper')} value={this.state.values[1]}/>
-                </FormControl>
-
-                <FormControl>
-                    <InputLabel htmlFor="color-select">Color</InputLabel>
-                    <Select
-                        native
-                        value={this.state.color}
-                        onChange={this.handleChange('color')}
-                        input={<Input id="color-select"/>}
-                    >
-                        {COLORS.map((color) => (
-                            <option key={color} value={color}>{color}</option>
-                        ))}
-                    </Select>
-                </FormControl>
                 <FormControl>
                     <InputLabel htmlFor="colorMode">Style Mode</InputLabel>
                     <Select

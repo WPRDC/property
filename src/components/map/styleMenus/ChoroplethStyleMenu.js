@@ -16,10 +16,13 @@ import LayersIcon from 'material-ui-icons/Layers';
 /* Defaults & Helper Functions */
 import {createChoroplethCSS, createStyleSQL, QUANTIFICATION_METHODS, CHOROPLETHS} from '../../../utils/mapUtils';
 
+import ChoroplethPicker from '../ChoroplethPicker'
+
 const BIN_OPTIONS = [3, 4, 5, 6, 7];
 
 // Get `first` key from CHOROPLETHS as default color
 const DEFAULT_COLOR = Object.keys(CHOROPLETHS)[0];
+
 
 
 class ChoroplethStyleMenu extends PureComponent {
@@ -99,19 +102,8 @@ class ChoroplethStyleMenu extends PureComponent {
                         {BIN_OPTIONS.map((bins, i) => <option key={i.toString()} value={bins}>{bins}</option>)}
                     </Select>
                 </FormControl>
-                <FormControl>
-                    <InputLabel htmlFor="colors-select">Colors</InputLabel>
-                    <Select
-                        native
-                        value={this.state.colorName}
-                        onChange={this.handleMenuChange('colorName')}
-                        input={<Input id="colors-select"/>}
-                    >
-                        {Object.keys(CHOROPLETHS).map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                        ))}
-                    </Select>
-                </FormControl>
+                <ChoroplethPicker value={this.state.colorName} onChange={this.handleMenuChange('colorName')}/>
+
                 <FormControl>
                     <InputLabel htmlFor="quantification-method-select">Quantification</InputLabel>
                     <Select
@@ -125,7 +117,6 @@ class ChoroplethStyleMenu extends PureComponent {
                         ))}
                     </Select>
                 </FormControl>
-
             </div>
         );
     }

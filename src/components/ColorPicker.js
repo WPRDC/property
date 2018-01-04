@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { GithubPicker } from 'react-color';
+import {GithubPicker} from 'react-color';
 import Button from 'material-ui/Button';
 
 class ColorPicker extends Component {
@@ -20,24 +20,31 @@ class ColorPicker extends Component {
     };
 
     handleChange = (color) => {
-        this.setState({ color: color.hex });
+        this.setState({color: color.hex});
         this.handleClose();
     };
 
 
-    handleChangeComplete = (color, event) =>{
+    handleChangeComplete = (color, event) => {
         this.props.onChange(color.hex);
     };
 
+    componentWillReceiveProps = ({color}) => {
+        this.setState({color});
+    };
+
+
     render() {
-         const styles = {
+        const styles = {
             color: {
                 width: '24px',
-                height: '16px',
+                height: '18px',
                 borderRadius: '2px',
                 background: this.state.color,
             },
-            swatch: {
+            button: {
+                height: '100%',
+                marginBottom: '-8px'
             },
             popover: {
                 position: 'absolute',
@@ -50,21 +57,20 @@ class ColorPicker extends Component {
                 bottom: '0px',
                 left: '0px',
             },
-            base: this.props.style
+            base: Object.assign({}, {position: 'relative'}, this.props.style)
         };
-
 
 
         return (
             <div style={styles.base}>
-                <Button dense style={styles.swatch} onClick={this.handleClick}>
+                <Button style={styles.button} onClick={this.handleClick}>
                     <div style={styles.color}/>
                 </Button>
                 {this.state.displayColorPicker ? <div style={styles.popover}>
                     <div style={styles.cover} onClick={this.handleClose}/>
                     <GithubPicker color={this.state.color}
-                                   onChange={this.handleChange}
-                                   onChangeComplete={this.handleChangeComplete}/>
+                                  onChange={this.handleChange}
+                                  onChangeComplete={this.handleChangeComplete}/>
                 </div> : null}
 
             </div>
