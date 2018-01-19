@@ -210,6 +210,38 @@ export const MAP_DATASETS = [
                 type: 'string',
             },
         ]
+    },
+    {
+        id: 'sales',
+        name: 'Property Sales',
+        parcelIdField: 'PARID',
+        datasetUrl: 'https://data.wprdc.org/dataset/real-estate-sales',
+        cartoConnection: {
+            cartoAccount: 'wprdc-editor',
+            cartoTable: 'allegheny_county_tax_liens',
+            mapId: '2ac98314-c5b9-4730-ae79-71c80dbd8790',
+            cartoCssId: 'liens',
+        },
+        fields: [
+            {
+                id: 'SALEDATE',
+                name: 'Sale Date',
+                info: 'Date of sale',
+                type: 'string',
+            },
+            {
+                id: 'car',
+                name: 'Sale Price',
+                info: 'How much the property was sold for.',
+                type: 'numeric',
+            },
+            {
+                id: 'prior_years',
+                name: 'Sale Type',
+                info: 'Sale type',
+                type: 'string',
+            },
+        ]
     }
 ];
 

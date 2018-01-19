@@ -15,7 +15,7 @@ const PARCEL_ID_PATTERN = /^(\d{4}\D\d{4}[a-zA-Z0-9]{7})$/;
 export function hasValues(obj) {
     for (let k in obj) {
         if (obj.hasOwnProperty(k)) {
-            if (obj[k] === null || typeof(obj[k]) === 'undefined')
+            if (obj[k] === null || typeof(obj[k]) === 'undefined' || obj[k] === '')
                 return false;
         }
     }
@@ -46,6 +46,12 @@ export function monify(number, decimal) {
         dec = 2;
 
     // Set decimals and commas
+    try {
+        number = parseFloat(number)
+    } catch(err) {
+        console.log(err);
+        return '';
+    }
     number = number.toFixed(dec).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     return '$' + number;
@@ -77,7 +83,7 @@ export const arraysAreDifferent = (a, b) => {
  * Checks search query, first to see if it's a Parcel ID, then if it's not, it assumes it's an address.
  *
  * @param {string} query - query entered by user could be parcel ID or address
- * @return {Promise}
+ * @return {Promise} - Promise that resolves with the parcel_id
  */
 export const checkSearchQuery = query => {
     if (PARCEL_ID_PATTERN.test(query)) {

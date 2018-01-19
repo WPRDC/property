@@ -1,5 +1,5 @@
 import {getStreetViewImage} from "../utils/apiUtils";
-import {extractAddressFromData} from "../utils/dataUtils";
+import {extractAddressFromData, checkSearchQuery} from "../utils/dataUtils";
 
 export const SELECT_PARCEL = 'SELECT_PARCEL';
 export const INVALIDATE_PARCEL = 'INVALIDATE_PARCEL';
@@ -131,5 +131,27 @@ export const fetchParcelImageIfNeeded = parcelId => {
         } else {
             return Promise.resolve()
         }
+    }
+}
+
+export const searchForParcel = query => {
+    // Search query
+    return function (dispatch) {
+        console.log('searching');
+        return (checkSearchQuery(query))
+            .then(
+                // on successful search we'll receive a parcel id
+                // todo: handle ambiguous searches
+
+                parcelId => {
+                    console.log(parcelId)
+                    dispatch(selectParcel(parcelId));
+                    dispatch(fetchParcelDataIfNeeded(parcelId))
+                },
+                // on a unsuccessful search, pop up an error
+                error => {
+                    console.log('ERROR', error);
+                }
+            )
     }
 }
