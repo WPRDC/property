@@ -2,7 +2,8 @@ import {singleShapeLayer} from "../utils/mapUtils";
 import {arrayMove} from 'react-sortable-hoc';
 
 import {
-    SELECT_BASEMAP, SET_SELECTED_PARCEL_SHAPE, CENTER_MAP_ON_POINT, OPEN_BASEMAP_MENU, CLOSE_BASEMAP_MENU
+    SELECT_BASEMAP, SET_SELECTED_PARCEL_SHAPE, CENTER_MAP_ON_POINT, OPEN_BASEMAP_MENU, CLOSE_BASEMAP_MENU,
+    CHANGE_VIEWPORT
 } from "../actions/mapActions";
 
 import {BASEMAPS, SELECTION_LAYERS} from "../utils/mapDefaults";
@@ -27,10 +28,10 @@ export const selectedLayer = (state = {}, action) => {
     }
 };
 
-export const mapOptions = (state = {center: [40.438340, -79.961884], zoom: 16}, action) => {
+export const viewport = (state = {center: [40.438340, -79.961884], zoom: 16}, action) => {
     switch (action.type) {
-        case CENTER_MAP_ON_POINT:
-            return {center: action.point, zoom: 16};
+        case CHANGE_VIEWPORT:
+            return Object.assign({}, state, action.viewport);
         default:
             return state
     }

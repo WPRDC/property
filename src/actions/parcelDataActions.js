@@ -1,5 +1,6 @@
 import {getStreetViewImage} from "../utils/apiUtils";
 import {extractAddressFromData, checkSearchQuery} from "../utils/dataUtils";
+import {changeViewport} from "./mapActions";
 
 export const SELECT_PARCEL = 'SELECT_PARCEL';
 export const INVALIDATE_PARCEL = 'INVALIDATE_PARCEL';
@@ -136,7 +137,7 @@ export const fetchParcelImageIfNeeded = parcelId => {
 
 export const searchForParcel = query => {
     // Search query
-    return function (dispatch) {
+    return function (dispatch, getState) {
         console.log('searching');
         return (checkSearchQuery(query))
             .then(
@@ -144,9 +145,14 @@ export const searchForParcel = query => {
                 // todo: handle ambiguous searches
 
                 parcelId => {
-                    console.log(parcelId)
-                    dispatch(selectParcel(parcelId));
+
                     dispatch(fetchParcelDataIfNeeded(parcelId))
+                        .then(data => {
+                            dispatch(selectParcel(parcelId));
+                            const coords = getState().parcelDataById[parcelId].geo.centroid.coordinates;
+                            const center = coords.reverse().map(coord => parseFloat(coord))
+                            dispatch(changeViewport({center}))
+                        })
                 },
                 // on a unsuccessful search, pop up an error
                 error => {
@@ -155,3 +161,4 @@ export const searchForParcel = query => {
             )
     }
 }
+

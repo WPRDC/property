@@ -5,11 +5,12 @@ import {selectParcel} from "./parcelDataActions";
 
 
 export const SET_SELECTED_PARCEL_SHAPE = 'SET_SELECTED_PARCEL_SHAPE';
-export const CENTER_MAP_ON_POINT = 'CENTER_MAP_ON_POINT';
 
 export const OPEN_BASEMAP_MENU = 'OPEN_BASEMAP_MENU';
 export const CLOSE_BASEMAP_MENU = 'CLOSE_BASEMAP_MENU';
 export const SELECT_BASEMAP = 'SELECT_BASEMAP';
+
+export const CHANGE_VIEWPORT = 'CHANGE_VIEWPORT';
 
 
 export const fetchParcelFromPoint = point => {
@@ -30,12 +31,7 @@ export const setSelectedParcelShape = (parcelId, shapeClass = PARCEL) => {
     }
 };
 
-export const centerMapOnPoint = point => {
-    return {
-        type: CENTER_MAP_ON_POINT,
-        point
-    }
-};
+
 
 
 export const openBasemapMenu = () => {
@@ -68,3 +64,10 @@ export const selectBasemap = basemap => {
     }
 };
 
+export const changeViewport = viewport => {
+    console.log(viewport);
+    return {
+        type: CHANGE_VIEWPORT,
+        viewport
+    }
+}
