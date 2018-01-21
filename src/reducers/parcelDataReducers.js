@@ -6,6 +6,7 @@ import {
     REQUEST_PARCEL_IMAGE,
     RECEIVE_PARCEL_IMAGE
 } from "../actions/index";
+import {CLOSE_ALERT_MESSAGE, OPEN_ALERT_MESSAGE} from "../actions/parcelDataActions";
 
 
 const DEFAULT_PARCEL = '0028F00194000000';
@@ -85,3 +86,14 @@ export const parcelImagesById = (state = {}, action) => {
             return state;
     }
 };
+
+export const alertMessage = (state = {isOpen: false, message: ''}, action) => {
+    switch(action.type){
+        case OPEN_ALERT_MESSAGE:
+            return Object.assign({}, state, {isOpen: true, message: action.message});
+        case CLOSE_ALERT_MESSAGE:
+            return Object.assign({}, state, {isOpen: false, message: ''});
+        default:
+            return state;
+    }
+}

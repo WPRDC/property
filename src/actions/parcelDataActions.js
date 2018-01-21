@@ -141,9 +141,6 @@ export const searchForParcel = query => {
         console.log('searching');
         return (checkSearchQuery(query))
             .then(
-                // on successful search we'll receive a parcel id
-                // todo: handle ambiguous searches
-
                 parcelId => {
 
                     dispatch(fetchParcelDataIfNeeded(parcelId))
@@ -156,9 +153,25 @@ export const searchForParcel = query => {
                 },
                 // on a unsuccessful search, pop up an error
                 error => {
+                    dispatch(openAlertMessage("Couldn't find a parcel"));
                     console.log('ERROR', error);
                 }
             )
     }
 }
 
+export const OPEN_ALERT_MESSAGE = 'OPEN_ALERT_MESSAGE';
+export const CLOSE_ALERT_MESSAGE = 'CLOSE_ALERT_MESSAGE';
+
+export const openAlertMessage = message => {
+    return {
+        type: OPEN_ALERT_MESSAGE,
+        message
+    }
+};
+
+export const closeAlertMessage = () => {
+    return {
+        type: CLOSE_ALERT_MESSAGE
+    }
+}
