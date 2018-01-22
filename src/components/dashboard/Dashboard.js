@@ -31,6 +31,7 @@ import {
 
 /* Project Components */
 import ParcelSearch from '../../containers/ParcelSearch'
+import TaxDelinquency from "./customModules/TaxDelinquency";
 
 const blue500 = blue[500];
 
@@ -63,7 +64,7 @@ const style = {
 };
 
 const Dashboard = props => {
-    const {parcelId, data, isFetching, imageUrl, panMapToTarget} = props;
+    const {parcelId, data, isFetching, imageUrl, panMapToTarget, handleSearch} = props;
 
     if (data && !isFetching) {
         const address = extractAddressFromData(data); //todo: have address generated earlier in the stream (maybe at api server level?)
@@ -81,15 +82,15 @@ const Dashboard = props => {
 
                     <DwellingCharacteristics data={data}/>
 
-
                     <AssessmentTable data={data}/>
 
                     <PropertyTaxReductions data={data}/>
 
-
                     <SalesTable data={data}/>
 
                     <TaxLiens data={data}/>
+
+                    <TaxDelinquency data={data}/>
                 </DataSection>
             </Paper>
         );

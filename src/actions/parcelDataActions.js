@@ -1,5 +1,6 @@
 import {getStreetViewImage} from "../utils/apiUtils";
-import {extractAddressFromData} from "../utils/dataUtils";
+import {extractAddressFromData, checkSearchQuery} from "../utils/dataUtils";
+import {changeViewport} from "./mapActions";
 
 export const SELECT_PARCEL = 'SELECT_PARCEL';
 export const INVALIDATE_PARCEL = 'INVALIDATE_PARCEL';
@@ -131,5 +132,46 @@ export const fetchParcelImageIfNeeded = parcelId => {
         } else {
             return Promise.resolve()
         }
+    }
+}
+
+export const searchForParcel = query => {
+    // Search query
+    return function (dispatch, getState) {
+        console.log('searching');
+        return (checkSearchQuery(query))
+            .then(
+                parcelId => {
+
+                    dispatch(fetchParcelDataIfNeeded(parcelId))
+                        .then(data => {
+                            dispatch(selectParcel(parcelId));
+                            const coords = getState().parcelDataById[parcelId].geo.centroid.coordinates;
+                            const center = coords.reverse().map(coord => parseFloat(coord))
+                            dispatch(changeViewport({center}))
+                        })
+                },
+                // on a unsuccessful search, pop up an error
+                error => {
+                    dispatch(openAlertMessage("Couldn't find a parcel"));
+                    console.log('ERROR', error);
+                }
+            )
+    }
+}
+
+export const OPEN_ALERT_MESSAGE = 'OPEN_ALERT_MESSAGE';
+export const CLOSE_ALERT_MESSAGE = 'CLOSE_ALERT_MESSAGE';
+
+export const openAlertMessage = message => {
+    return {
+        type: OPEN_ALERT_MESSAGE,
+        message
+    }
+};
+
+export const closeAlertMessage = () => {
+    return {
+        type: CLOSE_ALERT_MESSAGE
     }
 }

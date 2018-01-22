@@ -32,7 +32,10 @@ export const getParcelIdFromAddress = address => {
             .then((response) => {
                 response.json()
                     .then((data) => {
-                        resolve(data.data.parcel_id)
+                        if (data.data.parcel_id)
+                            resolve(data.data.parcel_id);
+                        else
+                            reject ("Parcel not found");
                     }, (err) => reject(err))
             }, (err) => {
                 reject(err);

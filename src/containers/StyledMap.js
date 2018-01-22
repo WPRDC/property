@@ -20,6 +20,7 @@ import {connect} from 'react-redux'
 import {BASEMAPS} from "../utils/mapDefaults";
 import {toggleStyleLayerListMenu} from "../actions/layerEditorActions";
 import {toggleMapLayerMenu} from "../actions/mapLayerActions";
+import {changeViewport} from "../actions/mapActions";
 
 
 const style = {
@@ -61,20 +62,21 @@ class StyledMap extends Component {
 
     render() {
         const {
-            mapOptions,
+            viewport,
             basemap,
             availableShapesLayer,
             selectedLayer,
             mapLayerList,
             mapLayersById,
             styleLayerMenu,
-            toggleStyleLayerMenu
+            toggleStyleLayerMenu,
+            handleViewportChange
         } = this.props;
 
         const {
             center,
-            maxZoom
-        } = mapOptions;
+            zoom
+        } = viewport;
         return (
             <div style={style.base} className="mapContainer">
                 <Button fab color="primary" aria-label="add" onClick={toggleStyleLayerMenu}
@@ -87,10 +89,11 @@ class StyledMap extends Component {
 
                 <Map style={style.map}
                      center={center}
-                     zoom={15}
+                     zoom={zoom}
                      onClick={this.handleClick}
                      zoomControl={false}
                      tap={false}
+                     onViewportChanged={handleViewportChange}
                 >
                     <ZoomControl position='topright'/>
                     <TileLayer url={basemap.url}
@@ -143,7 +146,7 @@ function mapStateToProps(state) {
         selectedLayer,
         mapLayerList,
         mapLayersById,
-        mapOptions,
+        viewport,
         styleLayerMenu
     } = state;
 
@@ -153,7 +156,7 @@ function mapStateToProps(state) {
         selectedLayer,
         mapLayerList,
         mapLayersById,
-        mapOptions,
+        viewport,
         styleLayerMenu
     }
 }
@@ -166,6 +169,9 @@ const mapDispatchToProps = dispatch => {
         },
         toggleStyleLayerMenu: () => {
             dispatch(toggleMapLayerMenu())
+        },
+        handleViewportChange: viewport => {
+            dispatch(changeViewport(viewport))
         }
     }
 };

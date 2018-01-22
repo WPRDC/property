@@ -8,6 +8,8 @@ import StyledMap from "./containers/StyledMap";
 import Footer from './components/Footer'
 import Header from './components/Header'
 
+import AlertMessage from './containers/AlertMessage'
+
 import {
     fetchParcelDataIfNeeded, fetchParcelImageIfNeeded,
     selectParcel
@@ -45,6 +47,7 @@ class App extends Component {
                     <StyledMap/>
 
                     <ParcelDashboard/>
+                    <AlertMessage/>
                 </div>
 
                 <Footer className="flex-item">
