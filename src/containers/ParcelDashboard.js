@@ -1,5 +1,6 @@
 import {connect} from 'react-redux'
 import Dashboard from '../components/dashboard/Dashboard'
+import {changeViewport} from "../actions";
 //import {} from "../actions/index";
 
 
@@ -8,7 +9,8 @@ const mapStateToProps = (state) => {
     const {
         isFetching,
         lastUpdated,
-        data
+        data,
+        geo
     } = parcelDataById[currentParcelId] || {
         isFetching: true,
         data: null
@@ -19,6 +21,7 @@ const mapStateToProps = (state) => {
         parcelId:
         currentParcelId,
         data,
+        geo,
         isFetching,
         lastUpdated,
         imageUrl
@@ -27,8 +30,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        panMapToTarget: () => {
-        }, // noop TODO: implement new panToMapThing function
+        panMapToTarget: coords => () => {
+            dispatch(changeViewport({center: [parseFloat(coords[1]), parseFloat(coords[0])]}));
+        },
     }
 };
 

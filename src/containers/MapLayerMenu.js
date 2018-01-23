@@ -11,6 +11,7 @@ import AddIcon from 'material-ui-icons/Add'
 import {green} from 'material-ui/colors'
 import Divider from 'material-ui/Divider';
 import BasemapListItem from "../components/map/BasemapListItem";
+import Tooltip from 'material-ui/Tooltip'
 
 /* Custom Components */
 import MapLayerList from './MapLayerList'
@@ -73,11 +74,12 @@ class MapLayerMenu extends Component {
                             </Toolbar>
                         </AppBar>
 
-
-                        <Button fab color="primary" aria-label="add" style={style.addButton} onClick={handleAddLayer}>
-                            <AddIcon/>
-                        </Button>
-
+                        <Tooltip title="Add A Layer">
+                            <Button fab color="primary" aria-label="add" style={style.addButton}
+                                    onClick={handleAddLayer}>
+                                <AddIcon/>
+                            </Button>
+                        </Tooltip>
                         <MapLayerList
                             distance={4} l
                             ockAxis={'y'}

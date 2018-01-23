@@ -64,7 +64,7 @@ const style = {
 };
 
 const Dashboard = props => {
-    const {parcelId, data, isFetching, imageUrl, panMapToTarget, handleSearch} = props;
+    const {parcelId, data,  geo, isFetching, imageUrl, panMapToTarget, handleSearch} = props;
 
     if (data && !isFetching) {
         const address = extractAddressFromData(data); //todo: have address generated earlier in the stream (maybe at api server level?)
@@ -73,7 +73,7 @@ const Dashboard = props => {
             <Paper style={style.base}>
                 <DataSection>
                     <ParcelSearch style={style.search}/>
-                    <DashboardHeader handlePanToRequest={props.panMapToTarget} imageUrl={imageUrl} address={address}
+                    <DashboardHeader handlePanToRequest={panMapToTarget(geo.centroid.coordinates)} imageUrl={imageUrl} address={address}
                                      parcelId={parcelId}/>
 
                     <ParcelCharacteristics data={data}/>

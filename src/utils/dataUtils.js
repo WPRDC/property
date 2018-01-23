@@ -229,3 +229,14 @@ export const limitString = (string, len) => {
     if (string.length - len > 3) return (string.slice(0, len) + '...')
     else return string
 }
+
+
+export function shortenNumber(number) {
+    if(number >= 10000000){
+        return Math.round(number/1000000) + 'M'
+    } else if(number >=10000)
+        return Math.round(number/1000) +  'K'
+    else {
+        return number
+    }
+}

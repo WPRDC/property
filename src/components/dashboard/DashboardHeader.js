@@ -54,8 +54,8 @@ const DashboardHeader = props => {
                 <h1 style={style.addr}>{addrLine}</h1>
 
                 <div style={style.parcelId}>
-                    <Tooltip title="Parcel ID">
-                        <span style={style.parcelId}>{props.parcelId}</span>
+                    <Tooltip title="Parcel ID" placement="bottom-start">
+                        <p style={style.parcelId}>{props.parcelId}</p>
                     </Tooltip>
                 </div>
 

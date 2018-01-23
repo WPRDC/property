@@ -15,7 +15,8 @@ const ChoroplethPicker = props => {
         <FormControl>
             <InputLabel htmlFor="age-helper">Colors</InputLabel>
             <Select value={value} onChange={onChange}
-                    input={<Input name="color" id="choropleth-color"/>}>
+                    input={<Input name="color" id="choropleth-color"/>}
+                    style={{width: '110px'}}>
                 {
                     Object.keys(CHOROPLETHS).map((key, index) => {
                         const choropleth = CHOROPLETHS[key]
@@ -24,7 +25,8 @@ const ChoroplethPicker = props => {
                             <MenuItem key={index.toString()}
                                       value={key}
                             >
-                                <ChoroplethBar colors={colors} id={key}/>
+                                &nbsp;
+                                <ChoroplethBar colors={colors} id={key} width={'80px'} style={{position: 'absolute', top: '12px'}}/>
                             </MenuItem>
                         )
                     })
@@ -33,7 +35,6 @@ const ChoroplethPicker = props => {
         </FormControl>
     )
 };
-
 
 
 export default ChoroplethPicker;

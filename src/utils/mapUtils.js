@@ -448,7 +448,7 @@ export const generateLegendInfo = (geoType, layerType, layerState) => {
                 };
                 break;
             case 'choropleth':
-                colorMapping = {colors: CHOROPLETHS[submenu.colorName], min: 0, max: 1}
+                colorMapping = {colors: CHOROPLETHS[submenu.colorName], min: Math.min(...layerState.fieldValues), max: Math.max(...layerState.fieldValues)}
                 break;
         }
     }

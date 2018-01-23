@@ -155,8 +155,8 @@ export const MAP_DATASETS = [
         parcelIdField: 'pin',
         datasetUrl: 'https://data.wprdc.org/dataset/allegheny-county-tax-liens-filed-and-satisfied',
         cartoConnection: {
-            cartoAccount: 'wprdc-editor',
-            cartoTable: 'allegheny_county_tax_liens',
+            account: 'wprdc-editor',
+            table: 'allegheny_county_tax_liens',
             mapId: '2ac98314-c5b9-4730-ae79-71c80dbd8790',
             cartoCssId: 'liens',
         },
@@ -185,14 +185,14 @@ export const MAP_DATASETS = [
         parcelIdField: 'PARID',
         datasetUrl: 'https://data.wprdc.org/dataset/real-estate-sales',
         cartoConnection: {
-            cartoAccount: 'wprdc-editor',
-            cartoTable: 'allegheny_county_tax_liens',
-            mapId: '2ac98314-c5b9-4730-ae79-71c80dbd8790',
-            cartoCssId: 'liens',
+            account: 'wprdc',
+            table: 'table_5bbe6c55_bce6_4edb_9d04_68edeb6bf7b1',
+            mapId: '21d67014-8660-45d0-83e1-265bfd9130b3',
+            cartoCssId: 'sales',
         },
         fields: [
             {
-                id: 'SALEDATE',
+                id: 'saledate',
                 name: 'Sale Date',
                 info: 'Date of sale',
                 type: 'string',
@@ -202,47 +202,16 @@ export const MAP_DATASETS = [
                 name: 'Sale Price',
                 info: 'How much the property was sold for.',
                 type: 'numeric',
+                range: [null, null]
             },
             {
-                id: 'SALEDESC',
+                id: 'saledesc',
                 name: 'Sale Type',
                 info: 'Sale type',
                 type: 'string',
             },
         ]
     },
-    {
-        id: 'sales',
-        name: 'Property Sales',
-        parcelIdField: 'PARID',
-        datasetUrl: 'https://data.wprdc.org/dataset/real-estate-sales',
-        cartoConnection: {
-            cartoAccount: 'wprdc-editor',
-            cartoTable: 'allegheny_county_tax_liens',
-            mapId: '2ac98314-c5b9-4730-ae79-71c80dbd8790',
-            cartoCssId: 'liens',
-        },
-        fields: [
-            {
-                id: 'SALEDATE',
-                name: 'Sale Date',
-                info: 'Date of sale',
-                type: 'string',
-            },
-            {
-                id: 'car',
-                name: 'Sale Price',
-                info: 'How much the property was sold for.',
-                type: 'numeric',
-            },
-            {
-                id: 'prior_years',
-                name: 'Sale Type',
-                info: 'Sale type',
-                type: 'string',
-            },
-        ]
-    }
 ];
 
 

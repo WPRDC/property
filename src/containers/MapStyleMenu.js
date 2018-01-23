@@ -12,6 +12,7 @@ import AppBar from 'material-ui/AppBar';
 import Tabs, {Tab} from 'material-ui/Tabs';
 import Divider from 'material-ui/Divider';
 import Slide from 'material-ui/transitions/Slide'
+import Tooltip from 'material-ui/Tooltip'
 
 /* Material UI Icons */
 import {default as MapIcon} from 'material-ui-icons/Map';
