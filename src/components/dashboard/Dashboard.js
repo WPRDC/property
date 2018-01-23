@@ -32,6 +32,7 @@ import {
 /* Project Components */
 import ParcelSearch from '../../containers/ParcelSearch'
 import TaxDelinquency from "./customModules/TaxDelinquency";
+import Foreclosure from "./customModules/Foreclosure";
 
 const blue500 = blue[500];
 
@@ -68,7 +69,7 @@ const Dashboard = props => {
 
     if (data && !isFetching) {
         const address = extractAddressFromData(data); //todo: have address generated earlier in the stream (maybe at api server level?)
-
+        console.log(data);
         return (
             <Paper style={style.base}>
                 <DataSection>
@@ -91,6 +92,7 @@ const Dashboard = props => {
                     <TaxLiens data={data}/>
 
                     <TaxDelinquency data={data}/>
+                    <Foreclosure data={data}/>
                 </DataSection>
             </Paper>
         );

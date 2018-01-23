@@ -179,7 +179,17 @@ export function getFieldValues(dataset, field) {
                 response.json()
                     .then((data) => {
                         if (data.hasOwnProperty('rows')) {
-                            resolve(data.rows.map((row) => row[field.id]));
+                            resolve(data.rows.sort((a, b) => {
+                                const nameA = a[field.id];
+                                const nameB = b[field.id];
+                                if (nameA < nameB) {
+                                    return -1;
+                                }
+                                if (nameA > nameB) {
+                                    return 1;
+                                }
+                                return 0;
+                            }).map((row) => row[field.id]));
                         } else {
                             reject('"row" not in results')
                         }
@@ -289,7 +299,7 @@ export function createRangeCSS(dataset, field, min, max, color, mode) {
     if (mode === 'line') {
         targetType = 'line';
         colorLine = `line-color: ${color}; polygon-fill: #000;`
-        lineWidth =  3;
+        lineWidth = 3;
     }
 
 
@@ -420,7 +430,9 @@ export const getAvailableFields = (styleMode, dataset) => {
 export const getAvailableValues = (dataset, field) => {
     getFieldValues(dataset, field)
         .then((newOptions) => {
+                console.log(newOptions)
                 newOptions.sort();
+                console.log(newOptions);
                 this.setState({fieldValues: newOptions})
             },
             (err) => {
@@ -449,7 +461,11 @@ export const generateLegendInfo = (geoType, layerType, layerState) => {
                 };
                 break;
             case 'choropleth':
-                colorMapping = {colors: CHOROPLETHS[submenu.colorName], min: Math.min(...layerState.fieldValues), max: Math.max(...layerState.fieldValues)}
+                colorMapping = {
+                    colors: CHOROPLETHS[submenu.colorName],
+                    min: Math.min(...layerState.fieldValues),
+                    max: Math.max(...layerState.fieldValues)
+                }
                 break;
         }
     }

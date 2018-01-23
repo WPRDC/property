@@ -155,8 +155,8 @@ export const MAP_DATASETS = [
         parcelIdField: 'pin',
         datasetUrl: 'https://data.wprdc.org/dataset/allegheny-county-tax-liens-filed-and-satisfied',
         cartoConnection: {
-            account: 'wprdc-editor',
-            table: 'allegheny_county_tax_liens',
+            account: 'wprdc',
+            table: 'd1e80180_5b2e_4dab_8ec3_be621628649e',
             mapId: '2ac98314-c5b9-4730-ae79-71c80dbd8790',
             cartoCssId: 'liens',
         },
@@ -165,10 +165,9 @@ export const MAP_DATASETS = [
                 id: 'total_amount',
                 name: 'Total Amount of Liens ($)',
                 info: 'some info and stuff',
-                type: 'money',
+                type: 'numeric',
+                subtype: 'money',
                 range: [null, null],
-                valueFunction: 'log',
-                base: '20'
             },
             {
                 id: 'number',
@@ -209,6 +208,86 @@ export const MAP_DATASETS = [
                 name: 'Sale Type',
                 info: 'Sale type',
                 type: 'string',
+            },
+        ]
+    },
+    {
+        id: 'tax_delinquencies',
+        name: 'Property Tax Delinquencies',
+        parcelIdField: 'pin',
+        datasetUrl: 'https://data.wprdc.org/dataset/city-of-pittsburgh-property-tax-delinquency',
+        cartoConnection: {
+            account: 'wprdc',
+            table: 'ed0d1550_c300_4114_865c_82dc7c23235b_1',
+            mapId: '21d67014-8660-45d0-83e1-265bfd9130b3',
+            cartoCssId: 'sales',
+        },
+        fields: [
+            {
+                id: 'billing_city',
+                name: 'Billing City',
+                info: 'City where tax bills are sent.',
+                type: 'category',
+            },
+            {
+                id: 'current_delq',
+                name: 'Current Amount Delinquent',
+                info: 'Current delinquent tax amount',
+                type: 'numeric',
+                subtype: 'money',
+                range: [null, null]
+            },
+            {
+                id: 'prior_years',
+                name: 'Years Delinquent',
+                info: 'Prior delinquent years',
+                type: 'numeric',
+                range: [null, null]
+            },
+        ]
+    },
+    {
+        id: 'foreclosures',
+        name: 'Foreclosure Filings',
+        parcelIdField: 'pin',
+        datasetUrl: 'https://data.wprdc.org/dataset/allegheny-county-mortgage-foreclosure-records',
+        cartoConnection: {
+            account: 'wprdc',
+            table: 'table_859bccfd_0e12_4161_a348_313d734f25fd',
+            mapId: '50adf7e4-ca10-4e9a-aed2-4c2cae9ed3a4',
+            cartoCssId: 'foreclosures',
+        },
+        fields: [
+            {
+                id: 'filing_date',
+                name: 'Filing Date',
+                info: 'Date when foreclosure filing as submitted',
+                type: 'string',
+            },
+            {
+                id: 'case_id',
+                name: 'Case ID',
+                info: 'Case ID for foreclosure',
+                type: 'string',
+            },
+            {
+                id: 'docket_type',
+                name: 'Docket Type',
+                info: 'Docket type',
+                type: 'category',
+            }, {
+                id: 'plaintiff',
+                name: 'Plaintiff',
+                info: 'Plaintiff',
+                type: 'category',
+            },
+            {
+                id: 'amount',
+                name: 'Amount',
+                info: 'Amount at issue as of last data extraction',
+                type: 'numeric',
+                subtype: 'money',
+                range: [null, null]
             },
         ]
     },
