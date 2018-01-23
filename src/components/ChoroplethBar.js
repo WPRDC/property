@@ -9,13 +9,15 @@ const styles = {
         margin: '-1px'
     },
     label: {
-        fontSize: '0.5rem',
+        fontSize: '0.8rem',
     },
     labelLeft: {
+        fontSize: '0.8rem',
         float: 'left',
         textAlign: 'left',
     },
     labelRight: {
+        fontSize: '0.8rem',
         float: 'right',
         textAlign: 'right'
     }
@@ -49,8 +51,8 @@ const ChoroplethBar = props => {
                 {labels
                     ? (
                         <div>
-                            {labels.left}
-                            {labels.right}
+                            <span style={styles.labelLeft}>{labels.left}</span>
+                            <span style={styles.labelRight}>{labels.right}</span>
                         </div>
                     )
                     : String.fromCharCode(160)

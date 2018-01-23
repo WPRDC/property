@@ -215,10 +215,11 @@ export function createCategoryCSS(dataset, field, categoryColors, mode) {
 
     let opacityTarget = 'polygon-opacity';
     let fillTarget = 'polygon-fill';
+    let lineWidth = '0';
     if (mode === 'line') {
         opacityTarget = 'line-opacity';
         fillTarget = 'line-color'
-
+        lineWidth = '10';
     }
 
 
@@ -226,7 +227,7 @@ export function createCategoryCSS(dataset, field, categoryColors, mode) {
     let css = `#${cartoCssId}{
                 polygon-opacity: 0.0;  
                 line-color: #000;  line-opacity: 0;
-                line-width: 1;
+                line-width: ${lineWidth};
                 `;
 
     // Add conditional css for each category-color combo entered
@@ -288,7 +289,7 @@ export function createRangeCSS(dataset, field, min, max, color, mode) {
     if (mode === 'line') {
         targetType = 'line';
         colorLine = `line-color: ${color}; polygon-fill: #000;`
-        lineWidth = 1
+        lineWidth =  3;
     }
 
 

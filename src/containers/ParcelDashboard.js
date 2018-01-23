@@ -31,7 +31,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => {
     return {
         panMapToTarget: coords => () => {
-            dispatch(changeViewport({center: [parseFloat(coords[1]), parseFloat(coords[0])]}));
+            dispatch(changeViewport({center: [parseFloat(coords[1]), parseFloat(coords[0])], zoom: 16}));
         },
     }
 };

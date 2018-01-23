@@ -3,22 +3,30 @@ import ChoroplethBar from "../ChoroplethBar";
 import ChoroplethPicker from "./ChoroplethPicker";
 
 import Card from 'material-ui/Card'
+import Typography from 'material-ui/Typography'
 import {shortenNumber} from "../../utils/dataUtils";
+import ShortenedText from "../../components/ShortenedText"
+
 
 const style = {
     base: {
         position: 'absolute',
-        bottom: '12px',
-        right: '12px',
+        bottom: '24px',
+        right: '4px',
         zIndex: '2000',
+        minWidth: '200px',
+        padding: '6px'
+    },
+    title: {
+      marginBottom: '6px'
     },
     categoryLegend: {
         paddingLeft: '6px',
         paddingRight: '6px',
         listStyleType: 'none',
+        margin: '2px'
     },
-    legendItem: {
-    },
+    legendItem: {},
     singleColor: {}
 }
 
@@ -36,7 +44,8 @@ const SingleColor = props => {
             background: color,
             border: 'none',
             borderRadius: '2px',
-            marginRight: '2px'
+            marginRight: '2px',
+            verticalAlign: 'middle'
         }}/>
     )
 };
@@ -44,7 +53,7 @@ const SingleColor = props => {
 const LegendLabel = props => {
     const {text} = props;
     return (
-        <span style={{paddingBottom: '2px', verticalAlign: 'middle', fontSize: '.8rem'}}>{text}</span>
+        <span style={{verticalAlign: 'middle', fontSize: '.8rem'}}>{text}</span>
     )
 }
 
@@ -68,7 +77,7 @@ const CategoryLegendPart = props => {
 }
 
 const ChoroplethLegendPart = props => {
-    const {colorMapping, id} = props;
+    const {colorMapping} = props;
     const labels = {left: shortenNumber(colorMapping.min), right: shortenNumber(colorMapping.max)}
     return (
         <ul style={style.categoryLegend}>
@@ -76,27 +85,39 @@ const ChoroplethLegendPart = props => {
                 <ChoroplethBar colors={colorMapping.colors[7]} width={'100%'} labels={labels}/>
             </li>
         </ul>
+
     )
 
 }
 
 const RangeLegendPart = props => {
-
+    const {colorMapping} = props;
+    const {color, range} = colorMapping;
+    return (<ul style={style.categoryLegend}>
+            <li style={style.legendItem}>
+                <SingleColor color={color}/>
+                <LegendLabel text={`${range[0]} - ${range[1]}`}/>
+            </li>
+        </ul>
+    )
 }
 
 
 const Legend = props => {
     const {mapLayerList, mapLayersById} = props;
-
+    if(typeof(mapLayerList) === 'undefined' || !mapLayerList.length){
+        return null;
+    }
     return (
         <Card style={style.base}>
+            {/*<Typography style={style.title} type="title">Legend</Typography>*/}
             {
                 mapLayerList.slice().reverse().map(id => {
                         const layer = mapLayersById[id];
                         const legendInfo = layer.legendInfo;
                         return (
                             <div key={'legend-' + id}>
-                                <h6>{layer.layerName}</h6>
+                                <Typography type="subheading"><ShortenedText text={layer.layerName} length={30}/></Typography>
                                 {legendInfo.styleType === 'category'
                                     ? <CategoryLegendPart key={id} colorMapping={legendInfo.colorMapping}/>
                                     : null
@@ -108,9 +129,10 @@ const Legend = props => {
                                 }
                                 {
                                     legendInfo.styleType === 'range'
-                                        ? null
+                                        ? <RangeLegendPart key={id} colorMapping={legendInfo.colorMapping}/>
                                         : null
                                 }
+                                <br/>
                             </div>
                         )
                     }
