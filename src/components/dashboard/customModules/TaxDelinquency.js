@@ -7,7 +7,7 @@ import DataCard from '../DataCard'
 const TaxDelinquency = props => {
     return (
         <DataCard title="Property Tax Delinquency"
-                  subtitle="Current only for City of Pittsburgh properties."
+                  subtitle="Currently only for City of Pittsburgh properties."
                   datasetId="tax_delinquency"
         >
             <KeyValueListDisplay

@@ -133,10 +133,12 @@ export const extractField = (sourceData, fieldMapping) => {
  * Pulls out key-value mapping {title: value} from a source of data
  * @param data
  * @param fieldMapping
+ * @param index
  * @return {{}}
  */
-export const extractKeyValueSubset = (data, fieldMapping) => {
+export const extractKeyValueSubset = (data, fieldMapping, index=0) => {
     let subset = {};
+
     for (let field of fieldMapping) {
         let title = '',
             value = '';
@@ -153,8 +155,8 @@ export const extractKeyValueSubset = (data, fieldMapping) => {
                 title = field.title;
             else
                 title = field.field;
-            if (data[field.resource].length && data[field.resource][0].hasOwnProperty(field.field))
-                value = data[field.resource][0][field.field]
+            if (data[field.resource].length && data[field.resource][index].hasOwnProperty(field.field))
+                value = data[field.resource][index][field.field]
         }
 
         if (exists(field.formatter))

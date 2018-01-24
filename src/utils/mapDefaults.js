@@ -41,7 +41,7 @@ export const SELECTION_LAYERS = {
 export const BASEMAPS = {
     voyager: {
         name: 'Voyager',
-        url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager_nolabels/{z}/{x}/{y}.png',
+        url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
         avatar: 'osm.png'
     },
@@ -212,7 +212,7 @@ export const MAP_DATASETS = [
         ]
     },
     {
-        id: 'tax_delinquencies',
+        id: 'tax_delinquency',
         name: 'Property Tax Delinquencies',
         parcelIdField: 'pin',
         datasetUrl: 'https://data.wprdc.org/dataset/city-of-pittsburgh-property-tax-delinquency',
@@ -291,6 +291,69 @@ export const MAP_DATASETS = [
             },
         ]
     },
+    {
+        id: 'pli_violations',
+        name: 'Building Code Violations',
+        parcelIdField: 'pin',
+        datasetUrl: 'https://data.wprdc.org/dataset/pittsburgh-pli-violations-report',
+        cartoConnection: {
+            account: 'wprdc',
+            table: 'table_859bccfd_0e12_4161_a348_313d734f25fd',
+            mapId: '50adf7e4-ca10-4e9a-aed2-4c2cae9ed3a4',
+            cartoCssId: 'foreclosures',
+        },
+        fields: [
+            // {
+            //     id: 'case_number',
+            //     name: 'Case Number',
+            //     info: 'Case Number identifying violation.',
+            //     type: 'string',
+            // },
+            // {
+            //     id: 'violation',
+            //     name: 'Violation',
+            //     info: 'Code violation',
+            //     type: 'string',
+            // },
+            // {
+            //     id: 'corrective_action',
+            //     name: 'Corrective Action',
+            //     info: 'Prescribed corrective action for violation.',
+            //     type: 'string',
+            // },
+            // {
+            //     id: 'location',
+            //     name: 'Location',
+            //     info: 'Location on the property where the violation occurred.',
+            //     type: 'string',
+            // },
+            // {
+            //     id: 'inspection_date',
+            //     name: 'Inspection date',
+            //     info: 'Date of inspection',
+            //     type: 'string',
+            // },
+            // {
+            //     id: 'inspection_result',
+            //     name: 'Inspection Result',
+            //     info: 'Amount at issue as of last data extraction',
+            //     type: 'category',
+            // },
+        ]
+    },
+    {
+        id: 'assessment_appeals',
+        name: 'Property Assessment Appeals',
+        parcelIdField: 'PARCEL ID',
+        datasetUrl: 'https://data.wprdc.org/dataset/allegheny-county-property-assessment-appeals',
+        cartoConnection: {
+            account: 'wprdc',
+            table: 'table_859bccfd_0e12_4161_a348_313d734f25fd',
+            mapId: '50adf7e4-ca10-4e9a-aed2-4c2cae9ed3a4',
+            cartoCssId: 'foreclosures',
+        },
+        fields: []
+    }
 ];
 
 

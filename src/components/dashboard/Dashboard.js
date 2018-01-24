@@ -33,6 +33,7 @@ import {
 import ParcelSearch from '../../containers/ParcelSearch'
 import TaxDelinquency from "./customModules/TaxDelinquency";
 import Foreclosure from "./customModules/Foreclosure";
+import BuildingCodeViolations from "./customModules/BuildingCodeViolations";
 
 const blue500 = blue[500];
 
@@ -88,7 +89,7 @@ const Dashboard = props => {
                     <PropertyTaxReductions data={data}/>
 
                     <SalesTable data={data}/>
-
+                    <BuildingCodeViolations data={data}/>
                     <TaxLiens data={data}/>
 
                     <TaxDelinquency data={data}/>
