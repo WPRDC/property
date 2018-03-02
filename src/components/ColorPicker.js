@@ -1,18 +1,25 @@
 import React, {Component} from 'react';
+import {findDOMNode} from 'react-dom';
+
+
 import {GithubPicker} from 'react-color';
 import Button from 'material-ui/Button';
+
+import Popover from 'material-ui/Popover';
 
 class ColorPicker extends Component {
     constructor(props) {
         super(props);
         this.state = {
             displayColorPicker: false,
-            color: props.color || '#11f'
+            color: props.color || '#11f',
+            anchorEl: null
         }
     }
+    button = null;
 
     handleClick = () => {
-        this.setState({displayColorPicker: !this.state.displayColorPicker})
+        this.setState({displayColorPicker: !this.state.displayColorPicker, anchorEl: findDOMNode(this.button)})
     };
 
     handleClose = () => {
@@ -46,10 +53,6 @@ class ColorPicker extends Component {
                 height: '100%',
                 marginBottom: '-8px'
             },
-            popover: {
-                position: 'absolute',
-                zIndex: '2',
-            },
             cover: {
                 position: 'fixed',
                 top: '0px',
@@ -60,19 +63,29 @@ class ColorPicker extends Component {
             base: Object.assign({}, {position: 'relative'}, this.props.style)
         };
 
+        console.log(this.state.anchorEl)
 
         return (
             <div style={styles.base}>
-                <Button style={styles.button} onClick={this.handleClick}>
+                <Button
+                    ref={node => {
+                        this.button = node;
+                    }}
+                    style={styles.button}
+                    onClick={this.handleClick}>
                     <div style={styles.color}/>
                 </Button>
-                {this.state.displayColorPicker ? <div style={styles.popover}>
-                    <div style={styles.cover} onClick={this.handleClose}/>
+                <Popover
+                    open={this.state.displayColorPicker}
+                    anchorEl={this.state.anchorEl}
+                    anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                    onClose={this.handleClose}
+                >
                     <GithubPicker color={this.state.color}
+                                  triangle="hide"
                                   onChange={this.handleChange}
                                   onChangeComplete={this.handleChangeComplete}/>
-                </div> : null}
-
+                </Popover>
             </div>
         )
 
