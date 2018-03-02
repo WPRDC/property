@@ -63,16 +63,17 @@ class RangeStyleMenu extends Component {
     _initRange = (dataset, field) => {
         let range = field.range;
         // If there the field has a fully predfined range, we don't need to make an API call
-        if (range && range[0] !== null && range[1] !== null) {
-            let q2 = range[0] + ((range[1] - range[0]) / 4);
-            let q3 = range[0] + (3 * (range[1] - range[0]) / 4);
+        if (false && range && range[0] !== null && range[1] !== null) {
+            let q2 = Math.round(range[0] + ((range[1] - range[0]) / 4));
+            let q3 = Math.round(range[0] + (3 * (range[1] - range[0]) / 4));
             this.setState(
                 {
                     min: range[0],
                     max: range[1],
                     values: [q2, q3]
+
                 },
-                this._handleStyleInfoChange()
+                this._handleStyleInfoChange
             )
         }
         // Otherwise we'll need to fill in the gaps with live data
@@ -88,8 +89,8 @@ class RangeStyleMenu extends Component {
                         } else {
                             let min = range[0] !== null ? range[0] : data.min;
                             let max = range[1] !== null ? range[1] : data.max;
-                            let q2 = min + ((max - min) / 4);
-                            let q3 = min + (3 * (max - min) / 4);
+                            let q2 = Math.round(min + ((max - min) / 4));
+                            let q3 = Math.round(min + (3 * (max - min) / 4));
                             this.setState(
                                 {
                                     min: min,
@@ -111,15 +112,18 @@ class RangeStyleMenu extends Component {
      * @param  {string} name - name of state property to be updated
      */
     handleChange = (name) => (event) => {
+        let val;
         switch (name) {
             case 'color':
                 this.setState({color: event}, this._handleStyleInfoChange);
                 break;
             case 'lower':
-                this.setState({values: [event.target.value, this.state.values[1]]});
+                val = parseInt(event.target.value);
+                this.setState({values: [val, this.state.values[1]]});
                 break;
             case 'upper':
-                this.setState({values: [this.state.values[0], event.target.value]});
+                val = parseInt(event.target.value);
+                this.setState({values: [this.state.values[0], val]});
                 break;
             case 'styleMode': {
                 this.setState({styleMode: event.target.value}, this._handleStyleInfoChange);
@@ -135,7 +139,7 @@ class RangeStyleMenu extends Component {
      * @param {array} values - array of two values [lower, upper] ends of range.
      */
     onRangeSliderChange = (values) => {
-        this.setState({values,}, this._handleStyleInfoChange())
+        this.setState({values,}, this._handleStyleInfoChange)
     };
 
     /**
@@ -153,19 +157,23 @@ class RangeStyleMenu extends Component {
     /**
      * Runs when component is updated.  Updates the style data.
      */
-    componentDidUpdate = (prevProps) => {
+    componentDidUpdate = (prevProps, prevState) => {
         if (prevProps.dataset.id !== this.props.dataset.id || prevProps.field.id !== this.props.field.id) {
             this._initRange(this.props.dataset, this.props.field);
+        }
+        if (this.state.values[0] !== prevState.values[0] && this.state.values[1] !== prevState.values[1]){
+            this._handleStyleInfoChange();
         }
     }
 
 
     render() {
+        console.log("VALUES", this.state.values)
         return (
             <div>
                 <Range min={this.state.min} max={this.state.max} defaultValue={this.state.values}
                        value={this.state.values}
-                       onChange={this.onRangeSliderChange} allowCross={false}/>
+                       onChange={this.onRangeSliderChange}/>
                 <br/>
                 <div>
                     <FormControl>

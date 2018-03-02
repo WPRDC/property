@@ -323,6 +323,7 @@ export function createRangeCSS(dataset, field, min, max, color, mode) {
  * @return {Promise}
  */
 export const findMinMaxValues = (dataset, field) => {
+    console.log(dataset);
     const {parcelIdField, cartoConnection} = dataset;
     const {account, table, mapId, cartoCssId} = cartoConnection;
 

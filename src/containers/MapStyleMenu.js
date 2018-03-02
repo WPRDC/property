@@ -313,7 +313,7 @@ class MapStyleMenu extends Component {
                 transition={Slide}
                 style={style.dialog}
                 open={isOpen}
-                onRequestClose={closeMenu}>
+                onClose={closeMenu}>
 
                 <AppBar position="static" color="default">
                     <DialogTitle>Add Style to the Map</DialogTitle>
@@ -373,7 +373,7 @@ class MapStyleMenu extends Component {
                         onChange={this.handleChange('layerName')}
                         margin="dense"
                     />
-                    <Button color="accent" onClick={closeMenu}>Cancel</Button>
+                    <Button color="secondary" onClick={closeMenu}>Cancel</Button>
                     <Button color="primary" onClick={this.handleSubmit(editMode, this.state)}>
                         Put Some Style on It!
                     </Button>

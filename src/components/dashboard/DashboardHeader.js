@@ -50,7 +50,7 @@ const DashboardHeader = props => {
             <div style={style.base}>
                 <Tooltip title="Zoom to Property">
                     <Button fab style={style.button} onClick={props.handlePanToRequest}>
-                        <MyLocation color={blue500}/>
+                        <MyLocation color="action"/>
                     </Button>
                 </Tooltip>
                 <h1 style={style.addr}>{addrLine}</h1>
