@@ -48,14 +48,16 @@ const DashboardHeader = props => {
         <div>
             <DashboardHeaderImage imageUrl={imageUrl} address={address}/>
             <div style={style.base}>
-                <Button fab style={style.button} onClick={props.handlePanToRequest}>
-                    <MyLocation color={blue500}/>
-                </Button>
+                <Tooltip title="Zoom to Property">
+                    <Button fab style={style.button} onClick={props.handlePanToRequest}>
+                        <MyLocation color="action"/>
+                    </Button>
+                </Tooltip>
                 <h1 style={style.addr}>{addrLine}</h1>
 
                 <div style={style.parcelId}>
-                    <Tooltip title="Parcel ID">
-                        <span style={style.parcelId}>{props.parcelId}</span>
+                    <Tooltip title="Parcel ID" placement="bottom-start">
+                        <p style={style.parcelId}>{props.parcelId}</p>
                     </Tooltip>
                 </div>
 

@@ -6,6 +6,9 @@ import DataHighlightMenu from '../components/map/DataHighlightMenu'
 
 /* Material UI components */
 import Button from 'material-ui/Button'
+import Tooltip from 'material-ui/Tooltip'
+
+import PopulatedLegend from './PopulatedLegend'
 
 /* Material UI Icons */
 import LayersIcon from 'material-ui-icons/Layers'
@@ -79,11 +82,12 @@ class StyledMap extends Component {
         } = viewport;
         return (
             <div style={style.base} className="mapContainer">
-                <Button fab color="primary" aria-label="add" onClick={toggleStyleLayerMenu}
-                        style={style.button}>
-                    <LayersIcon/>
-                </Button>
-
+                <Tooltip title={'Add/Edit Map Layers'}>
+                    <Button fab color="primary" aria-label="add" onClick={toggleStyleLayerMenu}
+                            style={style.button}>
+                        <LayersIcon/>
+                    </Button>
+                </Tooltip>
 
                 <MapLayerMenu/>
 
@@ -124,6 +128,7 @@ class StyledMap extends Component {
 
 
                 </Map>
+                <PopulatedLegend/>
                 <DataHighlightMenu/>
 
             </div>

@@ -41,7 +41,7 @@ export const SELECTION_LAYERS = {
 export const BASEMAPS = {
     voyager: {
         name: 'Voyager',
-        url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager_nolabels/{z}/{x}/{y}.png',
+        url: 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
         avatar: 'osm.png'
     },
@@ -155,8 +155,8 @@ export const MAP_DATASETS = [
         parcelIdField: 'pin',
         datasetUrl: 'https://data.wprdc.org/dataset/allegheny-county-tax-liens-filed-and-satisfied',
         cartoConnection: {
-            cartoAccount: 'wprdc-editor',
-            cartoTable: 'allegheny_county_tax_liens',
+            account: 'wprdc',
+            table: 'd1e80180_5b2e_4dab_8ec3_be621628649e',
             mapId: '2ac98314-c5b9-4730-ae79-71c80dbd8790',
             cartoCssId: 'liens',
         },
@@ -165,10 +165,9 @@ export const MAP_DATASETS = [
                 id: 'total_amount',
                 name: 'Total Amount of Liens ($)',
                 info: 'some info and stuff',
-                type: 'money',
+                type: 'numeric',
+                subtype: 'money',
                 range: [null, null],
-                valueFunction: 'log',
-                base: '20'
             },
             {
                 id: 'number',
@@ -185,14 +184,14 @@ export const MAP_DATASETS = [
         parcelIdField: 'PARID',
         datasetUrl: 'https://data.wprdc.org/dataset/real-estate-sales',
         cartoConnection: {
-            cartoAccount: 'wprdc-editor',
-            cartoTable: 'allegheny_county_tax_liens',
-            mapId: '2ac98314-c5b9-4730-ae79-71c80dbd8790',
-            cartoCssId: 'liens',
+            account: 'wprdc',
+            table: 'table_5bbe6c55_bce6_4edb_9d04_68edeb6bf7b1',
+            mapId: '21d67014-8660-45d0-83e1-265bfd9130b3',
+            cartoCssId: 'sales',
         },
         fields: [
             {
-                id: 'SALEDATE',
+                id: 'saledate',
                 name: 'Sale Date',
                 info: 'Date of sale',
                 type: 'string',
@@ -202,9 +201,10 @@ export const MAP_DATASETS = [
                 name: 'Sale Price',
                 info: 'How much the property was sold for.',
                 type: 'numeric',
+                range: [null, null]
             },
             {
-                id: 'SALEDESC',
+                id: 'saledesc',
                 name: 'Sale Type',
                 info: 'Sale type',
                 type: 'string',
@@ -212,36 +212,147 @@ export const MAP_DATASETS = [
         ]
     },
     {
-        id: 'sales',
-        name: 'Property Sales',
-        parcelIdField: 'PARID',
-        datasetUrl: 'https://data.wprdc.org/dataset/real-estate-sales',
+        id: 'tax_delinquency',
+        name: 'Property Tax Delinquencies',
+        parcelIdField: 'pin',
+        datasetUrl: 'https://data.wprdc.org/dataset/city-of-pittsburgh-property-tax-delinquency',
         cartoConnection: {
-            cartoAccount: 'wprdc-editor',
-            cartoTable: 'allegheny_county_tax_liens',
-            mapId: '2ac98314-c5b9-4730-ae79-71c80dbd8790',
-            cartoCssId: 'liens',
+            account: 'wprdc',
+            table: 'ed0d1550_c300_4114_865c_82dc7c23235b_1',
+            mapId: '21d67014-8660-45d0-83e1-265bfd9130b3',
+            cartoCssId: 'sales',
         },
         fields: [
             {
-                id: 'SALEDATE',
-                name: 'Sale Date',
-                info: 'Date of sale',
-                type: 'string',
+                id: 'billing_city',
+                name: 'Billing City',
+                info: 'City where tax bills are sent.',
+                type: 'category',
             },
             {
-                id: 'car',
-                name: 'Sale Price',
-                info: 'How much the property was sold for.',
+                id: 'current_delq',
+                name: 'Current Amount Delinquent',
+                info: 'Current delinquent tax amount',
                 type: 'numeric',
+                subtype: 'money',
+                range: [null, null]
             },
             {
                 id: 'prior_years',
-                name: 'Sale Type',
-                info: 'Sale type',
-                type: 'string',
+                name: 'Years Delinquent',
+                info: 'Prior delinquent years',
+                type: 'numeric',
+                range: [null, null]
             },
         ]
+    },
+    {
+        id: 'foreclosures',
+        name: 'Foreclosure Filings',
+        parcelIdField: 'pin',
+        datasetUrl: 'https://data.wprdc.org/dataset/allegheny-county-mortgage-foreclosure-records',
+        cartoConnection: {
+            account: 'wprdc',
+            table: 'table_859bccfd_0e12_4161_a348_313d734f25fd',
+            mapId: '50adf7e4-ca10-4e9a-aed2-4c2cae9ed3a4',
+            cartoCssId: 'foreclosures',
+        },
+        fields: [
+            {
+                id: 'filing_date',
+                name: 'Filing Date',
+                info: 'Date when foreclosure filing as submitted',
+                type: 'string',
+            },
+            {
+                id: 'case_id',
+                name: 'Case ID',
+                info: 'Case ID for foreclosure',
+                type: 'string',
+            },
+            {
+                id: 'docket_type',
+                name: 'Docket Type',
+                info: 'Docket type',
+                type: 'category',
+            }, {
+                id: 'plaintiff',
+                name: 'Plaintiff',
+                info: 'Plaintiff',
+                type: 'category',
+            },
+            {
+                id: 'amount',
+                name: 'Amount',
+                info: 'Amount at issue as of last data extraction',
+                type: 'numeric',
+                subtype: 'money',
+                range: [null, null]
+            },
+        ]
+    },
+    {
+        id: 'pli_violations',
+        name: 'Building Code Violations',
+        parcelIdField: 'pin',
+        datasetUrl: 'https://data.wprdc.org/dataset/pittsburgh-pli-violations-report',
+        cartoConnection: {
+            account: 'wprdc',
+            table: 'table_859bccfd_0e12_4161_a348_313d734f25fd',
+            mapId: '50adf7e4-ca10-4e9a-aed2-4c2cae9ed3a4',
+            cartoCssId: 'foreclosures',
+        },
+        fields: [
+            // {
+            //     id: 'case_number',
+            //     name: 'Case Number',
+            //     info: 'Case Number identifying violation.',
+            //     type: 'string',
+            // },
+            // {
+            //     id: 'violation',
+            //     name: 'Violation',
+            //     info: 'Code violation',
+            //     type: 'string',
+            // },
+            // {
+            //     id: 'corrective_action',
+            //     name: 'Corrective Action',
+            //     info: 'Prescribed corrective action for violation.',
+            //     type: 'string',
+            // },
+            // {
+            //     id: 'location',
+            //     name: 'Location',
+            //     info: 'Location on the property where the violation occurred.',
+            //     type: 'string',
+            // },
+            // {
+            //     id: 'inspection_date',
+            //     name: 'Inspection date',
+            //     info: 'Date of inspection',
+            //     type: 'string',
+            // },
+            // {
+            //     id: 'inspection_result',
+            //     name: 'Inspection Result',
+            //     info: 'Amount at issue as of last data extraction',
+            //     type: 'category',
+            // },
+        ]
+    },
+    {
+        id: 'assessment_appeals',
+        name: 'Property Assessment Appeals',
+        parcelIdField: 'PARCEL ID',
+        datasetUrl: 'https://data.wprdc.org/dataset/allegheny-county-property-assessment-appeals',
+        cartoConnection: {
+            account: 'wprdc',
+            table: 'table_859bccfd_0e12_4161_a348_313d734f25fd',
+            mapId: '50adf7e4-ca10-4e9a-aed2-4c2cae9ed3a4',
+            cartoCssId: 'foreclosures',
+        },
+        fields: []
     }
 ];
 

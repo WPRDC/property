@@ -175,7 +175,6 @@ class CategoryStyleMenu extends Component {
     render() {
         return (
             <div>
-                <Divider/>
                 <List>
                     {this.state.menuItems.map((menuItem, idx) =>
                         <ListItem key={idx.toString()}>
@@ -198,20 +197,17 @@ class CategoryStyleMenu extends Component {
                             </ListItemSecondaryAction>
                         </ListItem>
                     )}
-                    <ListItem onClick={this.handleAddMenuItem}>
-                        <Button>
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <AddCircleIcon/>
-                                </Avatar>
+                    <Divider/>
+                    <ListItem button onClick={this.handleAddMenuItem}>
+                        <ListItemAvatar>
+                            <Avatar>
+                                <AddCircleIcon/>
+                            </Avatar>
 
-                            </ListItemAvatar>
-                            <ListItemText primary={'Add Another Category'}/>
-                        </Button>
-
+                        </ListItemAvatar>
+                        <ListItemText primary={'Add Another Category'}/>
                     </ListItem>
                 </List>
-                <Divider/>
                 <FormControl>
                     <InputLabel htmlFor="colorMode">Style Mode</InputLabel>
                     <Select

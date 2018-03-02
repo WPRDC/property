@@ -12,6 +12,7 @@ import AppBar from 'material-ui/AppBar';
 import Tabs, {Tab} from 'material-ui/Tabs';
 import Divider from 'material-ui/Divider';
 import Slide from 'material-ui/transitions/Slide'
+import Tooltip from 'material-ui/Tooltip'
 
 /* Material UI Icons */
 import {default as MapIcon} from 'material-ui-icons/Map';
@@ -312,7 +313,7 @@ class MapStyleMenu extends Component {
                 transition={Slide}
                 style={style.dialog}
                 open={isOpen}
-                onRequestClose={closeMenu}>
+                onClose={closeMenu}>
 
                 <AppBar position="static" color="default">
                     <DialogTitle>Add Style to the Map</DialogTitle>
@@ -372,7 +373,7 @@ class MapStyleMenu extends Component {
                         onChange={this.handleChange('layerName')}
                         margin="dense"
                     />
-                    <Button color="accent" onClick={closeMenu}>Cancel</Button>
+                    <Button color="secondary" onClick={closeMenu}>Cancel</Button>
                     <Button color="primary" onClick={this.handleSubmit(editMode, this.state)}>
                         Put Some Style on It!
                     </Button>

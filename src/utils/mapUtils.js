@@ -179,7 +179,17 @@ export function getFieldValues(dataset, field) {
                 response.json()
                     .then((data) => {
                         if (data.hasOwnProperty('rows')) {
-                            resolve(data.rows.map((row) => row[field.id]));
+                            resolve(data.rows.sort((a, b) => {
+                                const nameA = a[field.id];
+                                const nameB = b[field.id];
+                                if (nameA < nameB) {
+                                    return -1;
+                                }
+                                if (nameA > nameB) {
+                                    return 1;
+                                }
+                                return 0;
+                            }).map((row) => row[field.id]));
                         } else {
                             reject('"row" not in results')
                         }
@@ -215,10 +225,11 @@ export function createCategoryCSS(dataset, field, categoryColors, mode) {
 
     let opacityTarget = 'polygon-opacity';
     let fillTarget = 'polygon-fill';
+    let lineWidth = '0';
     if (mode === 'line') {
         opacityTarget = 'line-opacity';
         fillTarget = 'line-color'
-
+        lineWidth = '10';
     }
 
 
@@ -226,7 +237,7 @@ export function createCategoryCSS(dataset, field, categoryColors, mode) {
     let css = `#${cartoCssId}{
                 polygon-opacity: 0.0;  
                 line-color: #000;  line-opacity: 0;
-                line-width: 1;
+                line-width: ${lineWidth};
                 `;
 
     // Add conditional css for each category-color combo entered
@@ -288,7 +299,7 @@ export function createRangeCSS(dataset, field, min, max, color, mode) {
     if (mode === 'line') {
         targetType = 'line';
         colorLine = `line-color: ${color}; polygon-fill: #000;`
-        lineWidth = 1
+        lineWidth = 3;
     }
 
 
@@ -312,6 +323,7 @@ export function createRangeCSS(dataset, field, min, max, color, mode) {
  * @return {Promise}
  */
 export const findMinMaxValues = (dataset, field) => {
+    console.log(dataset);
     const {parcelIdField, cartoConnection} = dataset;
     const {account, table, mapId, cartoCssId} = cartoConnection;
 
@@ -419,7 +431,9 @@ export const getAvailableFields = (styleMode, dataset) => {
 export const getAvailableValues = (dataset, field) => {
     getFieldValues(dataset, field)
         .then((newOptions) => {
+                console.log(newOptions)
                 newOptions.sort();
+                console.log(newOptions);
                 this.setState({fieldValues: newOptions})
             },
             (err) => {
@@ -448,7 +462,11 @@ export const generateLegendInfo = (geoType, layerType, layerState) => {
                 };
                 break;
             case 'choropleth':
-                colorMapping = {colors: CHOROPLETHS[submenu.colorName], min: 0, max: 1}
+                colorMapping = {
+                    colors: CHOROPLETHS[submenu.colorName],
+                    min: Math.min(...layerState.fieldValues),
+                    max: Math.max(...layerState.fieldValues)
+                }
                 break;
         }
     }

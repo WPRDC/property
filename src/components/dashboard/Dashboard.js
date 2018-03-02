@@ -32,6 +32,8 @@ import {
 /* Project Components */
 import ParcelSearch from '../../containers/ParcelSearch'
 import TaxDelinquency from "./customModules/TaxDelinquency";
+import Foreclosure from "./customModules/Foreclosure";
+import BuildingCodeViolations from "./customModules/BuildingCodeViolations";
 
 const blue500 = blue[500];
 
@@ -64,16 +66,16 @@ const style = {
 };
 
 const Dashboard = props => {
-    const {parcelId, data, isFetching, imageUrl, panMapToTarget, handleSearch} = props;
+    const {parcelId, data,  geo, isFetching, imageUrl, panMapToTarget, handleSearch} = props;
 
     if (data && !isFetching) {
         const address = extractAddressFromData(data); //todo: have address generated earlier in the stream (maybe at api server level?)
-
+        console.log(data);
         return (
             <Paper style={style.base}>
                 <DataSection>
                     <ParcelSearch style={style.search}/>
-                    <DashboardHeader handlePanToRequest={props.panMapToTarget} imageUrl={imageUrl} address={address}
+                    <DashboardHeader handlePanToRequest={panMapToTarget(geo.centroid.coordinates)} imageUrl={imageUrl} address={address}
                                      parcelId={parcelId}/>
 
                     <ParcelCharacteristics data={data}/>
@@ -87,10 +89,11 @@ const Dashboard = props => {
                     <PropertyTaxReductions data={data}/>
 
                     <SalesTable data={data}/>
-
+                    <BuildingCodeViolations data={data}/>
                     <TaxLiens data={data}/>
 
                     <TaxDelinquency data={data}/>
+                    <Foreclosure data={data}/>
                 </DataSection>
             </Paper>
         );
