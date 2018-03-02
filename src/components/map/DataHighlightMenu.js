@@ -16,7 +16,7 @@ import {closeCustomStyleMenu, closeHighlightStyleMenu} from "../../actions/layer
 import ColorPicker from '../ColorPicker'
 import {GeoTypes, LayerTypes, StyleMenuEditModes} from "../../utils/mapDefaults";
 import {addMapLayer, openMapLayerMenu, updateMapLayer} from "../../actions/mapLayerActions";
-import {guid} from "../../utils/dataUtils";
+import {guid, limitString} from "../../utils/dataUtils";
 import DelayedMountDialog from "../DelayedMountDialog";
 
 const styles = theme => ({
@@ -162,8 +162,8 @@ const mapDispatchToProps = dispatch => {
                 styleInfo: menuState.styleInfo,
                 legendInfo: {
                     geoType: GeoTypes.POLYGON,
-                    styleType: 'HIGHLIGHT',
-                    colorMapping: [{value: selectedValue, color: menuState.color}]
+                    styleType: 'highlight',
+                    colorMapping: [{value: `${limitString(selectedValue, 26)}`, color: menuState.color}]
                 },
                 menuState,
             };
