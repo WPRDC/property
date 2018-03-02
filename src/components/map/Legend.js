@@ -118,7 +118,7 @@ const Legend = props => {
                         return (
                             <div key={'legend-' + id}>
                                 <Typography type="subheading"><ShortenedText text={layer.layerName} length={30}/></Typography>
-                                {legendInfo.styleType === 'category'
+                                {legendInfo.styleType === 'category' || legendInfo.styleType === 'highlight'
                                     ? <CategoryLegendPart key={id} colorMapping={legendInfo.colorMapping}/>
                                     : null
                                 }
