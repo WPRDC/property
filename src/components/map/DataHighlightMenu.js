@@ -30,8 +30,6 @@ const styles = theme => ({
 class DataHighlightMenu extends Component {
     constructor(props) {
         super(props)
-
-        //todo: move state to redux and remove this crap, make it a functional component
         this.state = {
             range: null,
             color: 'blue',
@@ -48,7 +46,7 @@ class DataHighlightMenu extends Component {
     };
 
     handleSubmit = () => {
-        const {editMode, layerId, layerData, submitMenu, closeMenu} =this.props;
+        const {editMode, layerId, layerData, submitMenu, closeMenu} = this.props;
         const {range, color, selectedIndex} = this.state;
         const {items} = layerData.menuState;
         const {makeSql, makeCss} = items[selectedIndex];
@@ -73,7 +71,7 @@ class DataHighlightMenu extends Component {
         const {dataset, items} = layerData.menuState || {dataset: null, items: null}
 
         return (
-            <Dialog open={isOpen} onRequestClose={closeMenu}>
+            <Dialog open={isOpen} onClose={closeMenu}>
                 <DialogTitle>
                     {dataset
                         ? dataset.name
@@ -81,20 +79,17 @@ class DataHighlightMenu extends Component {
                     }
                 </DialogTitle>
 
-                <DialogContent>
+                <DialogContent style={{overflow: "none"}}>
                     <DialogContentText>
                         {`Highlight parcels with similar data.`}
                     </DialogContentText>
 
                     <FieldValueMenu items={items} index={selectedIndex} onChange={handleSelectField}>
-
+                        <ColorPicker style={{}} color={color} onChange={this.handleSelectColor} triangle={'top-right'}/>
                     </FieldValueMenu>
 
                 </DialogContent>
                 <DialogActions>
-                    <FormControl>
-                        <ColorPicker color={color} onChange={this.handleSelectColor}/>
-                    </FormControl>
                     <Button onClick={closeMenu} color="primary">Cancel</Button>
                     <Button onClick={this.handleSubmit} color="primary">Highlight</Button>
                 </DialogActions>
@@ -105,11 +100,16 @@ class DataHighlightMenu extends Component {
 };
 
 const FieldValueMenu = props => {
-    const {items, index, onChange} = props;
+    const {items, index, onChange, children} = props;
     const {field, value, formatter} = items[index];
     return (
         <div>
-            <FieldSelect items={items} onChange={onChange}/>
+            <FormControl>
+                <FieldSelect items={items} onChange={onChange}/>
+            </FormControl>
+            <FormControl>
+                {children}
+            </FormControl>
             <br/><br/>
             <ValueDisplay value={value} formatter={formatter}/>
         </div>
@@ -166,7 +166,7 @@ const mapDispatchToProps = dispatch => {
                     colorMapping: [{value: selectedValue, color: menuState.color}]
                 },
                 menuState,
-          };
+            };
 
             switch (editMode) {
                 case StyleMenuEditModes.ADD:
