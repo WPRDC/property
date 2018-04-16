@@ -5,17 +5,17 @@ import {removeStyleLayer} from "../actions";
 
 
 const mapStateToProps = state => {
-    const {styleLayers} = state;
+  const {styleLayers} = state;
 
-    return {
-        styleLayers
-    }
+  return {
+    styleLayers
+  }
 }
 
 const mapDispatchToProps = dispatch => {
-    return {
-        handleDelete: index => {
-            dispatch(removeStyleLayer(index))
-        }
+  return {
+    handleDelete: index => {
+      dispatch(removeStyleLayer(index))
     }
+  }
 }

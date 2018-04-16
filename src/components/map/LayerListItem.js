@@ -12,25 +12,25 @@ import {SortableElement} from 'react-sortable-hoc';
 
 
 const LayerListItem = props => {
-    const {layerType, layerName, handleOpenEditMenu, handleDelete} = props;
+  const {layerType, layerName, handleOpenEditMenu, handleDelete} = props;
 
-    return (
-        <ListItem button onClick={handleOpenEditMenu} className='sortableElement'>
-            <ListItemAvatar>
-                <Avatar>
-                    <LayersIcon/>
-                </Avatar>
-            </ListItemAvatar>
+  return (
+    <ListItem button onClick={handleOpenEditMenu} className='sortableElement'>
+      <ListItemAvatar>
+        <Avatar>
+          <LayersIcon/>
+        </Avatar>
+      </ListItemAvatar>
 
-            <ListItemText primary={layerType} secondary={layerName}/>
+      <ListItemText primary={layerType} secondary={layerName}/>
 
-            <ListItemSecondaryAction>
-                <IconButton aria-label="Delete" onClick={handleDelete}>
-                    <DeleteIcon/>
-                </IconButton>
-            </ListItemSecondaryAction>
-        </ListItem>
-    );
+      <ListItemSecondaryAction>
+        <IconButton aria-label="Delete" onClick={handleDelete}>
+          <DeleteIcon/>
+        </IconButton>
+      </ListItemSecondaryAction>
+    </ListItem>
+  );
 };
 
 

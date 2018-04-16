@@ -13,76 +13,76 @@ import {toggleBasemapMenu, closeBasemapMenu, selectBasemap} from "../../actions/
 import {BASEMAPS} from "../../utils/mapDefaults";
 
 const style = {
-    backgroundColor: green[600]
+  backgroundColor: green[600]
 };
 
 class BasemapListItem extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {anchorEl: null}
-    }
+  constructor(props) {
+    super(props)
+    this.state = {anchorEl: null}
+  }
 
-    handleClick = e => {
-        this.setState({anchorEl: e.currentTarget})
-        this.props.toggleBasemapMenu()
-    }
+  handleClick = e => {
+    this.setState({anchorEl: e.currentTarget})
+    this.props.toggleBasemapMenu()
+  }
 
-    render() {
-        const {
-            menuIsOpen,
-            selectedBasemap,
-            selectBasemap,
-            requestCloseBasemapMenu,
-        } = this.props;
-        const {
-            anchorEl
-        } = this.state
+  render() {
+    const {
+      menuIsOpen,
+      selectedBasemap,
+      selectBasemap,
+      requestCloseBasemapMenu,
+    } = this.props;
+    const {
+      anchorEl
+    } = this.state
 
-        return (
-            <ListItem button={true} onClick={this.handleClick}>
-                <ListItemAvatar>
-                    <Avatar>
-                        <LayersIcon/>
-                    </Avatar>
-                </ListItemAvatar>
-                <ListItemText primary={"Basemap Layer"} secondary={selectedBasemap.name}/>
+    return (
+      <ListItem button={true} onClick={this.handleClick}>
+        <ListItemAvatar>
+          <Avatar>
+            <LayersIcon/>
+          </Avatar>
+        </ListItemAvatar>
+        <ListItemText primary={"Basemap Layer"} secondary={selectedBasemap.name}/>
 
-                <BaseMapMenu open={menuIsOpen}
-                             anchorEl={anchorEl}
-                             basemaps={BASEMAPS}
-                             handleRequestClose={requestCloseBasemapMenu}
-                             handleSelectBasemap={selectBasemap}
-                />
-            </ListItem>
-        );
-    }
+        <BaseMapMenu open={menuIsOpen}
+                     anchorEl={anchorEl}
+                     basemaps={BASEMAPS}
+                     handleRequestClose={requestCloseBasemapMenu}
+                     handleSelectBasemap={selectBasemap}
+        />
+      </ListItem>
+    );
+  }
 };
 
 const mapStateToProps = state => {
-    const {menuIsOpen, selectedBasemap, anchorEl} = state.basemap;
-    return {
-        menuIsOpen,
-        selectedBasemap,
-        anchorEl
-    }
+  const {menuIsOpen, selectedBasemap, anchorEl} = state.basemap;
+  return {
+    menuIsOpen,
+    selectedBasemap,
+    anchorEl
+  }
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-        toggleBasemapMenu: () => {
-            dispatch(toggleBasemapMenu());
-        },
-        requestCloseBasemapMenu: (event) => {
-            if (event.type !== 'click') {
-                dispatch(closeBasemapMenu())
-            }
-        },
+  return {
+    toggleBasemapMenu: () => {
+      dispatch(toggleBasemapMenu());
+    },
+    requestCloseBasemapMenu: (event) => {
+      if (event.type !== 'click') {
+        dispatch(closeBasemapMenu())
+      }
+    },
 
-        selectBasemap: (basemap) => {
-            dispatch(selectBasemap(basemap))
+    selectBasemap: (basemap) => {
+      dispatch(selectBasemap(basemap))
 
-        }
     }
+  }
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BasemapListItem);

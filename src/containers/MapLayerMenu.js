@@ -22,103 +22,103 @@ import {reorderMapLayers} from "../actions/mapLayerActions";
 
 /* Functions & Constants */
 const style = {
-    base: {
-        position: 'absolute',
-        top: '12px',
-        left: '12px',
-        zIndex: '2',
-        width: "340px",
-    },
-    addButton: {
-        position: 'absolute',
-        top: '34px',
-        right: '16px',
-        backgroundColor: green[400],
-        zIndex: '200'
-    }
+  base: {
+    position: 'absolute',
+    top: '12px',
+    left: '12px',
+    zIndex: '2',
+    width: "340px",
+  },
+  addButton: {
+    position: 'absolute',
+    top: '34px',
+    right: '16px',
+    backgroundColor: green[400],
+    zIndex: '200'
+  }
 };
 
 
 class MapLayerMenu extends Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            // UI states
-            basemapMenuAnchorEl: null,
+    this.state = {
+      // UI states
+      basemapMenuAnchorEl: null,
 
-            // Menu Controls
-            styleMenuMode: '',
-            layers: [],
-            targetLayerIdx: 0  // The current layer that is being styled
-        }
+      // Menu Controls
+      styleMenuMode: '',
+      layers: [],
+      targetLayerIdx: 0  // The current layer that is being styled
     }
+  }
 
-    render() {
-        const {
-            isOpen,
-            layerCount,
-            handleAddLayer,
-            handleSortEnd
-        } = this.props;
+  render() {
+    const {
+      isOpen,
+      layerCount,
+      handleAddLayer,
+      handleSortEnd
+    } = this.props;
 
-        return (
-            <div style={style.base}>
-                <Slide in={isOpen} direction="right">
-                    <Paper>
-                        <AppBar position="static" color="primary">
-                            <Toolbar>
-                                <Typography type="title" color="inherit">
-                                    Map Layers
-                                </Typography>
-                            </Toolbar>
-                        </AppBar>
+    return (
+      <div style={style.base}>
+        <Slide in={isOpen} direction="right">
+          <Paper>
+            <AppBar position="static" color="primary">
+              <Toolbar>
+                <Typography type="title" color="inherit">
+                  Map Layers
+                </Typography>
+              </Toolbar>
+            </AppBar>
 
-                        <Tooltip title="Add A Layer">
-                            <Button fab color="primary" aria-label="add" style={style.addButton}
-                                    onClick={handleAddLayer}>
-                                <AddIcon/>
-                            </Button>
-                        </Tooltip>
-                        <MapLayerList
-                            distance={4} l
-                            ockAxis={'y'}
-                            lockToContainerEdges={true}
-                            onSortEnd={handleSortEnd}
-                            helperClass='sortableHelper'/>
+            <Tooltip title="Add A Layer">
+              <Button fab color="primary" aria-label="add" style={style.addButton}
+                      onClick={handleAddLayer}>
+                <AddIcon/>
+              </Button>
+            </Tooltip>
+            <MapLayerList
+              distance={4} l
+              ockAxis={'y'}
+              lockToContainerEdges={true}
+              onSortEnd={handleSortEnd}
+              helperClass='sortableHelper'/>
 
-                        {layerCount ? <Divider/> : null}
+            {layerCount ? <Divider/> : null}
 
-                        <BasemapListItem/>
+            <BasemapListItem/>
 
-                        <MapStyleMenu/>
+            <MapStyleMenu/>
 
-                    </Paper>
-                </Slide>
-            </div>
-        );
-    }
+          </Paper>
+        </Slide>
+      </div>
+    );
+  }
 
 }
 
 function mapStateToProps(state) {
-    const {
-        isOpen
-    } = state.mapLayerMenu;
-    const layerCount = state.mapLayerList.length
+  const {
+    isOpen
+  } = state.mapLayerMenu;
+  const layerCount = state.mapLayerList.length
 
-    return {
-        isOpen,
-        layerCount
-    }
+  return {
+    isOpen,
+    layerCount
+  }
 }
 
 const mapDispatchToProps = dispatch => {
-    return {
-        closeMenu: () => dispatch(closeCustomStyleMenu()),
-        handleAddLayer: () => dispatch(openCustomStyleMenu(StyleMenuEditModes.ADD)),
-        handleSortEnd: ({oldIndex, newIndex}) => dispatch(reorderMapLayers(oldIndex, newIndex))
-    }
+  return {
+    closeMenu: () => dispatch(closeCustomStyleMenu()),
+    handleAddLayer: () => dispatch(openCustomStyleMenu(StyleMenuEditModes.ADD)),
+    handleSortEnd: ({oldIndex, newIndex}) => dispatch(reorderMapLayers(oldIndex, newIndex))
+  }
 }
 
 

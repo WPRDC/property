@@ -13,13 +13,13 @@ const PARCEL_ID_PATTERN = /^(\d{4}\D\d{4}[a-zA-Z0-9]{7})$/;
  * @return {boolean}
  */
 export function hasValues(obj) {
-    for (let k in obj) {
-        if (obj.hasOwnProperty(k)) {
-            if (obj[k] === null || typeof(obj[k]) === 'undefined' || obj[k] === '')
-                return false;
-        }
+  for (let k in obj) {
+    if (obj.hasOwnProperty(k)) {
+      if (obj[k] === null || typeof(obj[k]) === 'undefined' || obj[k] === '')
+        return false;
     }
-    return true;
+  }
+  return true;
 }
 
 
@@ -30,31 +30,31 @@ export function hasValues(obj) {
  * @return {boolean} `true` if all things exist, `false` otherwise
  */
 export function exists(...things) {
-    for (let thing of things) {
-        if (typeof(thing) === 'undefined') {
-            return false;
-        }
+  for (let thing of things) {
+    if (typeof(thing) === 'undefined') {
+      return false;
     }
-    return true;
+  }
+  return true;
 }
 
 export function monify(number, decimal) {
-    let dec = 0;
-    if (number !== 0 && (!number || isNaN(number)))
-        return '';
-    if (decimal)
-        dec = 2;
+  let dec = 0;
+  if (number !== 0 && (!number || isNaN(number)))
+    return '';
+  if (decimal)
+    dec = 2;
 
-    // Set decimals and commas
-    try {
-        number = parseFloat(number)
-    } catch(err) {
-        console.log(err);
-        return '';
-    }
-    number = number.toFixed(dec).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  // Set decimals and commas
+  try {
+    number = parseFloat(number)
+  } catch (err) {
+    console.log(err);
+    return '';
+  }
+  number = number.toFixed(dec).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-    return '$' + number;
+  return '$' + number;
 }
 
 
@@ -67,15 +67,15 @@ export function monify(number, decimal) {
  * @return {boolean} True if they are different, False if the same
  */
 export const arraysAreDifferent = (a, b) => {
-    if (!a || !b) {
-        return true;
-    }
+  if (!a || !b) {
+    return true;
+  }
 
-    return (a.length !== b.length ||
-        !(a.every((item, i) => {
-            return item === b[i]
-        }))
-    );
+  return (a.length !== b.length ||
+    !(a.every((item, i) => {
+      return item === b[i]
+    }))
+  );
 };
 
 
@@ -86,31 +86,31 @@ export const arraysAreDifferent = (a, b) => {
  * @return {Promise} - Promise that resolves with the parcel_id
  */
 export const checkSearchQuery = query => {
-    if (PARCEL_ID_PATTERN.test(query)) {
-        return new Promise((resolve, reject) => {
-            resolve(query.toUpperCase());
-        })
-    }
-    else {
-        return getParcelIdFromAddress(query)
-    }
+  if (PARCEL_ID_PATTERN.test(query)) {
+    return new Promise((resolve, reject) => {
+      resolve(query.toUpperCase());
+    })
+  }
+  else {
+    return getParcelIdFromAddress(query)
+  }
 };
 
 export const extractAddressFromData = data => {
-    return (
-        {
-            "number": data['assessments'][0]['PROPERTYHOUSENUM'],
-            "street": data['assessments'][0]['PROPERTYADDRESS'],
-            "city": data['assessments'][0]['PROPERTYCITY'],
-            "state": data['assessments'][0]['PROPERTYSTATE'],
-            "zip": data['assessments'][0]['PROPERTYZIP'],
-        }
-    )
+  return (
+    {
+      "number": data['assessments'][0]['PROPERTYHOUSENUM'],
+      "street": data['assessments'][0]['PROPERTYADDRESS'],
+      "city": data['assessments'][0]['PROPERTYCITY'],
+      "state": data['assessments'][0]['PROPERTYSTATE'],
+      "zip": data['assessments'][0]['PROPERTYZIP'],
+    }
+  )
 }
 
 export const makeAddressLine = addressParts => {
-    const {number, street, city, state, zip} = addressParts;
-    return `${number} ${street} ${city} ${state} ${zip}`
+  const {number, street, city, state, zip} = addressParts;
+  return `${number} ${street} ${city} ${state} ${zip}`
 }
 
 
@@ -122,11 +122,11 @@ export const makeAddressLine = addressParts => {
  * @return {*}
  */
 export const extractField = (sourceData, fieldMapping) => {
-    let value = sourceData[fieldMapping.resource][0][fieldMapping.id];
-    if (typeof(fieldMapping.formatter) !== 'undefined') {
-        value = fieldMapping.formatter(value);
-    }
-    return value;
+  let value = sourceData[fieldMapping.resource][0][fieldMapping.id];
+  if (typeof(fieldMapping.formatter) !== 'undefined') {
+    value = fieldMapping.formatter(value);
+  }
+  return value;
 }
 
 /**
@@ -136,36 +136,36 @@ export const extractField = (sourceData, fieldMapping) => {
  * @param index
  * @return {{}}
  */
-export const extractKeyValueSubset = (data, fieldMapping, index=0) => {
-    let subset = {};
+export const extractKeyValueSubset = (data, fieldMapping, index = 0) => {
+  let subset = {};
 
-    for (let field of fieldMapping) {
-        let title = '',
-            value = '';
+  for (let field of fieldMapping) {
+    let title = '',
+      value = '';
 
-        // items not dependent on `data`
-        if (exists(field.value, field.title)) {
-            title = field.title;
-            value = field.value;
+    // items not dependent on `data`
+    if (exists(field.value, field.title)) {
+      title = field.title;
+      value = field.value;
 
-        }
-        // items pulled from data
-        else if (exists(field.resource, field.field)) {
-            if (exists(field.title))
-                title = field.title;
-            else
-                title = field.field;
-            if (data[field.resource].length && data[field.resource][index].hasOwnProperty(field.field))
-                value = data[field.resource][index][field.field]
-        }
-
-        if (exists(field.formatter))
-            subset[title] = field.formatter(value);
-        else
-            subset[title] = value;
+    }
+    // items pulled from data
+    else if (exists(field.resource, field.field)) {
+      if (exists(field.title))
+        title = field.title;
+      else
+        title = field.field;
+      if (data[field.resource].length && data[field.resource][index].hasOwnProperty(field.field))
+        value = data[field.resource][index][field.field]
     }
 
-    return subset;
+    if (exists(field.formatter))
+      subset[title] = field.formatter(value);
+    else
+      subset[title] = value;
+  }
+
+  return subset;
 }
 
 /**
@@ -177,71 +177,71 @@ export const extractKeyValueSubset = (data, fieldMapping, index=0) => {
  * @return {Array}
  */
 export const extractTable = (data, tableProps) => {
-    let table = [];
+  let table = [];
 
-    // Generate heading row
-    if (tableProps.showHeading) {
-        let heading = [];
-        for (let field of tableProps.heading) {
-            if (field === '__label__')
-                heading.push('');
-            else
-                heading.push(field)
-        }
-        table.push(heading);
+  // Generate heading row
+  if (tableProps.showHeading) {
+    let heading = [];
+    for (let field of tableProps.heading) {
+      if (field === '__label__')
+        heading.push('');
+      else
+        heading.push(field)
     }
+    table.push(heading);
+  }
 
-    // Collect Data for rows
-    for (let row of tableProps.rows) {
-        let tempRow = [];
-        for (let field of tableProps.heading) {
-            if (field === '__label__')
-                tempRow.push(row[field]);
-            else
-                tempRow.push(extractField(data, row[field]))
-        }
-        table.push(tempRow);
+  // Collect Data for rows
+  for (let row of tableProps.rows) {
+    let tempRow = [];
+    for (let field of tableProps.heading) {
+      if (field === '__label__')
+        tempRow.push(row[field]);
+      else
+        tempRow.push(extractField(data, row[field]))
     }
+    table.push(tempRow);
+  }
 
-    return table;
+  return table;
 };
 
 export const nl2br = multilineString => {
-    return <div>
-        {
-            multilineString.split('\n').map((item, key) =>
-                <span key={key}>{item}<br/></span>)
-        }
-    </div>
+  return <div>
+    {
+      multilineString.split('\n').map((item, key) =>
+        <span key={key}>{item}<br/></span>)
+    }
+  </div>
 }
 
 export const guid = () => {
-    const S4 = () => {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-    };
-    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+  const S4 = () => {
+    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+  };
+  return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 }
 
 export const sentenceCase = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
 
 export const limitString = (string, len) => {
-    if (string.length - len > 3) return (string.slice(0, len) + '...')
-    else return string
+  if (string.length - len > 3) return (string.slice(0, len) + '...')
+  else return string
 }
 
 
 export function shortenNumber(number) {
-    if(number >= 1000000000){
-        return (number/1000000000).toFixed(2)  + 'B'
-    }
-    else if(number >= 1000000){
-        return (number/1000000).toFixed(2) + 'M'
-    } else if(number >=10000)
-        return (number/1000).toFixed(2)  +  'K'
-    else {
-        return number
-    }
+  if (number >= 1000000000) {
+    return (number / 1000000000).toFixed(2) + 'B'
+  }
+  else if (number >= 1000000) {
+    return (number / 1000000).toFixed(2) + 'M'
+  } else if (number >= 10000)
+    return (number / 1000).toFixed(2) + 'K'
+  else {
+    return number
+  }
 }

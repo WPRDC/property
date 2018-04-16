@@ -19,13 +19,13 @@ import DashboardHeader from './DashboardHeader'
 import DataSection from './DataSection'
 /* Components that need to be moved */
 import {
-    ParcelCharacteristics,
-    DwellingCharacteristics,
-    AssessmentTable,
-    PropertyTaxReductions,
-    SalesTable,
-    TaxLiens,
-    OwnerAddress
+  ParcelCharacteristics,
+  DwellingCharacteristics,
+  AssessmentTable,
+  PropertyTaxReductions,
+  SalesTable,
+  TaxLiens,
+  OwnerAddress
 } from './customModules/index'
 
 
@@ -38,85 +38,86 @@ import BuildingCodeViolations from "./customModules/BuildingCodeViolations";
 const blue500 = blue[500];
 
 const style = {
-    base: {
-        position: 'relative',
-        float: 'left',
-        width: '480px',
-        overflowY: 'scroll',
-        overflowX: 'hidden',
-        margin: 0,
+  base: {
+    position: 'relative',
+    float: 'left',
+    width: '480px',
+    overflowY: 'scroll',
+    overflowX: 'hidden',
+    margin: 0,
+  },
+  template: {
+    img: {
+      height: '229px',
+      width: '100%',
     },
-    template: {
-        img: {
-            height: '229px',
-            width: '100%',
-        },
-        header: {
-            height: '80px',
-            backgroundColor: blue500
-        }
-    },
-    search: {
-        margin: '6px',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '454px'
+    header: {
+      height: '80px',
+      backgroundColor: blue500
     }
+  },
+  search: {
+    margin: '6px',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '454px'
+  }
 };
 
 const Dashboard = props => {
-    const {parcelId, data,  geo, isFetching, imageUrl, panMapToTarget, handleSearch} = props;
+  const {parcelId, data, geo, isFetching, imageUrl, panMapToTarget, handleSearch} = props;
 
-    if (data && !isFetching) {
-        const address = extractAddressFromData(data); //todo: have address generated earlier in the stream (maybe at api server level?)
-        console.log(data);
-        return (
-            <Paper style={style.base}>
-                <DataSection>
-                    <ParcelSearch style={style.search}/>
-                    <DashboardHeader handlePanToRequest={panMapToTarget(geo.centroid.coordinates)} imageUrl={imageUrl} address={address}
-                                     parcelId={parcelId}/>
+  if (data && !isFetching) {
+    const address = extractAddressFromData(data); //todo: have address generated earlier in the stream (maybe at api server level?)
+    console.log(data);
+    return (
+      <Paper style={style.base}>
+        <DataSection>
+          <ParcelSearch style={style.search}/>
+          <DashboardHeader handlePanToRequest={panMapToTarget(geo.centroid.coordinates)} imageUrl={imageUrl}
+                           address={address}
+                           parcelId={parcelId}/>
 
-                    <ParcelCharacteristics data={data}/>
+          <ParcelCharacteristics data={data}/>
 
-                    <OwnerAddress data={data} parcelId={parcelId}/>
+          <OwnerAddress data={data} parcelId={parcelId}/>
 
-                    <DwellingCharacteristics data={data}/>
+          <DwellingCharacteristics data={data}/>
 
-                    <AssessmentTable data={data}/>
+          <AssessmentTable data={data}/>
 
-                    <PropertyTaxReductions data={data}/>
+          <PropertyTaxReductions data={data}/>
 
-                    <SalesTable data={data}/>
-                    <BuildingCodeViolations data={data}/>
-                    <TaxLiens data={data}/>
+          <SalesTable data={data}/>
+          <BuildingCodeViolations data={data}/>
+          <TaxLiens data={data}/>
 
-                    <TaxDelinquency data={data}/>
-                    <Foreclosure data={data}/>
-                </DataSection>
-            </Paper>
-        );
-    }
-    else {
-        return (
-            <div style={style.base}>
-                <DataSection>
-                    <div style={style.template.img}/>
-                    <LinearProgress mode="query"/>
-                    <div style={style.template.header}/>
-                </DataSection>
-            </div>
-        );
-    }
+          <TaxDelinquency data={data}/>
+          <Foreclosure data={data}/>
+        </DataSection>
+      </Paper>
+    );
+  }
+  else {
+    return (
+      <div style={style.base}>
+        <DataSection>
+          <div style={style.template.img}/>
+          <LinearProgress mode="query"/>
+          <div style={style.template.header}/>
+        </DataSection>
+      </div>
+    );
+  }
 };
 
 Dashboard.propTypes = {
-    parcelId: PropTypes.string.isRequired,
-    data: PropTypes.object,
-    isFetching: PropTypes.bool.isRequired,
-    imageUrl: PropTypes.string,
-    panMapToTarget: PropTypes.func
+  parcelId: PropTypes.string.isRequired,
+  data: PropTypes.object,
+  isFetching: PropTypes.bool.isRequired,
+  imageUrl: PropTypes.string,
+  panMapToTarget: PropTypes.func
 }
 
 export default Dashboard;
