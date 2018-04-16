@@ -11,58 +11,58 @@ export const CLOSE_MAP_LAYER_MENU = 'CLOSE_MAP_LAYER_MENU';
 
 
 export const openMapLayerMenu = () => {
-    return {
-        type: OPEN_MAP_LAYER_MENU,
-    }
+  return {
+    type: OPEN_MAP_LAYER_MENU,
+  }
 }
 
 export const closeMapLayerMenu = () => {
-    return {
-        type: CLOSE_MAP_LAYER_MENU
-    }
+  return {
+    type: CLOSE_MAP_LAYER_MENU
+  }
 }
 
 export const toggleMapLayerMenu = () => {
-    return (dispatch, getState) => {
-        getState().mapLayerMenu.isOpen
-            ? dispatch(closeMapLayerMenu())
-            : dispatch(openMapLayerMenu())
-    }
+  return (dispatch, getState) => {
+    getState().mapLayerMenu.isOpen
+      ? dispatch(closeMapLayerMenu())
+      : dispatch(openMapLayerMenu())
+  }
 }
 
 
 export const addMapLayer = (layerId, layerData) => {
-    return {
-        type: ADD_MAP_LAYER,
-        layerId,
-        layerData,
-    }
+  return {
+    type: ADD_MAP_LAYER,
+    layerId,
+    layerData,
+  }
 };
 
 export const removeMapLayer = (layerId) => {
-    return {
-        type: REMOVE_MAP_LAYER,
-        layerId
-    }
+  return {
+    type: REMOVE_MAP_LAYER,
+    layerId
+  }
 };
 
 export const updateMapLayer = (layerId, layerData) => {
-    return {
-        type: UPDATE_MAP_LAYER,
-        layerId,
-        layerData
-    }
+  return {
+    type: UPDATE_MAP_LAYER,
+    layerId,
+    layerData
+  }
 };
 
 
 export const reorderMapLayers = (oldIndex, newIndex) => {
-    return (dispatch, getState) => {
-        const currentList = getState().mapLayerList;
-        dispatch(
-            {
-                type: REORDER_MAP_LAYERS,
-                reorderedList: arrayMove(currentList, oldIndex, newIndex)
-            }
-        )
-    }
+  return (dispatch, getState) => {
+    const currentList = getState().mapLayerList;
+    dispatch(
+      {
+        type: REORDER_MAP_LAYERS,
+        reorderedList: arrayMove(currentList, oldIndex, newIndex)
+      }
+    )
+  }
 };

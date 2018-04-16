@@ -5,17 +5,17 @@ import AlertBox from '../components/AlertBox'
 import {closeAlertMessage} from "../actions/parcelDataActions";
 
 const mapStateToProps = state => {
-    const {isOpen, message} = state.alertMessage
-    return {isOpen, message}
+  const {isOpen, message} = state.alertMessage
+  return {isOpen, message}
 }
 
 const mapDispatchToProps = dispatch => {
-    return {
-        handleClose: () => {
-            console.log("CLOSING THAT SHIT")
-            dispatch(closeAlertMessage())
-        }
+  return {
+    handleClose: () => {
+      console.log("CLOSING THAT SHIT")
+      dispatch(closeAlertMessage())
     }
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(AlertBox)

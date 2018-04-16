@@ -9,33 +9,33 @@ import {limitString, sentenceCase} from "../../utils/dataUtils";
 
 
 const LayerList = props => {
-    const {
-        mapLayerList,
-        mapLayersById,
-        handleAddLayer,
-        handleOpenEditMenu,
-        handleDeleteLayer,
-        onSortEnd
-    } = props;
+  const {
+    mapLayerList,
+    mapLayersById,
+    handleAddLayer,
+    handleOpenEditMenu,
+    handleDeleteLayer,
+    onSortEnd
+  } = props;
 
-    return (
-        <List>
-            {mapLayerList.slice().reverse().map((layerId, idx) => {
-                const {legendInfo, layerName} = mapLayersById[layerId];
-                //const displayedLayerType = (layerType === 'HIGHLIGHT' ? 'Highlight' : )
-                return (
-                    <LayerListItem
-                        key={layerId}
-                        index={idx}
-                        layerType={sentenceCase(legendInfo.styleType) + ' Layer'}
-                        layerName={limitString(layerName, 28)}
-                        handleOpenEditMenu={handleOpenEditMenu(mapLayersById, layerId)}
-                        handleDelete={handleDeleteLayer(layerId)}
-                    />
-                )
-            })}
-        </List>
-    )
+  return (
+    <List>
+      {mapLayerList.slice().reverse().map((layerId, idx) => {
+        const {legendInfo, layerName} = mapLayersById[layerId];
+        //const displayedLayerType = (layerType === 'HIGHLIGHT' ? 'Highlight' : )
+        return (
+          <LayerListItem
+            key={layerId}
+            index={idx}
+            layerType={sentenceCase(legendInfo.styleType) + ' Layer'}
+            layerName={limitString(layerName, 28)}
+            handleOpenEditMenu={handleOpenEditMenu(mapLayersById, layerId)}
+            handleDelete={handleDeleteLayer(layerId)}
+          />
+        )
+      })}
+    </List>
+  )
 };
 
 

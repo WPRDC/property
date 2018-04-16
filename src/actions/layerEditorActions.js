@@ -9,25 +9,24 @@ export const OPEN_HIGHLIGHT_STYLE_MENU = 'OPEN_HIGHLIGHT_STYLE_MENU';
 export const CLOSE_HIGHLIGHT_STYLE_MENU = 'CLOSE_HIGHLIGHT_STYLE_MENU';
 
 
-
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 //+++++++++++++++++++++++++++++++ CUSTOM STYLE MENU ++++++++++++++++++++++++++++++++++++++++++
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 export const openCustomStyleMenu = (editMode, layerId, layerData) => {
-    return {
-        type: OPEN_CUSTOM_STYLE_MENU,
-        editMode,
-        layerId,
-        layerData
-    }
+  return {
+    type: OPEN_CUSTOM_STYLE_MENU,
+    editMode,
+    layerId,
+    layerData
+  }
 };
 
 export const closeCustomStyleMenu = () => {
-    return {
-        type: CLOSE_CUSTOM_STYLE_MENU,
-    }
+  return {
+    type: CLOSE_CUSTOM_STYLE_MENU,
+  }
 };
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -35,17 +34,17 @@ export const closeCustomStyleMenu = () => {
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 export const openHighlightStyleMenu = (editMode, layerId, layerData) => {
-    return {
-        type: OPEN_HIGHLIGHT_STYLE_MENU,
-        editMode,
-        layerId,
-        layerData
-    }
+  return {
+    type: OPEN_HIGHLIGHT_STYLE_MENU,
+    editMode,
+    layerId,
+    layerData
+  }
 }
 
 export const closeHighlightStyleMenu = () => {
-    return {
-        type: CLOSE_HIGHLIGHT_STYLE_MENU
-    }
+  return {
+    type: CLOSE_HIGHLIGHT_STYLE_MENU
+  }
 }
 
